@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Topic } from '../../interfaces/topic.interface';
 
 @Component({
   selector: 'app-topics-list',
