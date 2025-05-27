@@ -12,6 +12,8 @@ import { CommentListComponent } from './comments/comment-list/comment-list.compo
 import { CommentFormComponent } from './comments/comment-form/comment-form.component';
 import { ThemeListComponent } from './themes/theme-list/theme-list.component';
 import { ThemeItemComponent } from './themes/theme-item/theme-item.component';
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { MockDataService } from './mock-data';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, ArticleViewComponent, ArticleFormComponent, CommentListComponent, CommentFormComponent, ThemeListComponent, ThemeItemComponent],
@@ -21,6 +23,7 @@ import { ThemeItemComponent } from './themes/theme-item/theme-item.component';
     BrowserAnimationsModule,
     MatButtonModule,
     SharedModule,
+    HttpClientInMemoryWebApiModule.forRoot(MockDataService, { dataEncapsulation: false })
   ],
   providers: [],
   bootstrap: [AppComponent],
