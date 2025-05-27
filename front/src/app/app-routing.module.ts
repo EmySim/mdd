@@ -1,13 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
 
-// consider a guard combined with canLoad / canActivate route option
-// to manage unauthenticated user to access private routes
-const routes: Routes = [{ path: '', component: HomeComponent }];
+const routes: Routes = [
+  { path: '', redirectTo: '/feed', pathMatch: 'full' },
+  { path: 'login', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+  { path: 'register', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+  { path: 'feed', loadChildren: () => import('./feed/feed.module').then(m => m.FeedModule) },
+  { path: 'topics', loadChildren: () => import('./topics/topics.module').then(m => m.TopicsModule) },
+  { path: 'profile', loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule) },
+  { path: 'post/:id', loadChildren: () => import('./posts/posts.module').then(m => m.PostsModule) },
+  { path: 'new-post', loadChildren: () => import('./posts/posts.module').then(m => m.PostsModule) },
+  { path: '**', redirectTo: '/feed' }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
