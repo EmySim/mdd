@@ -28,15 +28,16 @@ public class JwtUtils {
 
     /**
      * Clé secrète pour signer les tokens JWT.
+     * Configurée via application.properties
      */
-    @Value("${app.jwt.secret:MddSecretKeyForJWTTokenGeneration2024VerySecureAndLongEnoughForHS256Algorithm}")
+    @Value("${app.jwt.secret}")
     private String jwtSecret;
 
     /**
      * Durée de validité du token en millisecondes.
-     * Par défaut : 24 heures (86400000 ms)
+     * Configurée via application.properties
      */
-    @Value("${app.jwt.expiration:86400000}")
+    @Value("${app.jwt.expiration}")
     private long jwtExpirationMs;
 
     /**
