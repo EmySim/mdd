@@ -2,11 +2,13 @@ package com.openclassrooms.mddapi.config;
 
 import com.openclassrooms.mddapi.security.JwtAuthenticationEntryPoint;
 import com.openclassrooms.mddapi.security.JwtAuthenticationFilter;
+import com.openclassrooms.mddapi.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +41,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserDetailsServiceImpl userDetailsService;
 
     /**
      * Configuration de la chaîne de filtres de sécurité.
@@ -52,7 +55,6 @@ public class SecurityConfig {
      * @return la chaîne de filtres configurée
      * @throws Exception en cas d'erreur de configuration
      */
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.info("🔒 Configuration du SecurityFilterChain pour l'API MDD");
@@ -69,7 +71,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/auth/login"),
                                 new AntPathRequestMatcher("/api/auth/register"),
-                                new AntPathRequestMatcher("/actuator/health"),
                                 new AntPathRequestMatcher("/h2-console/**")
                         ).permitAll()
                         .requestMatchers(
@@ -80,10 +81,13 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
+        // Configuration du provider d'authentification
+        http.authenticationProvider(authenticationProvider());
+
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         log.info("✅ SecurityFilterChain configuré avec succès");
-        log.info("🔓 Endpoints publics : /api/auth/login, /api/auth/register, /actuator/health, /h2-console/**");
+        log.info("🔓 Endpoints publics : /api/auth/login, /api/auth/register, /h2-console/**");
         log.info("🔒 Endpoints protégés : /api/posts/**, /api/topics/**, /api/users/**");
 
         return http.build();
@@ -114,5 +118,20 @@ public class SecurityConfig {
             AuthenticationConfiguration authConfig) throws Exception {
         log.info("🎯 Configuration de l'AuthenticationManager");
         return authConfig.getAuthenticationManager();
+    }
+
+    /**
+     * Configuration du provider d'authentification DAO.
+     * Lie le service UserDetailsService avec l'encodeur de mots de passe.
+     *
+     * @return provider d'authentification configuré
+     */
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        log.info("🔗 Configuration du DaoAuthenticationProvider");
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 }
