@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import com.openclassrooms.mddapi.exception.GlobalExceptionHandler;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +23,8 @@ import javax.validation.Valid;
  *
  * Gère l'inscription et la connexion avec génération de tokens JWT
  * selon les spécifications fonctionnelles du MVP.
+ *
+ * APPROCHE DB-FIRST
  *
  * Endpoints publics :
  * - POST /api/auth/register : Inscription nouvel utilisateur
@@ -47,51 +48,27 @@ public class AuthController {
     /**
      * Inscription d'un nouvel utilisateur.
      *
-     * Vérifie l'unicité de l'email et du username puis crée le compte
-     * avec mot de passe encodé. Conforme aux spécifications MVP.
-     *
-     * @param registerRequest données d'inscription validées
-     * @return message de succès ou d'erreur
+     * ✅ DB-FIRST : Save direct, DB rejette les doublons automatiquement
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         log.info("🔐 Tentative d'inscription pour email: {}, username: {}",
                 registerRequest.getEmail(), registerRequest.getUsername());
 
-        // Vérification unicité email
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            log.warn("❌ Email déjà existant: {}", registerRequest.getEmail());
-            return ResponseEntity.badRequest()
-                    .body(MessageResponse.error("Cet email est déjà utilisé"));
-        }
+        // ✅ DB-FIRST : Construction + save direct
+        // Si email/username duplicate → DataIntegrityViolationException → GlobalExceptionHandler
+        User user = User.builder()
+                .email(registerRequest.getEmail())
+                .username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .build();
 
-        // Vérification unicité username
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            log.warn("❌ Username déjà existant: {}", registerRequest.getUsername());
-            return ResponseEntity.badRequest()
-                    .body(MessageResponse.error("Ce nom d'utilisateur est déjà pris"));
-        }
+        User savedUser = userRepository.save(user);
 
-        try {
-            // Création du nouvel utilisateur
-            User user = User.builder()
-                    .email(registerRequest.getEmail())
-                    .username(registerRequest.getUsername())
-                    .password(passwordEncoder.encode(registerRequest.getPassword()))
-                    .build();
+        log.info("✅ Utilisateur créé avec succès - ID: {}, Email: {}, Username: {}",
+                savedUser.getId(), savedUser.getEmail(), savedUser.getUsername());
 
-            User savedUser = userRepository.save(user);
-
-            log.info("✅ Utilisateur créé avec succès - ID: {}, Email: {}, Username: {}",
-                    savedUser.getId(), savedUser.getEmail(), savedUser.getUsername());
-
-            return ResponseEntity.ok(MessageResponse.success("Inscription réussie"));
-
-        } catch (Exception e) {
-            log.error("💥 Erreur lors de l'inscription: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError()
-                    .body(MessageResponse.error("Erreur lors de l'inscription"));
-        }
+        return ResponseEntity.ok(MessageResponse.success("Inscription réussie"));
     }
 
     /**
@@ -107,47 +84,35 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         log.info("🔑 Tentative de connexion pour email: {}", loginRequest.getEmail());
 
-        try {
-            // Authentification Spring Security
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
-                    )
-            );
+        // ✅ DB-FIRST : Si auth échoue → AuthenticationException → GlobalExceptionHandler
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
 
-            // Génération du token JWT
-            String jwt = jwtUtils.generateTokenFromUsername(loginRequest.getEmail());
+        log.debug("🔓 Authentification réussie pour: {}", loginRequest.getEmail());
 
-            // Récupération des infos utilisateur
-            User user = userRepository.findByEmail(loginRequest.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé après authentification"));
+        // Génération du token JWT
+        String jwt = jwtUtils.generateTokenFromUsername(loginRequest.getEmail());
 
-            log.info("✅ Connexion réussie - ID: {}, Email: {}, Username: {}",
-                    user.getId(), user.getEmail(), user.getUsername());
+        // Récupération des infos utilisateur
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new GlobalExceptionHandler.ResourceNotFoundException("Utilisateur", loginRequest.getEmail()));
 
-            // Réponse avec token et infos utilisateur
-            return ResponseEntity.ok(JwtResponse.builder()
-                    .token(jwt)
-                    .type("Bearer")
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .username(user.getUsername())
-                    .expiresIn(jwtUtils.getJwtExpirationSeconds())
-                    .build());
+        log.info("✅ Connexion réussie - ID: {}, Email: {}, Username: {}",
+                user.getId(), user.getEmail(), user.getUsername());
 
-        } catch (AuthenticationException e) {
-            log.warn("❌ Échec authentification pour email: {} - Raison: {}",
-                    loginRequest.getEmail(), e.getMessage());
-
-            return ResponseEntity.badRequest()
-                    .body(MessageResponse.error("Email ou mot de passe incorrect"));
-
-        } catch (Exception e) {
-            log.error("💥 Erreur lors de la connexion: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError()
-                    .body(MessageResponse.error("Erreur lors de la connexion"));
-        }
+        // Réponse avec token et infos utilisateur
+        return ResponseEntity.ok(JwtResponse.builder()
+                .token(jwt)
+                .type("Bearer")
+                .id(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .expiresIn(jwtUtils.getJwtExpirationSeconds())
+                .build());
     }
 
     /**

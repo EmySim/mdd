@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import java.util.Arrays;
 
 /**
  * Configuration de sécurité pour l'API MDD.
@@ -59,6 +60,21 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.info("🔒 Configuration du SecurityFilterChain pour l'API MDD");
 
+        // Définir les endpoints comme variables
+        String[] publicEndpoints = {
+                "/api/auth/login",
+                "/api/auth/register",
+                "/h2-console/**",
+                "/api/auth/status",
+                "/actuator/health"
+        };
+
+        String[] protectedEndpoints = {
+                "/api/posts/**",
+                "/api/topics/**",
+                "/api/users/**"
+        };
+
         http
                 .csrf().disable()
                 .exceptionHandling()
@@ -69,14 +85,14 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/auth/login"),
-                                new AntPathRequestMatcher("/api/auth/register"),
-                                new AntPathRequestMatcher("/h2-console/**")
+                                Arrays.stream(publicEndpoints)
+                                        .map(AntPathRequestMatcher::new)
+                                        .toArray(AntPathRequestMatcher[]::new)
                         ).permitAll()
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/posts/**"),
-                                new AntPathRequestMatcher("/api/topics/**"),
-                                new AntPathRequestMatcher("/api/users/**")
+                                Arrays.stream(protectedEndpoints)
+                                        .map(AntPathRequestMatcher::new)
+                                        .toArray(AntPathRequestMatcher[]::new)
                         ).authenticated()
                         .anyRequest().authenticated()
                 );
@@ -86,9 +102,10 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // Logs dynamiques basés sur les vraies variables
         log.info("✅ SecurityFilterChain configuré avec succès");
-        log.info("🔓 Endpoints publics : /api/auth/login, /api/auth/register, /h2-console/**");
-        log.info("🔒 Endpoints protégés : /api/posts/**, /api/topics/**, /api/users/**");
+        log.info("🔓 Endpoints publics : {}", String.join(", ", publicEndpoints));
+        log.info("🔒 Endpoints protégés : {}", String.join(", ", protectedEndpoints));
 
         return http.build();
     }

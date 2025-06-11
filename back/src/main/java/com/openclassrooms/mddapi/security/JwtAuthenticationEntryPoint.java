@@ -55,13 +55,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         // Log de l'erreur d'authentification
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        String userAgent = request.getHeader("User-Agent");
 
-        log.warn("🚫 Accès non autorisé détecté:");
+        log.warn("🚫 Accès non autorise detecte:");
         log.warn("   📍 URI: {} {}", method, requestURI);
         log.warn("   🔍 Raison: {}", authException.getMessage());
-        log.warn("   🌐 User-Agent: {}", userAgent);
-        log.warn("   📡 Remote Address: {}", request.getRemoteAddr());
 
         // Configuration de la réponse HTTP
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -117,25 +114,5 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 .build();
     }
 
-    /**
-     * Vérifie si la requête concerne un endpoint d'API.
-     *
-     * @param request la requête HTTP
-     * @return true si c'est un endpoint d'API
-     */
-    private boolean isApiEndpoint(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        return requestURI.startsWith("/api/");
-    }
 
-    /**
-     * Vérifie si la requête est une requête AJAX/XHR.
-     *
-     * @param request la requête HTTP
-     * @return true si c'est une requête AJAX
-     */
-    private boolean isAjaxRequest(HttpServletRequest request) {
-        String xRequestedWith = request.getHeader("X-Requested-With");
-        return "XMLHttpRequest".equals(xRequestedWith);
-    }
 }
