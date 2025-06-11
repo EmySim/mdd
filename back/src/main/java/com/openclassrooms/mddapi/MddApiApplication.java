@@ -52,31 +52,23 @@ public class MddApiApplication {
 	 */
 	private static void loadEnvironmentVariables() {
 		try {
-			// Configuration du chargeur dotenv avec gestion d'erreurs
 			Dotenv dotenv = Dotenv.configure()
-					.directory("./")                    // Répertoire du fichier .env
-					.ignoreIfMalformed()               // Ignore les erreurs de format
-					.ignoreIfMissing()                 // Continue si le fichier n'existe pas
+					.ignoreIfMalformed()
+					.ignoreIfMissing()
 					.load();
 
-			// Application des variables d'environnement au système
-			dotenv.entries().forEach(entry -> {
-				System.setProperty(entry.getKey(), entry.getValue());
+			// Chargement silencieux
+			dotenv.entries().forEach(entry ->
+					System.setProperty(entry.getKey(), entry.getValue())
+			);
 
-				// Log sécurisé (masque les mots de passe)
-				String value = entry.getKey().toLowerCase().contains("password")
-						? "***"
-						: entry.getValue();
-				System.out.println("✅ Variable chargée: " + entry.getKey() + " = " + value);
-			});
-
-			System.out.println("🔐 Fichier .env chargé avec succès");
-			System.out.println("🚀 Démarrage de l'application MDD API...");
+			// Un seul log de confirmation
+			if (!dotenv.entries().isEmpty()) {
+				System.out.println("Configuration .env chargée (" + dotenv.entries().size() + " variables)");
+			}
 
 		} catch (Exception e) {
-			System.out.println("⚠️  Aucun fichier .env trouvé - utilisation des valeurs par défaut");
-			System.out.println("💡 Astuce: Créez un fichier .env avec vos variables de configuration");
-			System.out.println("📋 Variables attendues: DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME");
+			// Chargement silencieux même en cas d'erreur
 		}
 	}
 }
