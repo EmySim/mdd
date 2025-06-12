@@ -1,1 +1,62 @@
-<p>login works!</p>
+<div
+  class="login-container"
+  [ngClass]="{
+    'mobile-form': isMobile$ | async,
+    'desktop-form': !(isMobile$ | async)
+  }"
+>
+  <div class="logo-container">
+    <img src="assets/logo-mdd.png" alt="MDD logo" />
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+    <h2>Se connecter</h2>
+
+    <!-- Erreur globale -->
+    <mat-error
+      *ngIf="errorService.error$ | async as globalError"
+      class="error-text"
+    >
+      {{ globalError }}
+    </mat-error>
+
+    <!-- Champ Email -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+      <mat-error *ngIf="hasFieldError('email')">
+        {{ getFieldError("email") }}
+      </mat-error>
+      <mat-error
+        *ngIf="(errorService.validationErrors$ | async)?.['email'] as emailError"
+      >
+        {{ emailError }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Champ Mot de passe -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Mot de passe</mat-label>
+      <input matInput formControlName="password" type="password" />
+      <mat-error *ngIf="hasFieldError('password')">
+        {{ getFieldError("password") }}
+      </mat-error>
+      <mat-error
+        *ngIf="(errorService.validationErrors$ | async)?.['password'] as passwordError"
+      >
+        {{ passwordError }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Bouton submit -->
+    <button
+      mat-raised-button
+      color="primary"
+      class="w-full"
+      type="submit"
+      [disabled]="loading"
+    >
+      {{ loading ? "Connexion..." : "Se connecter" }}
+    </button>
+  </form>
+</div>

@@ -2,8 +2,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Observable, takeUntil, map } from 'rxjs';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService, LoginRequest } from '../auth.service';
+import { ErrorService } from 'src/app/core/error.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -14,24 +17,30 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   loading = false;
   error: string | null = null;
-  
+  isMobile$: Observable<boolean>; // ✅ logique responsive
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private breakpointObserver: BreakpointObserver,
+    public errorService: ErrorService
   ) {
     this.loginForm = this.createLoginForm();
+
+    // Initialisation de l'observable responsive
+    this.isMobile$ = this.breakpointObserver
+      .observe([Breakpoints.Handset])
+      .pipe(map(result => result.matches));
   }
 
   ngOnInit(): void {
-    // ✅ Vérification correcte avec l'Observable
     this.authService.isLoggedIn$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(isLoggedIn => {
       if (isLoggedIn) {
-        console.log('🔄 Utilisateur déjà connecté, redirection vers feed');
         this.router.navigate(['/feed']);
       }
     });
@@ -53,7 +62,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       ]],
       password: ['', [
         Validators.required,
-        Validators.minLength(8)
+        Validators.minLength(8),
+        Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}/)
       ]]
     });
   }
@@ -74,33 +84,16 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.authService.login(credentials).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
-        next: (response) => {
-          console.log('✅ Connexion réussie:', response.username);
+        next: () => {
           this.router.navigate(['/feed']);
         },
-        error: (error) => {
-          console.error('❌ Erreur de connexion:', error);
-          this.error = this.getErrorMessage(error);
+        error: (error: HttpErrorResponse) => {
+          this.errorService.handleHttpError(error);
           this.loading = false;
         }
       });
     } else {
       this.markFormGroupTouched();
-    }
-  }
-
-  /**
-   * Gestion des messages d'erreur
-   */
-  private getErrorMessage(error: any): string {
-    if (error.status === 401) {
-      return 'Email ou mot de passe incorrect';
-    } else if (error.status === 0) {
-      return 'Impossible de contacter le serveur. Vérifiez votre connexion.';
-    } else if (error.error?.message) {
-      return error.error.message;
-    } else {
-      return 'Une erreur est survenue lors de la connexion';
     }
   }
 
@@ -135,6 +128,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
       if (field.errors['minlength']) {
         return 'Le mot de passe doit contenir au moins 8 caractères';
+      }
+      if (field.errors['pattern']) {
+        return 'Le mot de passe doit contenir majuscule, minuscule, chiffre et caractère spécial';
       }
     }
     return '';

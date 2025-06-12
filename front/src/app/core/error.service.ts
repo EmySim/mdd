@@ -1,4 +1,4 @@
-// src/app/core/error.service.ts - VERSION MVP COHÉRENTE
+// src/app/core/error.service.ts 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';

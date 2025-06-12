@@ -1,0 +1,44 @@
+# Frontend - Application Angular
+
+Ce dossier contient la partie frontend de l’application, développée avec Angular.
+
+## Prérequis
+
+- Node.js (version recommandée : 18.x ou supérieure)
+- npm (version recommandée : 9.x ou supérieure)
+- Angular CLI (`npm install -g @angular/cli`)
+
+## Installation
+
+```bash
+npm install
+```
+
+## Lancement du serveur de développement
+
+```bash
+ng serve
+```
+
+L’application sera accessible sur [http://localhost:4200](http://localhost:4200).
+
+## Structure du dossier
+
+- `src/` : Code source de l’application Angular
+- `angular.json` : Configuration Angular
+- `package.json` : Dépendances et scripts npm
+
+## Scripts utiles
+
+- `ng serve` : Lance le serveur de développement
+- `ng build` : Compile l’application pour la production
+- `ng test` : Lance les tests unitaires
+
+## JDD
+
+"email": "admin@mdd.com",
+"password": "adminPassword1!"
+
+## Contact
+
+Pour toute question, contactez l’équipe de développement.
