@@ -177,7 +177,7 @@ INSERT INTO subjects (name, description) VALUES
  * Mots de passe hashés avec BCrypt (strength 10)
  */
 INSERT INTO users (email, username, password) VALUES
-('admin@mdd.com', 'admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('admin@mdd.com', 'admin', '$2a$10$GxBhPOrT7k6dLEB5b1R.v.n6Zl/BZwNozml3HRCKP7zrZBimnL5tO'),
 ('author@mdd.com', 'author', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0v.4GVDYlHcvklJcM9LxrJPz/1Hi'),
 ('user@mdd.com', 'user', '$2b$12$YZePMILFOezjsJVkenuAJ.5WBRt5DJwWvM///gKZzfoyN3GO0.uu.');
 
