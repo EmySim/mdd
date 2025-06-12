@@ -1,26 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { ErrorService } from '../../core/error.service';
 
 @Component({
   selector: 'app-error-toast',
   template: `
-    <div class="error-toast" *ngIf="message">
-      {{ message }}
-      <button (click)="close()">✖</button>
+    <div class="error-toast" *ngIf="hasError">
+      {{ errorMessage }}
+      <button (click)="clearError()">✖</button>
     </div>
   `,
   styleUrls: ['./error-toast.component.scss']
 })
 export class ErrorToastComponent implements OnInit {
-  message: string | null = null;
+  
+  hasError = false;
+  errorMessage = '';
 
-  constructor(private errorService: ErrorService) {}
+  constructor() { }
 
-  ngOnInit() {
-    this.errorService.error$.subscribe(msg => this.message = msg);
+  ngOnInit(): void {
+    // TODO: Connecter au service d'erreur global
   }
 
-  close() {
-    this.errorService.clearError();
+  clearError(): void {
+    this.hasError = false;
+    this.errorMessage = '';
   }
 }
