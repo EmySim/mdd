@@ -56,11 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    log.debug("✅ Utilisateur authentifié: {}", user.getUsername());
+                    log.debug("✅ [AUTH] Utilisateur authentifié: {}", user.getUsername());
                 }
             }
         } catch (Exception e) {
-            log.error("❌ Erreur JWT: {}", e.getMessage());
+            log.error("❌ [AUTH] Erreur JWT: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

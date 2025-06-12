@@ -6,61 +6,74 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Gestionnaire global des exceptions pour l'API MDD.
  * 
- * ✅ CODES HTTP STANDARDS GÉRÉS :
- * - 400 BAD_REQUEST : Validation, paramètres invalides
- * - 401 UNAUTHORIZED : Authentification échouée
- * - 403 FORBIDDEN : Accès refusé (permissions)
- * - 404 NOT_FOUND : Ressource non trouvée
- * - 409 CONFLICT : Contraintes DB (email déjà pris, etc.)
- * - 500 INTERNAL_SERVER_ERROR : Erreurs système
+ * Intercepte toutes les exceptions et retourne des réponses HTTP cohérentes.
+ * Utilise les exceptions Java standard : EntityNotFoundException, IllegalStateException, etc.
+ * Codes gérés : 400 (validation), 403 (permissions), 404 (not found), 409 (conflit), 500 (erreur système).
+ * Note: Les erreurs 401 sont gérées par JwtAuthenticationEntryPoint dans SecurityConfig.
+ * 
+ * @author Équipe MDD
+ * @version 2.0
  */
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     // ============================================================================
-    // 400 BAD_REQUEST - Requêtes malformées / Validation
+    // 400 BAD_REQUEST - Validation
     // ============================================================================
 
     /**
-     * 400 - Erreurs de validation (@Valid)
+     * Gère les erreurs de validation des DTOs (@Valid).
+     * Intercepte les erreurs Bean Validation et retourne le détail par champ.
+     *
+     * @param ex l'exception de validation
+     * @param request la requête HTTP
+     * @return ResponseEntity avec erreurs par champ et statut 400
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(
             MethodArgumentNotValidException ex, WebRequest request) {
 
-        log.warn("🔴 [400] Erreur de validation: {}", request.getDescription(false));
+        log.warn("🔴 [400] Validation échouée: {}", request.getDescription(false));
 
-        Map<String, String> errors = new HashMap<>();
+        // Extraction des erreurs par champ
+        Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage() != null ? error.getDefaultMessage() : "Erreur de validation";
-            errors.put(fieldName, errorMessage);
+            String errorMessage = error.getDefaultMessage() != null
+                    ? error.getDefaultMessage()
+                    : "Erreur de validation";
+            fieldErrors.put(fieldName, errorMessage);
         });
 
+        // Construction de la réponse avec détail des erreurs
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Validation failed");
         response.put("type", "error");
-        response.put("errors", errors);
+        response.put("errors", fieldErrors);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // 400
     }
 
     /**
-     * 400 - Paramètres invalides
+     * Gère les arguments invalides ou paramètres incorrects.
+     *
+     * @param ex l'exception contenant le message d'erreur
+     * @param request la requête HTTP
+     * @return ResponseEntity avec message d'erreur et statut 400
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<MessageResponse> handleIllegalArgumentException(
@@ -74,29 +87,23 @@ public class GlobalExceptionHandler {
     }
 
     // ============================================================================
-    // 401 UNAUTHORIZED - Authentification échouée
+    // 401 UNAUTHORIZED - Gestion déléguée à JwtAuthenticationEntryPoint
+    // ============================================================================
+    
+    // Note: Les erreurs 401 sont gérées par JwtAuthenticationEntryPoint
+    // configuré dans SecurityConfig pour une gestion cohérente JWT
+
+    // ============================================================================
+    // 403 FORBIDDEN - Permissions
     // ============================================================================
 
     /**
-     * 401 - Email/mot de passe incorrects
-     */
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<MessageResponse> handleAuthenticationException(
-            AuthenticationException ex, WebRequest request) {
-
-        String exceptionMessage = ex.getMessage() != null ? ex.getMessage() : "Authentication failed";
-        log.warn("🔐 [401] Authentification échouée: {}", exceptionMessage);
-
-        MessageResponse response = MessageResponse.error("Email ou mot de passe incorrect");
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED); // 401
-    }
-
-    // ============================================================================
-    // 403 FORBIDDEN - Accès refusé (permissions insuffisantes)
-    // ============================================================================
-
-    /**
-     * 403 - Accès refusé (ex: essayer de modifier l'article d'un autre user)
+     * Gère les refus d'accès pour permissions insuffisantes.
+     * Ex: modifier l'article d'un autre utilisateur.
+     *
+     * @param ex l'exception d'accès refusé
+     * @param request la requête HTTP
+     * @return ResponseEntity avec message d'erreur et statut 403
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<MessageResponse> handleAccessDeniedException(
@@ -114,11 +121,16 @@ public class GlobalExceptionHandler {
     // ============================================================================
 
     /**
-     * 404 - Article, User, Subject non trouvé
+     * Gère les erreurs de ressources non trouvées.
+     * Usage: User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
+     *
+     * @param ex l'exception contenant le message d'erreur
+     * @param request la requête HTTP
+     * @return ResponseEntity avec message d'erreur et statut 404
      */
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<MessageResponse> handleResourceNotFoundException(
-            ResourceNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<MessageResponse> handleEntityNotFoundException(
+            EntityNotFoundException ex, WebRequest request) {
 
         String exceptionMessage = ex.getMessage() != null ? ex.getMessage() : "Ressource non trouvée";
         log.info("🔍 [404] Ressource non trouvée: {}", exceptionMessage);
@@ -128,11 +140,16 @@ public class GlobalExceptionHandler {
     }
 
     // ============================================================================
-    // 409 CONFLICT - Conflits de données
+    // 409 CONFLICT - Conflits
     // ============================================================================
 
     /**
-     * 409 - Email déjà pris, username déjà pris (contraintes DB)
+     * Gère les violations de contraintes de base de données.
+     * Analyse le message d'erreur DB pour retourner un message utilisateur compréhensible.
+     *
+     * @param ex l'exception de violation de contrainte
+     * @param request la requête HTTP
+     * @return ResponseEntity avec message adapté et statut 409
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<MessageResponse> handleDataIntegrityViolation(
@@ -143,32 +160,38 @@ public class GlobalExceptionHandler {
             errorMsg = "Contrainte de base de données violée";
         }
         errorMsg = errorMsg.toLowerCase();
-        
-        log.warn("🔴 [409] Violation contrainte DB: {}", errorMsg);
 
-        String message;
+        log.warn("🔴 [409] Contrainte DB violée: {}", errorMsg);
+
+        // Analyse du message d'erreur pour déterminer la cause
+        String userMessage;
         if (errorMsg.contains("uk_users_email") || errorMsg.contains("email")) {
-            message = "Cet email est déjà utilisé";
+            userMessage = "Cet email est déjà utilisé";
         } else if (errorMsg.contains("uk_users_username") || errorMsg.contains("username")) {
-            message = "Ce nom d'utilisateur est déjà pris";
+            userMessage = "Ce nom d'utilisateur est déjà pris";
         } else if (errorMsg.contains("duplicate") || errorMsg.contains("unique")) {
-            message = "Cette donnée existe déjà dans le système";
+            userMessage = "Cette donnée existe déjà dans le système";
         } else {
-            message = "Erreur de validation des données";
+            userMessage = "Erreur de validation des données";
         }
 
-        MessageResponse response = MessageResponse.error(message);
+        MessageResponse response = MessageResponse.error(userMessage);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT); // 409
     }
 
     /**
-     * 409 - Conflits business (ex: se désabonner d'un sujet non suivi)
+     * Gère les conflits métier de l'application.
+     * Ex: se désabonner d'un sujet non suivi, s'abonner à un sujet déjà suivi.
+     *
+     * @param ex l'exception de conflit métier
+     * @param request la requête HTTP
+     * @return ResponseEntity avec message métier et statut 409
      */
-    @ExceptionHandler(BusinessConflictException.class)
-    public ResponseEntity<MessageResponse> handleBusinessConflictException(
-            BusinessConflictException ex, WebRequest request) {
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<MessageResponse> handleIllegalStateException(
+            IllegalStateException ex, WebRequest request) {
 
-        String exceptionMessage = ex.getMessage() != null ? ex.getMessage() : "Conflit métier";
+        String exceptionMessage = ex.getMessage() != null ? ex.getMessage() : "État invalide";
         log.warn("⚠️ [409] Conflit business: {}", exceptionMessage);
 
         MessageResponse response = MessageResponse.error(exceptionMessage);
@@ -180,7 +203,12 @@ public class GlobalExceptionHandler {
     // ============================================================================
 
     /**
-     * 500 - Toutes les autres erreurs non gérées
+     * Gestionnaire de fallback pour toutes les erreurs non gérées.
+     * Retourne un message générique et logge les détails pour investigation.
+     *
+     * @param ex l'exception non gérée
+     * @param request la requête HTTP
+     * @return ResponseEntity avec message générique et statut 500
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageResponse> handleGlobalException(
@@ -189,27 +217,10 @@ public class GlobalExceptionHandler {
         String exceptionMessage = ex.getMessage() != null ? ex.getMessage() : "Erreur inconnue";
         log.error("💥 [500] Erreur système: {}", exceptionMessage, ex);
 
-        MessageResponse response = MessageResponse.error("Une erreur technique est survenue. Veuillez réessayer.");
+        // Message générique pour éviter l'exposition d'informations sensibles
+        MessageResponse response = MessageResponse.error(
+                "Une erreur technique est survenue. Veuillez réessayer."
+        );
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR); // 500
-    }
-
-    // ============================================================================
-    // EXCEPTIONS CUSTOM
-    // ============================================================================
-
-    public static class ResourceNotFoundException extends RuntimeException {
-        public ResourceNotFoundException(String message) {
-            super(message);
-        }
-        
-        public ResourceNotFoundException(String resource, Object id) {
-            super(String.format("%s avec l'ID '%s' non trouvé(e)", resource, id));
-        }
-    }
-
-    public static class BusinessConflictException extends RuntimeException {
-        public BusinessConflictException(String message) {
-            super(message);
-        }
     }
 }
