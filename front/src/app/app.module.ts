@@ -1,47 +1,57 @@
+// src/app/app.module.ts - VERSION AVEC INTERCEPTOR
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
+// Angular Material
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
 
+// Modules de l'application
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './pages/home/home.component';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core/core.module';
 
-// Composants spécifiques à AppModule
-import { ArticleViewComponent } from './features/articles/article-view/article-view.component';
-import { ArticleFormComponent } from './features/articles/article-form/article-form.component';
-import { CommentListComponent } from './features/comments/comment-list/comment-list.component';
-import { CommentFormComponent } from './features/comments/comment-form/comment-form.component';
-import { ThemeListComponent } from './themes/theme-list/theme-list.component';
-import { ThemeItemComponent } from './themes/theme-item/theme-item.component';
+// Composants principaux
+import { HomeComponent } from './pages/home/home.component';
+
+// ✨ NOUVEAU : Interceptor JWT
+import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    ArticleViewComponent,
-    ArticleFormComponent,
-    CommentListComponent,
-    CommentFormComponent,
-    ThemeListComponent,
-    ThemeItemComponent
+    HomeComponent
   ],
   imports: [
+    // Modules Angular essentiels
     BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule, 
     AppRoutingModule,
-    HttpClientModule, 
+    BrowserAnimationsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+
+    // Angular Material modules (minimum MVP)
     MatButtonModule,
-    CoreModule, 
-    SharedModule 
+    MatToolbarModule,
+    MatIconModule,
+
+    // Modules de l'application
+    SharedModule,
+    CoreModule
   ],
-  providers: [],
+  providers: [
+    // ✨ NOUVEAU : Interceptor JWT pour gestion automatique des erreurs
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
