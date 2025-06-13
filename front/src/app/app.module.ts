@@ -19,7 +19,7 @@ import { CoreModule } from './core/core.module';
 // Composants principaux
 import { HomeComponent } from './pages/home/home.component';
 
-// ✨ NOUVEAU : Interceptor JWT
+// ✨ Interceptor JWT
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 
 @NgModule({
@@ -45,7 +45,7 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     CoreModule
   ],
   providers: [
-    // ✨ NOUVEAU : Interceptor JWT pour gestion automatique des erreurs
+    // ✨ Interceptor JWT pour gestion automatique des erreurs
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
