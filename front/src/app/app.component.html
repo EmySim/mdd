@@ -1,6 +1,5 @@
 <app-error-toast></app-error-toast>
-<app-navbar></app-navbar>
+<app-navbar *ngIf="showNavbar()"></app-navbar>
 <main>
   <router-outlet></router-outlet>
 </main>
-<app-footer></app-footer> 
