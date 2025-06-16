@@ -27,14 +27,9 @@ const routes: Routes = [
   // Route pour la landing page
   { path: 'home', component: HomeComponent },
 
-  // Routes publiques (avec GuestGuard pour éviter l'accès si déjà connecté)
-  { 
-    path: 'login', 
-    loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule),
-    canActivate: [GuestGuard]
-  },
-  { 
-    path: 'register', 
+  // Route parente pour auth (lazy loading)
+  {
+    path: 'auth',
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule),
     canActivate: [GuestGuard]
   },

@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
    */
   navigateToLogin(): void {
     console.log('🔑 Navigation vers la page de connexion');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   /**
@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
    */
   navigateToRegister(): void {
     console.log('📝 Navigation vers la page d\'inscription');
-    this.router.navigate(['/register']);
+    this.router.navigate(['/auth/register']);
   }
 
   /**
