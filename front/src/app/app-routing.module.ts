@@ -1,15 +1,31 @@
 // src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './pages/home/home.component';
 import { AuthGuard, GuestGuard } from './features/auth/auth.guard';
 
+/**
+ * Configuration principale du routing de l'application MDD.
+ * 
+ * Architecture :
+ * - /home : Landing page publique
+ * - /auth/* : Routes d'authentification (login, register) avec lazy loading
+ * - /feed : Fil d'actualité (protégé)
+ * - /topics : Gestion des sujets (protégé)
+ * - /profile : Profil utilisateur (protégé)
+ * - /post/:id et /new-post : Gestion des articles (protégé)
+ * 
+ * Guards :
+ * - AuthGuard : Protège les routes nécessitant une authentification
+ * - GuestGuard : Empêche l'accès aux routes publiques si déjà connecté
+ */
+
 const routes: Routes = [
-  // Route par défaut - redirige vers le feed si connecté, sinon vers home
-  { 
-    path: '', 
-    redirectTo: '/feed', 
-    pathMatch: 'full' 
-  },
+  // Redirige la racine vers /home
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+
+  // Route pour la landing page
+  { path: 'home', component: HomeComponent },
 
   // Routes publiques (avec GuestGuard pour éviter l'accès si déjà connecté)
   { 
@@ -52,18 +68,17 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
 
-  // Route de fallback - redirige vers feed
+  // Route de fallback - redirige vers /home
   { 
     path: '**', 
-    redirectTo: '/feed' 
+    redirectTo: '/home' 
   }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    // Options de routage pour l'optimisation
-    enableTracing: false, // Mettre à true pour déboguer le routage
-    preloadingStrategy: undefined, // Pas de preloading pour le MVP
+    enableTracing: false,
+    preloadingStrategy: undefined,
   })],
   exports: [RouterModule]
 })
