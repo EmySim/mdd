@@ -1,0 +1,33 @@
+// === COULEURS ===
+$gray-light: #EEEEEE;         // Commentaires et overlay
+$red: #A40F0F;                // Se déconnecter
+$gray-dark: #939393;          // Bouton "déjà abonné"
+$purple: #7763C5;             // Couleur principale
+$white: #FFFFFF;
+$black: #000000;
+
+// === TYPOGRAPHIE ===
+$font-family: 'Inter', sans-serif;
+$font-weight: 400;
+$font-size-base: 24px;
+$line-height: 100%;
+$letter-spacing: 0%;
+
+// Tailles dérivées pour hiérarchie
+$font-size-sm: 16px;          // Textes secondaires
+$font-size-lg: 32px;          // Titres
+
+// === ESPACEMENTS SIMPLES ===
+$space-xs: 8px;
+$space-sm: 16px;
+$space-md: 24px;
+$space-lg: 32px;
+$space-xl: 48px;
+
+// === BREAKPOINTS ===
+$mobile: 576px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// === BORDER RADIUS ===
+$radius: 8px;

@@ -20,7 +20,7 @@ import { CoreModule } from './core/core.module';
 import { HomeComponent } from './pages/home/home.component';
 
 // ✨ Interceptor JWT
-import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [

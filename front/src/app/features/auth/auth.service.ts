@@ -9,7 +9,7 @@ import {
   JwtResponse, 
   MessageResponse, 
   User 
-} from './auth.interface';
+} from './interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root'

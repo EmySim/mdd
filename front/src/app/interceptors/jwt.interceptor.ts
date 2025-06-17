@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, catchError } from 'rxjs';
-import { AuthService } from '../../features/auth/auth.service';
-import { ErrorService } from '../error.service';
+import { AuthService } from '../features/auth/auth.service';
+import { ErrorService } from '../services/error.service';
 
 /**
  * Intercepteur JWT MVP - Simple et efficace

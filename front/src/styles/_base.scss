@@ -1,0 +1,33 @@
+// Reset minimal
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// Import de la police Inter
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: $font-family;
+  font-weight: $font-weight;
+  font-size: $font-size-base;
+  line-height: $line-height;
+  letter-spacing: $letter-spacing;
+  color: $black;
+  background-color: $white;
+}
+
+// Liens
+a {
+  color: $purple;
+  text-decoration: none;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}

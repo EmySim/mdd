@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subject, Observable, takeUntil, map } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService, LoginRequest } from '../auth.service';
-import { ErrorService } from 'src/app/core/error.service';
+import { ErrorService } from 'src/app/services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({

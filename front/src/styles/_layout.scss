@@ -1,0 +1,53 @@
+// Container responsive
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-sm;
+  
+  @include desktop {
+    padding: 0 $space-lg;
+  }
+}
+
+// Centrage simple
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+// Grille simple 2 colonnes
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-md;
+  
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Flex utilities
+.flex {
+  display: flex;
+  
+  &-col {
+    flex-direction: column;
+  }
+  
+  &-center {
+    justify-content: center;
+    align-items: center;
+  }
+  
+  &-between {
+    justify-content: space-between;
+  }
+  
+  &-gap {
+    gap: $space-sm;
+  }
+}

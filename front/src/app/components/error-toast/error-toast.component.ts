@@ -1,7 +1,7 @@
 // src/app/shared/error-toast/error-toast.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ErrorService } from '../../core/error.service';
+import { ErrorService } from '../../services/error.service';
 
 @Component({
   selector: 'app-error-toast',
