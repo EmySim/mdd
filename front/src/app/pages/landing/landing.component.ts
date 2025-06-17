@@ -1,25 +1,22 @@
-// src/app/pages/landing/landing.component.ts
+// src/app/pages/landing/landing.component.ts - CORRIGÉ
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
 
 /**
- * Composant Landing - Page d'accueil publique de MDD
+ * Composant Landing - Page d'accueil publique
  * 
  * Fonctionnalités :
- * ✅ Présentation de l'application pour utilisateurs non connectés
+ * ✅ Présentation de l'application
  * ✅ Navigation vers connexion/inscription
- * ✅ Redirection automatique si déjà connecté (simple check)
- * 
- * Conforme aux spécifications ORION :
- * "Accéder au formulaire de connexion et d'inscription à partir de la page d'accueil (non connectée)"
+ * ✅ Redirection automatique si déjà connecté
  */
 @Component({
-  selector: 'app-landing',  // ✅ Nom cohérent avec le fichier
+  selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent implements OnInit {  // ✅ Nom cohérent
+export class LandingComponent implements OnInit {
 
   constructor(
     private router: Router,
@@ -27,17 +24,23 @@ export class LandingComponent implements OnInit {  // ✅ Nom cohérent
   ) {}
 
   ngOnInit(): void {
-    // ✅ Vérification simple au chargement - pas de subscription
-    if (this.authService.isLoggedIn()) {
-      console.log('🏠 Utilisateur déjà connecté → redirection vers /home');
-      this.router.navigate(['/home']);  // ✅ Cohérent avec le routing
-    }
+    // ✅ Vérification simple au chargement
+    this.authService.isLoggedIn$.subscribe((loggedIn: boolean) => {
+      if (loggedIn) {
+        console.log('🏠 Utilisateur déjà connecté → redirection vers /home');
+        this.router.navigate(['/home']);
+      }
+    });
   }
 
+  // ===========================
+  // MÉTHODES DE NAVIGATION ✅ AJOUTÉES
+  // ===========================
+  
   /**
    * Navigation vers la page de connexion
    */
-  goToLogin(): void {
+  navigateToLogin(): void {  // ✅ AJOUTÉ - Méthode manquante
     console.log('🔑 Navigation vers la connexion');
     this.router.navigate(['/auth/login']);
   }
@@ -45,8 +48,17 @@ export class LandingComponent implements OnInit {  // ✅ Nom cohérent
   /**
    * Navigation vers la page d'inscription  
    */
-  goToRegister(): void {
+  navigateToRegister(): void {  // ✅ AJOUTÉ - Méthode manquante
     console.log('📝 Navigation vers l\'inscription');
     this.router.navigate(['/auth/register']);
+  }
+
+  // Alias pour compatibilité (si utilisé ailleurs)
+  goToLogin(): void {
+    this.navigateToLogin();
+  }
+
+  goToRegister(): void {
+    this.navigateToRegister();
   }
 }

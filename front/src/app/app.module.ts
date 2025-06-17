@@ -1,65 +1,94 @@
-// src/app/app.module.ts - VERSION SIMPLIFIÉE ET CORRIGÉE
+// src/app/app.module.ts - VERSION ULTRA-SIMPLE
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
-// Angular Material (minimum MVP)
+// Angular Material minimal
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 // Modules de l'application
 import { AppRoutingModule } from './app-routing.module';
+
+// Composants - TOUS déclarés ici (approche simple)
 import { AppComponent } from './app.component';
+import { HomeComponent } from './pages/home/home.component';
+import { LandingComponent } from './pages/landing/landing.component';
+import { ThemeComponent } from './features/themes/theme.component';
+import { ProfileComponent } from './features/profile/profile.component';
+import { ArticleComponent } from './features/articles/article.component';
 
-// Composants globaux (si vous en avez)
-// Note : Les pages (Landing/Home) sont maintenant en lazy loading
+// Composants réutilisables
+import { ErrorToastComponent } from './components/error-toast/error-toast.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
-// Interceptor JWT
+// Services globaux
+import { ThemeService } from './features/themes/theme.service';
+import { ProfileService } from './features/profile/profile.service';
+import { ArticleService } from './features/articles/article.service';
+
+// Interceptor
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 /**
- * Module racine de l'application MDD
+ * Module racine - APPROCHE ULTRA-SIMPLE
  * 
- * Configuration :
- * ✅ Modules essentiels (Browser, HTTP, Routing)
- * ✅ Angular Material minimal pour MVP
- * ✅ Interceptor JWT pour authentification
- * ✅ Lazy loading des pages (Landing/Home dans leurs modules)
+ * ✅ Tous les composants principaux déclarés ici
+ * ✅ Tous les services fournis ici
+ * ✅ Seulement AuthModule en lazy loading (plus complexe)
  * 
- * Note : Structure simplifiée sans Core/Shared modules
+ * Avantage : Simple, tout au même endroit
+ * Inconvénient : Bundle plus gros (mais OK pour MVP)
  */
 @NgModule({
   declarations: [
-    AppComponent
-    // ✅ PLUS de composants pages ici → Lazy loading !
-    // HomeComponent et LandingComponent sont dans leurs modules respectifs
+    // Composant racine
+    AppComponent,
+    
+    // Pages principales
+    HomeComponent,
+    LandingComponent,
+    
+    // Features (1 composant chacune)
+    ThemeComponent,
+    ProfileComponent,
+    ArticleComponent,
+    
+    // Composants réutilisables
+     ErrorToastComponent,
+    NavbarComponent
+    
+    // Auth reste en lazy loading → pas déclaré ici
   ],
   imports: [
-    // ===========================
-    // MODULES ANGULAR ESSENTIELS
-    // ===========================
+    // Modules Angular essentiels
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
 
-    // ===========================
-    // ANGULAR MATERIAL (MVP)
-    // ===========================
+    // Angular Material pour MVP
     MatButtonModule,
     MatToolbarModule,
-    MatIconModule
-
-    // ✅ PLUS de SharedModule/CoreModule → Structure simplifiée
+    MatIconModule,
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
   providers: [
-    // ===========================
-    // INTERCEPTORS
-    // ===========================
+    // Services des features
+    ThemeService,
+    ProfileService,
+    ArticleService,
+    
+    // Interceptor JWT
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,

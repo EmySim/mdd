@@ -1,8 +1,8 @@
-<!-- src/app/pages/home/home.component.html -->
+<!-- src/app/pages/home/home.component.html - CORRIGÉ -->
 <div class="home-container">
   
-  <!-- Navigation principale -->
-  <app-navbar></app-navbar>
+  <!-- Navigation principale (si navbar existe) -->
+  <!-- <app-navbar></app-navbar> ← Commenté temporairement -->
   
   <!-- Contenu principal -->
   <main class="home-content">
@@ -31,30 +31,36 @@
         </div>
         
         <div class="feed-actions">
-          <a routerLink="/articles/create" class="btn btn-primary">
-            ✍️ Nouvel article
+          <a routerLink="/articles" class="btn btn-primary">
+            ✍️ Voir les articles
           </a>
         </div>
       </div>
 
-      <!-- Composant feed (si vous l'avez créé) -->
-      <app-feed *ngIf="hasFeedComponent"></app-feed>
-      
-      <!-- Alternative : Affichage simple en attendant le composant feed -->
-      <div class="feed-placeholder" *ngIf="!hasFeedComponent">
+      <!-- ✅ SOLUTION TEMPORAIRE : Placeholder simple au lieu d'app-feed -->
+      <div class="feed-placeholder">
         <div class="placeholder-content">
-          <h3>🚀 Votre fil d'actualité arrive bientôt !</h3>
+          <h3>🚀 Votre fil d'actualité</h3>
+          <p>Le composant feed sera intégré prochainement !</p>
           <p>En attendant, vous pouvez :</p>
           <div class="placeholder-actions">
             <a routerLink="/themes" class="btn btn-outline">
               📚 Découvrir les thèmes
             </a>
-            <a routerLink="/articles/create" class="btn btn-primary">
-              ✍️ Écrire un article
+            <a routerLink="/articles" class="btn btn-primary">
+              ✍️ Voir les articles
+            </a>
+            <a routerLink="/profile" class="btn btn-outline">
+              👤 Mon profil
             </a>
           </div>
         </div>
       </div>
+
+      <!-- 
+      ✅ FUTUR : Quand le composant feed sera créé
+      <app-feed *ngIf="hasFeedComponent"></app-feed>
+      -->
 
     </section>
 

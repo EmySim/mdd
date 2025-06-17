@@ -8,8 +8,8 @@ import { LandingComponent } from './pages/landing/landing.component';
 
 // Features 
 import { ProfileComponent } from './features/profile/profile.component';
-import { ArticleComponent } from './features/article/article.component';
-import { ThemeComponent } from './features/theme/theme.component';
+import { ArticleComponent } from './features/articles/article.component';
+import { ThemeComponent } from './features/themes/theme.component';
 
 // Guards
 import { AuthGuard } from './features/auth/auth.guard';

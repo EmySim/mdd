@@ -1,5 +1,7 @@
+// src/app/features/auth/auth.module.ts - ROUTING INTÉGRÉ
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';  // ← Ajouté
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -12,22 +14,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-// Routing et composants
-import { AuthRoutingModule } from './auth-routing.module';
+// Composants
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
 /**
+ * Routing interne du module Auth
+ * Simplifié : pas besoin de fichier séparé pour 2 routes
+ */
+const authRoutes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent }
+];
+
+/**
  * Module d'authentification pour l'application MDD.
  * 
- * Ce module encapsule toutes les fonctionnalités liées à l'authentification :
- * - Composants de connexion et d'inscription
- * - Services d'authentification
- * - Guards de protection des routes
- * - Formulaires réactifs avec validation
- * - Interface Material Design
- * 
- * Utilise le lazy loading pour optimiser les performances.
+ * Version simplifiée avec routing intégré directement dans le module.
+ * Plus besoin de auth-routing.module.ts séparé !
  */
 @NgModule({
   declarations: [
@@ -39,8 +44,8 @@ import { RegisterComponent } from './register/register.component';
     CommonModule,
     HttpClientModule,
     
-    // Routing
-    AuthRoutingModule,
+    // Routing intégré ✅
+    RouterModule.forChild(authRoutes),  // ← Plus besoin de AuthRoutingModule !
     
     // Formulaires réactifs
     ReactiveFormsModule,
@@ -58,12 +63,11 @@ import { RegisterComponent } from './register/register.component';
   providers: [
     // Les services sont déclarés avec providedIn: 'root' 
     // donc pas besoin de les déclarer ici
-    // AuthService, AuthGuard, GuestGuard sont automatiquement disponibles
   ]
 })
 export class AuthModule { 
 
   constructor() {
-    console.log('🔐 AuthModule initialisé - Composants d\'authentification chargés');
+    console.log('🔐 AuthModule initialisé - Routing intégré');
   }
 }

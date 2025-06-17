@@ -1,17 +1,14 @@
-// src/app/pages/home/home.component.ts
+// src/app/pages/home/home.component.ts -
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../features/auth/auth.service';
 
 /**
  * Composant Home - Page d'accueil pour utilisateurs connectés
  * 
- * Fonctionnalités selon spécifications ORION :
- * ✅ "Consulter son fil d'actualité sur la page d'accueil une fois connecté"
- * ✅ Affichage du fil d'actualité chronologique
+ * Fonctionnalités :
+ * ✅ Affichage du fil d'actualité
  * ✅ Navigation via navbar
- * 
- * Note : Cette page est protégée par AuthGuard, donc l'utilisateur est 
- * forcément connecté quand il arrive ici.
+ * ✅ Gestion de l'état de chargement
  */
 @Component({
   selector: 'app-home',
@@ -20,14 +17,17 @@ import { AuthService } from '../../features/auth/auth.service';
 })
 export class HomeComponent implements OnInit {
 
-  // Données pour le fil d'actualité
+  // ===========================
+  // PROPRIÉTÉS DU COMPOSANT
+  // ===========================
   userEmail: string = '';
+  hasFeedComponent: boolean = false; // ✅ AJOUTÉ - Pour gérer l'affichage conditionnel
+  isLoading: boolean = false;
   
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     // ✅ Utilisateur forcément connecté (AuthGuard)
-    // On peut récupérer ses infos pour personnaliser l'affichage
     this.loadUserInfo();
     console.log('🏠 Page home chargée - Fil d\'actualité disponible');
   }
@@ -36,10 +36,16 @@ export class HomeComponent implements OnInit {
    * Charge les informations utilisateur pour personnaliser l'affichage
    */
   private loadUserInfo(): void {
-    // Récupération simple des infos utilisateur
-    const user = this.authService.getCurrentUser();
-    if (user) {
-      this.userEmail = user.email;
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Décodage simple du JWT pour récupérer l'email
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        this.userEmail = payload.email || payload.sub || 'Utilisateur';
+      }
+    } catch (error) {
+      console.warn('Impossible de récupérer les infos utilisateur', error);
+      this.userEmail = 'Développeur';
     }
   }
 }
