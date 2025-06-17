@@ -53,12 +53,4 @@ export class LandingComponent implements OnInit {
     this.router.navigate(['/auth/register']);
   }
 
-  // Alias pour compatibilité (si utilisé ailleurs)
-  goToLogin(): void {
-    this.navigateToLogin();
-  }
-
-  goToRegister(): void {
-    this.navigateToRegister();
-  }
 }

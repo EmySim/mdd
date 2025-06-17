@@ -1,24 +1,52 @@
-
-<nav class="navbar">
+<!-- src/app/components/navbar/navbar.component.html - CORRIGÉ -->
+<nav class="navbar" [class.navbar-simple]="isSimple" [class.navbar-complete]="!isSimple">
   <div class="container">
     <div class="navbar__content">
-      <img src="assets/logo-mdd.png" alt="MDD logo" />
       
-      <div class="navbar__menu">
-        <a href="/feed" class="navbar__link navbar__link--active">Articles</a>
-        <a href="/themes" class="navbar__link">Thèmes</a>
-        <a href="/profile" class="navbar__link">
-          <span class="icon icon--profile"></span>
-        </a>
-        <button class="navbar__link navbar__link--logout">
-          Se déconnecter
-        </button>
+      <!-- ===========================
+           LOGO (toujours visible)
+           =========================== -->
+      <div class="navbar-logo__container">
+        <img src="assets/logo-mdd.png" alt="MDD logo" class="navbar__logo" />
       </div>
-      
-      <!-- Menu mobile -->
-      <button class="visible-mobile btn btn--secondary">
-        <span class="icon icon--menu"></span>
+
+      <!-- ===========================
+           MENU COMPLET (seulement si !isSimple)
+           =========================== -->
+      <div class="navbar__menu" *ngIf="!isSimple">
+        <a (click)="logout()" class="navbar__link">Se déconnecter</a>
+        <a (click)="goToArticles()" 
+           class="navbar__link" 
+           [class.navbar__link--active]="isRouteActive('/articles')">
+          Articles
+        </a>
+        <a (click)="goToThemes()" 
+           class="navbar__link"
+           [class.navbar__link--active]="isRouteActive('/themes')">
+          Thèmes
+        </a>
+        <a (click)="goToProfile()" 
+           class="navbar__link"
+           [class.navbar__link--active]="isRouteActive('/profile')">
+          <span class="icon icon--profile">👤</span>
+        </a>
+      </div>
+
+      <!-- ===========================
+           MENU MOBILE (seulement si !isSimple)
+           =========================== -->
+      <button class="visible-mobile btn btn--secondary" 
+              *ngIf="!isSimple"
+              (click)="toggleMobileMenu()">
+        <span class="icon icon--menu">☰</span>
       </button>
+      
     </div>
   </div>
 </nav>
+
+<!-- Overlay mobile -->
+<div class="navbar__overlay" 
+     *ngIf="!isSimple && isMobileMenuOpen" 
+     (click)="closeMobileMenu()">
+</div>

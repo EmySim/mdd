@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 // Modules de l'application
 import { AppRoutingModule } from './app-routing.module';
 
-// Composants - TOUS déclarés ici (approche simple)
+// Composants
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
@@ -37,12 +37,12 @@ import { ArticleService } from './features/articles/article.service';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 /**
- * Module racine - APPROCHE ULTRA-SIMPLE
- * 
+ * Module racine
+ *
  * ✅ Tous les composants principaux déclarés ici
  * ✅ Tous les services fournis ici
  * ✅ Seulement AuthModule en lazy loading (plus complexe)
- * 
+ *
  * Avantage : Simple, tout au même endroit
  * Inconvénient : Bundle plus gros (mais OK pour MVP)
  */
@@ -50,20 +50,20 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
   declarations: [
     // Composant racine
     AppComponent,
-    
+
     // Pages principales
     HomeComponent,
     LandingComponent,
-    
-    // Features (1 composant chacune)
+
+    // Features
     ThemeComponent,
     ProfileComponent,
     ArticleComponent,
-    
+
     // Composants réutilisables
-     ErrorToastComponent,
-    NavbarComponent
-    
+    ErrorToastComponent,
+    NavbarComponent,
+
     // Auth reste en lazy loading → pas déclaré ici
   ],
   imports: [
@@ -80,21 +80,21 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatIconModule,
     MatCardModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
   ],
   providers: [
     // Services des features
     ThemeService,
     ProfileService,
     ArticleService,
-    
+
     // Interceptor JWT
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
