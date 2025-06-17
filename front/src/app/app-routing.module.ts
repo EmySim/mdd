@@ -1,80 +1,95 @@
-// src/app/app-routing.module.ts
+// src/app/app-routing.module.ts - VERSION SIMPLIFIÉE
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { AuthGuard, GuestGuard } from './features/auth/auth.guard';
+import { LandingComponent } from './pages/landing/landing.component';
+import { AuthGuard } from './features/auth/auth.guard';
 
 /**
- * Configuration principale du routing de l'application MDD.
+ * Configuration routing MDD - Approche simple et efficace
  * 
- * Architecture :
- * - /home : Landing page publique
- * - /auth/* : Routes d'authentification (login, register) avec lazy loading
- * - /feed : Fil d'actualité (protégé)
- * - /topics : Gestion des sujets (protégé)
- * - /profile : Profil utilisateur (protégé)
- * - /post/:id et /new-post : Gestion des articles (protégé)
+ * Principe : Un seul guard (AuthGuard) + logique conditionnelle dans les composants
  * 
- * Guards :
- * - AuthGuard : Protège les routes nécessitant une authentification
- * - GuestGuard : Empêche l'accès aux routes publiques si déjà connecté
+ * Routes :
+ * - /landing : Page publique
+ * - /home : Fil d'actualité (protégé)
+ * - /auth/* : Authentification (logique de redirection dans les composants)
+ * - Features protégées avec AuthGuard
  */
 
 const routes: Routes = [
-  // Redirige la racine vers /home
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  
+  // ===========================
+  // REDIRECTION SIMPLE
+  // ===========================
+  { 
+    path: '', 
+    redirectTo: '/landing', 
+    pathMatch: 'full' 
+  },
 
-  // Route pour la landing page
-  { path: 'home', component: HomeComponent },
+  // ===========================
+  // PAGES PRINCIPALES
+  // ===========================
+  
+  // Page publique
+  { 
+    path: 'landing', 
+    component: LandingComponent 
+  },
 
-  // Route parente pour auth (lazy loading)
+  // Fil d'actualité (protégé)
+  { 
+    path: 'home', 
+    component: HomeComponent,
+    canActivate: [AuthGuard]
+  },
+
+  // ===========================
+  // AUTHENTIFICATION (sans guard)
+  // ===========================
   {
     path: 'auth',
-    loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule),
-    canActivate: [GuestGuard]
+    loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
+    // Pas de GuestGuard → logique dans les composants login/register
   },
 
-  // Routes protégées (nécessitent une authentification)
+  // ===========================
+  // FEATURES PROTÉGÉES
+  // ===========================
+  
   { 
-    path: 'feed', 
-    loadChildren: () => import('./features/feed/feed.module').then(m => m.FeedModule),
+    path: 'themes', 
+    loadChildren: () => import('./features/themes/themes.module').then(m => m.ThemesModule),
     canActivate: [AuthGuard]
   },
-  { 
-    path: 'topics', 
-    loadChildren: () => import('./features/topics/topics.module').then(m => m.TopicsModule),
-    canActivate: [AuthGuard]
-  },
+  
   { 
     path: 'profile', 
     loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule),
     canActivate: [AuthGuard]
   },
 
-  // Routes pour les articles/posts
   { 
-    path: 'post/:id', 
-    loadChildren: () => import('./features/posts/posts.module').then(m => m.PostsModule),
-    canActivate: [AuthGuard]
-  },
-  { 
-    path: 'new-post', 
-    loadChildren: () => import('./features/posts/posts.module').then(m => m.PostsModule),
+    path: 'articles', 
+    loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule),
     canActivate: [AuthGuard]
   },
 
-  // Route de fallback - redirige vers /home
-  { 
-    path: '**', 
-    redirectTo: '/home' 
-  }
+  // ===========================
+  // COMPATIBILITÉ
+  // ===========================
+  { path: 'post/:id', redirectTo: 'articles/:id' },
+  { path: 'new-post', redirectTo: 'articles/create' },
+
+  // ===========================
+  // FALLBACK
+  // ===========================
+  { path: '**', redirectTo: '/landing' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {
-    enableTracing: true,
-    preloadingStrategy: undefined,
-  })],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

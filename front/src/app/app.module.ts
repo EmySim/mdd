@@ -17,7 +17,7 @@ import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core/core.module';
 
 // Composants principaux
-import { HomeComponent } from './pages/home/home.component';
+import { HomeComponent } from './pages/landing/landing.component';
 
 // ✨ Interceptor JWT
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
