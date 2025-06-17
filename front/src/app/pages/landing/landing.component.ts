@@ -1,24 +1,25 @@
+// src/app/pages/landing/landing.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
 
 /**
- * Composant de la page d'accueil/landing page de MDD.
+ * Composant Landing - Page d'accueil publique de MDD
  * 
- * Cette page est le point d'entrée de l'application pour les utilisateurs
- * non connectés. Elle présente l'application et propose les actions :
- * - Navigation vers la page de connexion
- * - Navigation vers la page d'inscription
- * - Redirection automatique vers le feed si l'utilisateur est déjà connecté
+ * Fonctionnalités :
+ * ✅ Présentation de l'application pour utilisateurs non connectés
+ * ✅ Navigation vers connexion/inscription
+ * ✅ Redirection automatique si déjà connecté (simple check)
  * 
- * Responsive design pour mobile et desktop.
+ * Conforme aux spécifications ORION :
+ * "Accéder au formulaire de connexion et d'inscription à partir de la page d'accueil (non connectée)"
  */
 @Component({
-  selector: 'app-home',
+  selector: 'app-landing',  // ✅ Nom cohérent avec le fichier
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class LandingComponent implements OnInit {  // ✅ Nom cohérent
 
   constructor(
     private router: Router,
@@ -26,40 +27,26 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // ✅ Vérification automatique si l'utilisateur est déjà connecté
-    // Si c'est le cas, redirection vers le feed
-    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
-      if (isLoggedIn) {
-        console.log('🔄 Utilisateur déjà connecté, redirection vers le feed');
-        this.router.navigate(['/feed']);
-      }
-    });
+    // ✅ Vérification simple au chargement - pas de subscription
+    if (this.authService.isLoggedIn()) {
+      console.log('🏠 Utilisateur déjà connecté → redirection vers /home');
+      this.router.navigate(['/home']);  // ✅ Cohérent avec le routing
+    }
   }
 
   /**
-   * Navigation vers la page de connexion.
-   * Route finale : /login
+   * Navigation vers la page de connexion
    */
-  navigateToLogin(): void {
-    console.log('🔑 Navigation vers la page de connexion');
+  goToLogin(): void {
+    console.log('🔑 Navigation vers la connexion');
     this.router.navigate(['/auth/login']);
   }
 
   /**
-   * Navigation vers la page d'inscription.
-   * Route finale : /register
+   * Navigation vers la page d'inscription  
    */
-  navigateToRegister(): void {
-    console.log('📝 Navigation vers la page d\'inscription');
+  goToRegister(): void {
+    console.log('📝 Navigation vers l\'inscription');
     this.router.navigate(['/auth/register']);
-  }
-
-  /**
-   * Méthode héritée du composant original pour la compatibilité.
-   * Peut être supprimée si plus utilisée.
-   */
-  start(): void {
-    console.log('🚀 Méthode start() appelée - redirection vers connexion');
-    this.navigateToLogin();
   }
 }

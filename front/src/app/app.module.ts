@@ -1,11 +1,11 @@
-// src/app/app.module.ts - VERSION AVEC INTERCEPTOR
+// src/app/app.module.ts - VERSION SIMPLIFIÉE ET CORRIGÉE
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
-// Angular Material
+// Angular Material (minimum MVP)
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,39 +13,53 @@ import { MatIconModule } from '@angular/material/icon';
 // Modules de l'application
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SharedModule } from './shared/shared.module';
-import { CoreModule } from './core/core.module';
 
-// Composants principaux
-import { HomeComponent } from './pages/landing/landing.component';
+// Composants globaux (si vous en avez)
+// Note : Les pages (Landing/Home) sont maintenant en lazy loading
 
-// ✨ Interceptor JWT
+// Interceptor JWT
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
+/**
+ * Module racine de l'application MDD
+ * 
+ * Configuration :
+ * ✅ Modules essentiels (Browser, HTTP, Routing)
+ * ✅ Angular Material minimal pour MVP
+ * ✅ Interceptor JWT pour authentification
+ * ✅ Lazy loading des pages (Landing/Home dans leurs modules)
+ * 
+ * Note : Structure simplifiée sans Core/Shared modules
+ */
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent
+    AppComponent
+    // ✅ PLUS de composants pages ici → Lazy loading !
+    // HomeComponent et LandingComponent sont dans leurs modules respectifs
   ],
   imports: [
-    // Modules Angular essentiels
+    // ===========================
+    // MODULES ANGULAR ESSENTIELS
+    // ===========================
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
 
-    // Angular Material modules (minimum MVP)
+    // ===========================
+    // ANGULAR MATERIAL (MVP)
+    // ===========================
     MatButtonModule,
     MatToolbarModule,
-    MatIconModule,
+    MatIconModule
 
-    // Modules de l'application
-    SharedModule,
-    CoreModule
+    // ✅ PLUS de SharedModule/CoreModule → Structure simplifiée
   ],
   providers: [
-    // ✨ Interceptor JWT pour gestion automatique des erreurs
+    // ===========================
+    // INTERCEPTORS
+    // ===========================
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,

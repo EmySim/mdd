@@ -32,7 +32,7 @@
   }
   
   // Bouton déconnexion (rouge)
-  &--danger {
+  &--logout {
     background-color: transparent;
     color: $red;
     border: none;
@@ -106,7 +106,7 @@
       color: $purple;
     }
     
-    &--danger {
+    &--logout {
       color: $red;
     }
   }

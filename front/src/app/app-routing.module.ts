@@ -1,26 +1,28 @@
-// src/app/app-routing.module.ts - VERSION SIMPLIFIÉE
+// src/app/app-routing.module.ts 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+// Pages principales
 import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
+
+// Features 
+import { ProfileComponent } from './features/profile/profile.component';
+import { ArticleComponent } from './features/article/article.component';
+import { ThemeComponent } from './features/theme/theme.component';
+
+// Guards
 import { AuthGuard } from './features/auth/auth.guard';
 
 /**
- * Configuration routing MDD - Approche simple et efficace
- * 
- * Principe : Un seul guard (AuthGuard) + logique conditionnelle dans les composants
- * 
- * Routes :
- * - /landing : Page publique
- * - /home : Fil d'actualité (protégé)
- * - /auth/* : Authentification (logique de redirection dans les composants)
- * - Features protégées avec AuthGuard
+ * Configuration routing MDD
+ * Note : Lazy loading seulement pour auth (plus complexe)
  */
 
 const routes: Routes = [
   
   // ===========================
-  // REDIRECTION SIMPLE
+  // REDIRECTION
   // ===========================
   { 
     path: '', 
@@ -32,13 +34,11 @@ const routes: Routes = [
   // PAGES PRINCIPALES
   // ===========================
   
-  // Page publique
   { 
     path: 'landing', 
     component: LandingComponent 
   },
 
-  // Fil d'actualité (protégé)
   { 
     path: 'home', 
     component: HomeComponent,
@@ -46,41 +46,33 @@ const routes: Routes = [
   },
 
   // ===========================
-  // AUTHENTIFICATION (sans guard)
+  // FEATURES SIMPLES
   // ===========================
+  
+  // Authentification (garde le lazy loading car plus complexe : login + register)
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
-    // Pas de GuestGuard → logique dans les composants login/register
   },
 
-  // ===========================
-  // FEATURES PROTÉGÉES
-  // ===========================
-  
+  // Autres features : DIRECT (simples, 1 composant chacune)
   { 
     path: 'themes', 
-    loadChildren: () => import('./features/themes/themes.module').then(m => m.ThemesModule),
+    component: ThemeComponent,
     canActivate: [AuthGuard]
   },
   
   { 
     path: 'profile', 
-    loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule),
+    component: ProfileComponent,
     canActivate: [AuthGuard]
   },
 
   { 
     path: 'articles', 
-    loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule),
+    component: ArticleComponent,
     canActivate: [AuthGuard]
   },
-
-  // ===========================
-  // COMPATIBILITÉ
-  // ===========================
-  { path: 'post/:id', redirectTo: 'articles/:id' },
-  { path: 'new-post', redirectTo: 'articles/create' },
 
   // ===========================
   // FALLBACK

@@ -1,17 +1,17 @@
+// src/app/pages/home/home.component.ts
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
 
 /**
- * Composant de la page d'accueil/landing page de MDD.
+ * Composant Home - Page d'accueil pour utilisateurs connectés
  * 
- * Cette page est le point d'entrée de l'application pour les utilisateurs
- * non connectés. Elle présente l'application et propose les actions :
- * - Navigation vers la page de connexion
- * - Navigation vers la page d'inscription
- * - Redirection automatique vers le feed si l'utilisateur est déjà connecté
+ * Fonctionnalités selon spécifications ORION :
+ * ✅ "Consulter son fil d'actualité sur la page d'accueil une fois connecté"
+ * ✅ Affichage du fil d'actualité chronologique
+ * ✅ Navigation via navbar
  * 
- * Responsive design pour mobile et desktop.
+ * Note : Cette page est protégée par AuthGuard, donc l'utilisateur est 
+ * forcément connecté quand il arrive ici.
  */
 @Component({
   selector: 'app-home',
@@ -20,46 +20,26 @@ import { AuthService } from '../../features/auth/auth.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  // Données pour le fil d'actualité
+  userEmail: string = '';
+  
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // ✅ Vérification automatique si l'utilisateur est déjà connecté
-    // Si c'est le cas, redirection vers le feed
-    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
-      if (isLoggedIn) {
-        console.log('🔄 Utilisateur déjà connecté, redirection vers le feed');
-        this.router.navigate(['/feed']);
-      }
-    });
+    // ✅ Utilisateur forcément connecté (AuthGuard)
+    // On peut récupérer ses infos pour personnaliser l'affichage
+    this.loadUserInfo();
+    console.log('🏠 Page home chargée - Fil d\'actualité disponible');
   }
 
   /**
-   * Navigation vers la page de connexion.
-   * Route finale : /login
+   * Charge les informations utilisateur pour personnaliser l'affichage
    */
-  navigateToLogin(): void {
-    console.log('🔑 Navigation vers la page de connexion');
-    this.router.navigate(['/auth/login']);
-  }
-
-  /**
-   * Navigation vers la page d'inscription.
-   * Route finale : /register
-   */
-  navigateToRegister(): void {
-    console.log('📝 Navigation vers la page d\'inscription');
-    this.router.navigate(['/auth/register']);
-  }
-
-  /**
-   * Méthode héritée du composant original pour la compatibilité.
-   * Peut être supprimée si plus utilisée.
-   */
-  start(): void {
-    console.log('🚀 Méthode start() appelée - redirection vers connexion');
-    this.navigateToLogin();
+  private loadUserInfo(): void {
+    // Récupération simple des infos utilisateur
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.userEmail = user.email;
+    }
   }
 }
