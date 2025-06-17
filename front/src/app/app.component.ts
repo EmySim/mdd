@@ -1,6 +1,7 @@
 // src/app/app.component.ts 
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './features/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -8,9 +9,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'front';
+  title = 'front MDD';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   /**
    * Détermine si la navbar doit être affichée
@@ -27,34 +31,19 @@ export class AppComponent {
     const url = this.router.url;
     
     // Pas de navbar sur ces routes
-    const noNavbarRoutes = ['/', '/landing'];
-    
-    return !noNavbarRoutes.includes(url);
+    return url !== '/landing' && url !== '/';
   }
 
   /**
-   * Détermine si la navbar doit être simple (logo seulement)
+   * Détermine le type de navbar
    * 
-   * NAVBAR SIMPLE sur :
-   * - /auth/login
-   * - /auth/register
-   * 
-   * NAVBAR COMPLÈTE sur :
-   * - /home, /articles, /themes, /profile
+   * RÈGLE SIMPLE :
+   * - Si utilisateur connecté → navbar COMPLÈTE  
+   * - Si utilisateur non connecté → navbar SIMPLE
    */
   isSimpleNavbar(): boolean {
-    const url = this.router.url;
-    
-    // Navbar simple sur les pages auth
-    return url.startsWith('/auth');
-    return url !== '/' && url !== '/landing';
+    // ✅ Simple = non connecté, Complète = connecté
+    return !this.authService.isLoggedIn();
   }
 
-  /**
-   * Détermine si la navbar doit être complète
-   * (logo + navigation + déconnexion)
-   */
-  isCompleteNavbar(): boolean {
-    return this.showNavbar() && !this.isSimpleNavbar();
-  }
 }
