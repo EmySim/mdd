@@ -37,7 +37,7 @@ export class AppComponent {
   /**
    * Détermine le type de navbar
    * 
-   * RÈGLE SIMPLE :
+   * RÈGLE :
    * - Si utilisateur connecté → navbar COMPLÈTE  
    * - Si utilisateur non connecté → navbar SIMPLE
    */

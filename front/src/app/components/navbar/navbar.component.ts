@@ -24,6 +24,28 @@ export class NavbarComponent {
     private router: Router,
     private authService: AuthService
   ) {}
+// ===========================
+  // NAVIGATION LOGO ✅ NOUVEAU
+  // ===========================
+
+  /**
+   * Redirection intelligente du logo selon l'état de connexion
+   * 
+   * LOGIQUE :
+   * - Si utilisateur connecté → /home (fil d'actualité)
+   * - Si utilisateur non connecté → /landing (page publique)
+   */
+  goToHomePage(): void {
+    if (this.authService.isLoggedIn()) {
+      console.log('🏠 Logo cliqué - Utilisateur connecté → /home');
+      this.router.navigate(['/home']);
+    } else {
+      console.log('🚪 Logo cliqué - Utilisateur non connecté → /landing');
+      this.router.navigate(['/landing']);
+    }
+    this.closeMobileMenu();
+  }
+
 
   // ===========================
   // MÉTHODES DE NAVIGATION ✅
