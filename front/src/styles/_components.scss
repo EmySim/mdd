@@ -1,238 +1,189 @@
-// === BOUTONS ===
+// === BOUTONS GLOBAUX (réutilisés partout) ===
 .btn {
-  @include btn-base;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $mdd-font-family;
+  font-size: $font-button-text;
+  font-weight: $weight-bold;
+  line-height: 1;
+  padding: $space-md $space-lg;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
   
-  // Bouton principal (violet)
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
   &--primary {
-    background-color: $purple;
-    color: $white;
+    background-color: var(--mdd-primary-violet);
+    color: var(--mdd-white);
     
     &:hover:not(:disabled) {
-      background-color: darken($purple, 10%);
+      background-color: var(--mdd-navbar-active);
+      transform: translateY(-1px);
     }
   }
   
-  // Bouton secondaire (contour)
   &--secondary {
     background-color: transparent;
-    color: $purple;
-    border: 2px solid $purple;
+    color: var(--mdd-primary-violet);
+    border: 2px solid var(--mdd-primary-violet);
     
     &:hover:not(:disabled) {
-      background-color: $purple;
-      color: $white;
+      background-color: var(--mdd-primary-violet);
+      color: var(--mdd-white);
     }
   }
   
-  // Bouton "déjà abonné" (gris)
   &--disabled {
-    background-color: $gray-dark;
-    color: $white;
+    background-color: var(--mdd-button-disabled);
+    color: var(--mdd-white);
     cursor: not-allowed;
   }
   
-  // Bouton déconnexion (rouge)
-  &--logout {
-    background-color: transparent;
-    color: $red;
-    border: none;
-    padding: $space-xs;
-    
-    &:hover:not(:disabled) {
-      background-color: $red;
-      color: $white;
-    }
-  }
-  
-  // Largeur complète
   &--full {
     width: 100%;
   }
-}
-
-// === INPUTS ===
-.input {
-  @include input-base;
-}
-
-.textarea {
-  @include input-base;
-  min-height: 120px;
-  resize: vertical;
-}
-
-// === CARTES SIMPLES ===
-.card {
-  background: $white;
-  border-radius: $radius;
-  padding: $space-md;
-  margin-bottom: $space-md;
   
-  // Pour les articles avec ombre légère
-  &--shadow {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-}
-
-// === NAVIGATION ===
-.navbar {
-  background: $white;
-  padding: $space-sm 0;
-  border-bottom: 1px solid $gray-light;
-  
-  &__content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  &__logo {
-    height: 40px;
-  }
-  
-  &__menu {
-    display: flex;
-    gap: $space-md;
+  &--landing {
+    min-width: 140px;
+    height: 48px;
     
     @include mobile {
-      display: none; // Menu burger à gérer
-    }
-  }
-  
-  &__link {
-    color: $black;
-    
-    &--active {
-      color: $purple;
+      width: 100%;
+      max-width: 280px;
+      height: 44px;
     }
     
-    &--logout {
-      color: $red;
+    @include desktop {
+      min-width: 180px;
+      height: 52px;
     }
   }
 }
 
-// === ARTICLES ===
-.article {
-  background: $white;
-  border-radius: $radius;
-  padding: $space-md;
-  margin-bottom: $space-md;
+// === LIEN LOGOUT GLOBAL ===
+.link-logout {
+  font-family: $mdd-font-family;
+  font-size: $font-logout-link;
+  font-weight: $weight-bold;
+  color: var(--mdd-logout-red);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
   
-  &__meta {
-    color: $gray-dark;
-    font-size: $font-size-sm;
-    margin-bottom: $space-sm;
-    display: flex;
-    gap: $space-sm;
-    
-    @include mobile {
-      flex-direction: column;
-    }
-  }
-  
-  &__title {
-    font-size: $font-size-lg;
-    font-weight: 700;
-    margin-bottom: $space-sm;
-  }
-  
-  &__content {
-    margin-bottom: $space-sm;
+  &:hover {
+    text-decoration: underline;
   }
 }
 
-// === COMMENTAIRES ===
-.comment {
-  background: $gray-light;
-  border-radius: $radius;
-  padding: $space-sm;
-  margin-bottom: $space-sm;
-  
-  &__author {
-    font-weight: 700;
-    margin-bottom: $space-xs;
-  }
-  
-  &__content {
-    color: $black;
-  }
-}
-
-// === FORMULAIRES ===
+// === FORMULAIRES GLOBAUX ===
 .form-group {
-  margin-bottom: $space-md;
+  margin-bottom: $space-lg;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .form-label {
   display: block;
-  margin-bottom: $space-xs;
-  font-weight: 500;
+  font-family: $mdd-font-family;
+  font-size: $font-landing-field;
+  font-weight: $weight-regular;
+  color: var(--mdd-black);
+  margin-bottom: $space-sm;
 }
 
-// === ICÔNES SIMPLES (avec des caractères Unicode) ===
-.icon {
-  display: inline-block;
-  font-style: normal;
+.form-field {
+  font-family: $mdd-font-family;
+  font-size: $font-landing-field;
+  font-weight: $weight-regular;
+  color: var(--mdd-black);
+  padding: $space-md;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  width: 100%;
+  transition: border-color 0.2s ease;
+  background-color: var(--mdd-white);
   
-  &--menu::before {
-    content: "☰"; // Burger menu
+  &:focus {
+    outline: none;
+    border-color: var(--mdd-primary-violet);
   }
   
-  &--back::before {
-    content: "←"; // Flèche retour
+  &::placeholder {
+    color: #999;
   }
   
-  &--send::before {
-    content: "→"; // Flèche envoyer
-  }
-  
-  &--profile::before {
-    content: "👤"; // Profil
-  }
-  
-  &--sort::before {
-    content: "↕"; // Trier
+  &--error {
+    border-color: var(--mdd-logout-red);
   }
 }
+
+// === CARTES GLOBALES ===
+.card {
+  background-color: var(--mdd-card-bg);
+  border-radius: 8px;
+  padding: $space-lg;
+  margin-bottom: $space-md;
+  
+  @include mobile {
+    padding: $space-md;
+    margin-bottom: $space-sm;
+  }
+  
+  &--article {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .article-title {
+      font-family: $mdd-font-family;
+      font-size: $font-article-title;
+      font-weight: $weight-bold;
+      color: var(--mdd-black);
+      margin-bottom: $space-sm;
+      line-height: 1.2;
+    }
+  }
+  
+  &--theme {
+    display: flex;
+    flex-direction: column;
+    
+    .theme-title {
+      font-family: $mdd-font-family;
+      font-size: $font-article-title;
+      font-weight: $weight-bold;
+      color: var(--mdd-black);
+      margin-bottom: $space-sm;
+    }
+  }
+}
+
 
 // === UTILITAIRES ===
 .text-center {
   text-align: center;
 }
 
-.text-purple {
-  color: $purple;
-}
-
-.text-gray {
-  color: $gray-dark;
-}
-
-.text-red {
-  color: $red;
-}
-
-.mb-0 { margin-bottom: 0; }
-.mb-sm { margin-bottom: $space-sm; }
-.mb-md { margin-bottom: $space-md; }
-.mb-lg { margin-bottom: $space-lg; }
-
-.mt-0 { margin-top: 0; }
-.mt-sm { margin-top: $space-sm; }
-.mt-md { margin-top: $space-md; }
-.mt-lg { margin-top: $space-lg; }
-
 .hidden-mobile {
   @include mobile {
-    display: none;
+    display: none !important;
   }
 }
 
-.visible-mobile {
-  display: none;
-  
-  @include mobile {
-    display: block;
-  }
-}
+.mb-sm { margin-bottom: $space-sm !important; }
+.mb-md { margin-bottom: $space-md !important; }
+.mb-lg { margin-bottom: $space-lg !important; }

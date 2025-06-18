@@ -1,1 +1,18 @@
-<p>theme works! Coming soon</p>
+<div class="grid grid--themes">
+  <div class="card card--theme" *ngFor="let theme of themes">
+    <h3 class="theme-title">{{ theme.name }}</h3>
+    <p class="theme-description">{{ theme.description }}</p>
+    <div class="theme-actions">
+      <button 
+        class="btn"
+        [ngClass]="{
+          'btn--primary': !theme.isSubscribed,
+          'btn--disabled': theme.isSubscribed
+        }"
+        (click)="toggleSubscription(theme)"
+        [disabled]="theme.isSubscribed">
+        {{ theme.isSubscribed ? 'Déjà abonné' : 'S\'abonner' }}
+      </button>
+    </div>
+  </div>
+</div>

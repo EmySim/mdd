@@ -1,4 +1,9 @@
-@import 'src/styles/styles.scss';
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
 
 // login.component.scss  
 .auth-container {

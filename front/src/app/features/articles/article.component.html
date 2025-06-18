@@ -1,1 +1,11 @@
-<p>article works!</p>
+<div class="grid grid--articles">
+  <div class="card card--article" *ngFor="let article of articles" (click)="viewArticle(article)">
+    <h3 class="article-title">{{ article.title }}</h3>
+    <div class="article-meta">
+      <span class="article-author">{{ article.author }}</span>
+      <span class="article-date">{{ article.date | date:'short' }}</span>
+      <span class="article-theme">{{ article.theme }}</span>
+    </div>
+    <p class="article-content">{{ article.excerpt }}</p>
+  </div>
+</div>

@@ -1,4 +1,8 @@
-@import 'src/styles/styles.scss';
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+:host {
+  display: block;
+}
 
 .register-container {
   max-width: 400px;

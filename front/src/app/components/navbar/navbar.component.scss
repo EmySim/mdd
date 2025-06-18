@@ -1,26 +1,68 @@
-@import '../../../styles/styles.scss';
+// navbar.component.scss 
 
-// navbar.component.scss
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
 .navbar {
-  // Styles spécifiques à la navbar
-  .logo-container {
+  // Layout spécifique au composant
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--mdd-white);
+  border-bottom: 1px solid #e0e0e0;
+  
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-md;
+  }
+  
+  &__logo {
+    height: 40px;
     cursor: pointer;
+  }
+  
+  &__menu {
+    display: flex;
+    gap: $space-lg;
     
-    .logo {
-      height: 40px;
-      
-      @include mobile {
-        height: 32px;
-      }
+    @include mobile {
+      display: none;
     }
   }
   
-  .logout-btn {
-    background-color: var(--mdd-logout-red) !important;
-    color: var(--mdd-white) !important;
+  &__link {
+    font-family: $mdd-font-family;
+    font-size: $font-navbar-link;
+    color: var(--mdd-black);
+    text-decoration: none;
     
-    &:hover {
-      opacity: 0.9;
+    &.active {
+      color: var(--mdd-navbar-active);
+    }
+  }
+  
+  &__mobile-menu {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--mdd-white);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+    padding: $space-lg;
+    
+    &--open {
+      transform: translateX(0);
     }
   }
 }

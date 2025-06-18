@@ -1,69 +1,11 @@
-<!-- src/app/pages/home/home.component.html - CORRIGÉ -->
-<div class="home-container">
-  
-  <!-- Navigation principale (si navbar existe) -->
-  <!-- <app-navbar></app-navbar> ← Commenté temporairement -->
-  
-  <!-- Contenu principal -->
-  <main class="home-content">
-    
-    <!-- En-tête de la page -->
-    <header class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">Mon fil d'actualité</h1>
-        <p class="page-subtitle" *ngIf="userEmail">
-          Bienvenue {{ userEmail }} ! Voici les derniers articles des thèmes que vous suivez.
-        </p>
-      </div>
-    </header>
-
-    <!-- Zone principale du fil d'actualité -->
-    <section class="feed-section">
-      
-      <!-- Contrôles du fil (tri, filtres) -->
-      <div class="feed-controls">
-        <div class="sort-controls">
-          <label for="sort-select">Trier par :</label>
-          <select id="sort-select" class="sort-select">
-            <option value="desc">Plus récent d'abord</option>
-            <option value="asc">Plus ancien d'abord</option>
-          </select>
-        </div>
-        
-        <div class="feed-actions">
-          <a routerLink="/articles" class="btn btn-primary">
-            ✍️ Voir les articles
-          </a>
-        </div>
-      </div>
-
-      <!-- ✅ SOLUTION TEMPORAIRE : Placeholder simple au lieu d'app-feed -->
-      <div class="feed-placeholder">
-        <div class="placeholder-content">
-          <h3>🚀 Votre fil d'actualité</h3>
-          <p>Le composant feed sera intégré prochainement !</p>
-          <p>En attendant, vous pouvez :</p>
-          <div class="placeholder-actions">
-            <a routerLink="/themes" class="btn btn-outline">
-              📚 Découvrir les thèmes
-            </a>
-            <a routerLink="/articles" class="btn btn-primary">
-              ✍️ Voir les articles
-            </a>
-            <a routerLink="/profile" class="btn btn-outline">
-              👤 Mon profil
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 
-      ✅ FUTUR : Quand le composant feed sera créé
-      <app-feed *ngIf="hasFeedComponent"></app-feed>
-      -->
-
-    </section>
-
-  </main>
-
+<div class="home-page">
+  <div class="home-page__header">
+    <h1 class="page-title">Mon fil d'actualité</h1>
+    <p class="page-subtitle" *ngIf="userEmail">
+      Bienvenue {{ userEmail }} ! Voici les derniers articles.
+    </p>
+  </div>
+  <div class="home-page__content">
+    <!-- Contenu du fil d'actualité -->
+  </div>
 </div>

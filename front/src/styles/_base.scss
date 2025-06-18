@@ -1,33 +1,43 @@
-// Reset minimal
-* {
+// === RESET DE BASE ===
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+* {
   margin: 0;
   padding: 0;
 }
 
-// Import de la police Inter
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
-html, body {
-  height: 100%;
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: $font-family;
-  font-weight: $font-weight;
-  font-size: $font-size-base;
-  line-height: $line-height;
-  letter-spacing: $letter-spacing;
-  color: $black;
-  background-color: $white;
+  font-family: $mdd-font-family;
+  font-size: $font-body-content;
+  font-weight: $weight-regular;
+  line-height: 1.4;
+  color: var(--mdd-black);
+  background-color: var(--mdd-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-// Liens
-a {
-  color: $purple;
-  text-decoration: none;
-  
-  &:hover {
-    text-decoration: underline;
+// === UTILITAIRES ===
+.text-center {
+  text-align: center;
+}
+
+.hidden-mobile {
+  @include mobile {
+    display: none !important;
   }
 }
+
+.mb-sm { margin-bottom: $space-sm !important; }
+.mb-md { margin-bottom: $space-md !important; }
+.mb-lg { margin-bottom: $space-lg !important; }

@@ -1,33 +1,43 @@
 // === COULEURS ===
-$gray-light: #EEEEEE;         // Commentaires et overlay
-$red: #A40F0F;                // Se déconnecter
-$gray-dark: #939393;          // Bouton "déjà abonné"
-$purple: #7763C5;             // Couleur principale
-$white: #FFFFFF;
-$black: #000000;
+$mdd-primary-violet: #7763C5;
+$mdd-navbar-active: #6C5CCF;
+$mdd-black: #000000;
+$mdd-white: #FFFFFF;
+$mdd-logout-red: #A40F0F;
+$mdd-button-disabled: #939393;
+$mdd-card-bg: #F5F5F5;
+$mdd-selection-bg: #EEEEEE;
 
 // === TYPOGRAPHIE ===
-$font-family: 'Inter', sans-serif;
-$font-weight: 400;
-$font-size-base: 24px;
-$line-height: 100%;
-$letter-spacing: 0%;
+$mdd-font-family: 'Inter', sans-serif;
+$font-landing-title: 24px;
+$font-page-title: 24px;
+$font-article-selected: 24px;
+$font-navbar-link: 20px;
+$font-landing-field: 16px;
+$font-button-text: 16px;
+$font-article-title: 16px;
+$font-filter-title: 16px;
+$font-body-content: 14px;
+$font-logout-link: 14px;
 
-// Tailles dérivées pour hiérarchie
-$font-size-sm: 16px;          // Textes secondaires
-$font-size-lg: 32px;          // Titres
-
-// === ESPACEMENTS SIMPLES ===
-$space-xs: 8px;
-$space-sm: 16px;
-$space-md: 24px;
-$space-lg: 32px;
-$space-xl: 48px;
+$weight-regular: 400;
+$weight-semi-bold: 600;
+$weight-bold: 700;
 
 // === BREAKPOINTS ===
-$mobile: 576px;
-$tablet: 768px;
-$desktop: 1024px;
+$breakpoint-mobile-min: 294px;
+$breakpoint-mobile: 576px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
 
-// === BORDER RADIUS ===
-$radius: 8px;
+// === ESPACEMENTS ===
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 32px;
+$space-xxl: 48px;
+
+// === AUTRES ===
+$transition-base: all 0.2s ease;

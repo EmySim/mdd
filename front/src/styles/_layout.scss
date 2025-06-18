@@ -1,53 +1,53 @@
-// Container responsive
+// === GRILLES GLOBALES ===
+.grid {
+  display: grid;
+  gap: $space-md;
+  
+  &--articles {
+    grid-template-columns: 1fr;
+    
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include desktop {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  &--themes {
+    grid-template-columns: 1fr;
+    
+    @media (min-width: #{$breakpoint-mobile-min}) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include tablet {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @include desktop {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// === CONTAINER GLOBAL ===
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 $space-sm;
+  padding: 0 $space-md;
   
-  @include desktop {
+  @media (max-width: 374px) {
+    padding: 0 $space-sm;
+  }
+  
+  @include tablet {
     padding: 0 $space-lg;
   }
-}
-
-// Centrage simple
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
-// Grille simple 2 colonnes
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $space-md;
   
-  @include mobile {
-    grid-template-columns: 1fr;
-  }
-}
-
-// Flex utilities
-.flex {
-  display: flex;
-  
-  &-col {
-    flex-direction: column;
-  }
-  
-  &-center {
-    justify-content: center;
-    align-items: center;
-  }
-  
-  &-between {
-    justify-content: space-between;
-  }
-  
-  &-gap {
-    gap: $space-sm;
+  @include desktop {
+    padding: 0 $space-xl;
   }
 }
