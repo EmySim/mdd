@@ -6,14 +6,17 @@
 >
   <div class="container">
     <div class="navbar__content">
-
       <!-- ===========================
            LOGO CLIQUABLE (redirection intelligente)
            → Non connecté : /landing
            → Connecté : /home
            =========================== -->
       <div class="navbar-logo__container" (click)="goToHomePage()">
-        <img src="assets/logo-mdd.png" alt="MDD logo" class="navbar__logo" />
+        <img
+          src="assets/logo_navbar_home.png"
+          alt="MDD logo"
+          class="navbar__logo"
+        />
       </div>
 
       <!-- ===========================
@@ -40,7 +43,11 @@
           class="navbar__link"
           [class.navbar__link--active]="isRouteActive('/profile')"
         >
-          <span class="icon icon--profile"></span>
+          <img
+            src="assets/icon_user.svg"
+            alt="icone utilisateur"
+            class="user__icon"
+          />
         </a>
       </div>
 
