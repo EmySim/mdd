@@ -171,19 +171,3 @@
     }
   }
 }
-
-
-// === UTILITAIRES ===
-.text-center {
-  text-align: center;
-}
-
-.hidden-mobile {
-  @include mobile {
-    display: none !important;
-  }
-}
-
-.mb-sm { margin-bottom: $space-sm !important; }
-.mb-md { margin-bottom: $space-md !important; }
-.mb-lg { margin-bottom: $space-lg !important; }
