@@ -1,13 +1,39 @@
 <nav class="navbar">
-  <div class="navbar__container">
-    <div class="navbar__content">
-      <img src="assets/logo_navbar_home.png" class="navbar__logo" (click)="goToHomePage()">
-      <div class="navbar__menu" *ngIf="!isSimple">
-        <a class="navbar__link navbar__link--logout" (click)="logout()">Se déconnecter</a>
-        <a class="navbar__link" [class.active]="isRouteActive('/articles')" (click)="goToArticles()">Articles</a>
-        <a class="navbar__link" [class.active]="isRouteActive('/themes')" (click)="goToThemes()">Thèmes</a>
-        <img src="assets/icon_user.svg" class="navbar__user-icon" (click)="goToProfile()">
+  <div class="container">
+    <div class="flex-between">
+      
+      <!-- Logo -->
+      <img src="assets/logo_navbar_home.png" 
+           class="navbar__logo" 
+           (click)="goToHomePage()">
+      
+      <!-- Menu principal (desktop) -->
+      <div class="flex-gap-lg hidden-mobile" *ngIf="!isSimple">
+        <a class="navbar__link navbar__link--logout" (click)="logout()">
+          Se déconnecter
+        </a>
+        <a class="navbar__link" 
+           [class.navbar__link--active]="isRouteActive('/articles')" 
+           (click)="goToArticles()">
+          Articles
+        </a>
+        <a class="navbar__link" 
+           [class.navbar__link--active]="isRouteActive('/themes')" 
+           (click)="goToThemes()">
+          Thèmes
+        </a>
+        <img src="assets/icon_user.svg" 
+             class="navbar__user-icon" 
+             (click)="goToProfile()">
       </div>
+      
+      <!-- Burger menu (mobile) -->
+      <button class="btn btn--sm mobile-only" 
+              *ngIf="!isSimple"
+              (click)="toggleMobileMenu()">
+        ☰
+      </button>
+      
     </div>
   </div>
 </nav>

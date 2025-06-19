@@ -1,4 +1,4 @@
-// navbar.component.scss 
+// navbar.component.scss - STYLES SPÉCIFIQUES AU COMPOSANT
 
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
@@ -27,9 +27,14 @@
   &__logo {
     height: 81px;
     cursor: pointer;
+    transition: opacity 0.2s ease;
 
-     @include mobile {
-      height: 53px; // Cohérent mobile
+    @include mobile {
+      height: 53px;
+    }
+    
+    &:hover {
+      opacity: 0.8;
     }
   }
   
@@ -47,13 +52,31 @@
     font-size: $font-navbar-link;
     color: var(--mdd-black);
     text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
 
-     &:hover {
+    &:hover {
       color: var(--mdd-navbar-active); 
     }
     
     &.active {
       color: var(--mdd-navbar-active);
+    }
+    
+    // ✅ STYLE SPÉCIFIQUE LOGOUT - défini ici car utilisé SEULEMENT dans navbar
+    &--logout {
+      font-family: $mdd-font-family;
+      font-size: $font-logout-link;
+      font-weight: $weight-bold;
+      color: var(--mdd-logout-red) !important;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      
+      &:hover {
+        text-decoration: underline;
+        color: var(--mdd-logout-red) !important;
+      }
     }
   }
 

@@ -47,19 +47,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.info("🔒 Configuration SecurityFilterChain");
-        
-        http.csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests(authz -> authz
-                .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/actuator/health").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/api/**").authenticated()
-                .anyRequest().authenticated()
-            );
+
+        http.cors() // Active CORS
+                .and()
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests(authz -> authz
+                        .antMatchers("/api/auth/**").permitAll()
+                        .antMatchers("/actuator/health").permitAll()
+                        .antMatchers("/h2-console/**").permitAll()
+                        .antMatchers("/api/**").authenticated()
+                        .anyRequest().authenticated()
+                );
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,4 +1,4 @@
-// === BOUTONS GLOBAUX (réutilisés partout) ===
+// === BOUTONS GLOBAUX (optimisés pour réutilisation) ===
 .btn {
   display: inline-flex;
   align-items: center;
@@ -11,7 +11,7 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: $transition-base;
   text-decoration: none;
   white-space: nowrap;
   
@@ -20,6 +20,7 @@
     opacity: 0.6;
   }
   
+  // === VARIANTES DE STYLE ===
   &--primary {
     background-color: var(--mdd-primary-violet);
     color: var(--mdd-white);
@@ -41,14 +42,67 @@
     }
   }
   
+  &--outline-primary {
+    background-color: transparent;
+    color: var(--mdd-primary-violet);
+    border: 2px solid var(--mdd-primary-violet);
+  }
+  
+  &--outline-neutral {
+    background-color: transparent;
+    color: var(--mdd-text-gray);
+    border: 2px solid var(--mdd-text-gray);
+  }
+  
   &--disabled {
     background-color: var(--mdd-button-disabled);
     color: var(--mdd-white);
     cursor: not-allowed;
   }
   
+  // === VARIANTES DE TAILLE ===
+  &--sm {
+    padding: $space-sm $space-md;
+    font-size: 14px;
+    height: 36px;
+  }
+  
+  &--md {
+    height: 44px;
+    
+    @include mobile {
+      height: 40px;
+    }
+  }
+  
+  &--lg {
+    height: 52px;
+    font-size: 18px;
+    padding: $space-md $space-xl;
+    
+    @include mobile {
+      height: 48px;
+    }
+  }
+  
+  // === VARIANTES DE LARGEUR ===
   &--full {
     width: 100%;
+  }
+  
+  &--auto {
+    width: auto;
+    min-width: 120px;
+  }
+  
+  // === CONTEXTES SPÉCIFIQUES ===
+  &--auth {
+    width: 100%;
+    height: 48px;
+    
+    @include mobile {
+      height: 44px;
+    }
   }
   
   &--landing {
@@ -68,85 +122,107 @@
   }
 }
 
-// === LIEN LOGOUT GLOBAL ===
-.link-logout {
-  font-family: $mdd-font-family;
-  font-size: $font-logout-link;
-  font-weight: $weight-bold;
-  color: var(--mdd-logout-red);
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
+// === FORMULAIRES GLOBAUX (harmonisés) ===
+.form {
+  &__group {
+    margin-bottom: $space-lg;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    &--compact {
+      margin-bottom: $space-md;
+    }
+  }
   
-  &:hover {
-    text-decoration: underline;
+  &__label {
+    display: block;
+    font-family: $mdd-font-family;
+    font-size: $font-landing-field;
+    font-weight: $weight-regular;
+    color: var(--mdd-black);
+    margin-bottom: $space-sm;
+  }
+  
+  &__field {
+    font-family: $mdd-font-family;
+    font-size: $font-landing-field;
+    font-weight: $weight-regular;
+    color: var(--mdd-black);
+    padding: $space-md;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    width: 100%;
+    transition: border-color 0.2s ease;
+    background-color: var(--mdd-white);
+    
+    &:focus {
+      outline: none;
+      border-color: var(--mdd-primary-violet);
+    }
+    
+    &::placeholder {
+      color: #999;
+    }
+    
+    &--error {
+      border-color: var(--mdd-logout-red);
+    }
+  }
+  
+  &__error {
+    color: var(--mdd-logout-red);
+    font-size: 0.875rem;
+    margin-top: $space-xs;
+    display: block;
+  }
+  
+  &__container {
+    max-width: 400px;
+    margin: 0 auto;
+    
+    &--auth {
+      background: var(--mdd-white);
+      border-radius: 8px;
+      padding: $space-xxl;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      
+      @include mobile {
+        padding: $space-lg;
+        margin: $space-md;
+        box-shadow: none;
+      }
+    }
   }
 }
 
-// === FORMULAIRES GLOBAUX ===
-.form-group {
-  margin-bottom: $space-lg;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.form-label {
-  display: block;
-  font-family: $mdd-font-family;
-  font-size: $font-landing-field;
-  font-weight: $weight-regular;
-  color: var(--mdd-black);
-  margin-bottom: $space-sm;
-}
-
-.form-field {
-  font-family: $mdd-font-family;
-  font-size: $font-landing-field;
-  font-weight: $weight-regular;
-  color: var(--mdd-black);
-  padding: $space-md;
-  border: 2px solid #e0e0e0;
-  border-radius: 4px;
-  width: 100%;
-  transition: border-color 0.2s ease;
-  background-color: var(--mdd-white);
-  
-  &:focus {
-    outline: none;
-    border-color: var(--mdd-primary-violet);
-  }
-  
-  &::placeholder {
-    color: #999;
-  }
-  
-  &--error {
-    border-color: var(--mdd-logout-red);
-  }
-}
-
-// === CARTES GLOBALES ===
+// === CARTES GLOBALES (optimisées) ===
 .card {
   background-color: var(--mdd-card-bg);
   border-radius: 8px;
   padding: $space-lg;
   margin-bottom: $space-md;
+  transition: $transition-base;
   
   @include mobile {
     padding: $space-md;
     margin-bottom: $space-sm;
   }
   
-  &--article {
+  // === VARIANTES INTERACTIVES ===
+  &--clickable {
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
+  }
+  
+  // === VARIANTES DE CONTENU ===
+  &--article {
+    @extend .card--clickable;
     
     .article-title {
       font-family: $mdd-font-family;
@@ -155,6 +231,36 @@
       color: var(--mdd-black);
       margin-bottom: $space-sm;
       line-height: 1.2;
+    }
+    
+    .article-meta {
+      display: flex;
+      gap: $space-sm;
+      font-size: $font-body-content;
+      color: #666;
+      margin-bottom: $space-sm;
+      flex-wrap: wrap;
+      
+      .article-author {
+        font-weight: $weight-semi-bold;
+      }
+      
+      .article-date {
+        color: #999;
+      }
+      
+      .article-theme {
+        background: var(--mdd-primary-violet);
+        color: var(--mdd-white);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+    }
+    
+    .article-content {
+      color: #666;
+      line-height: 1.4;
     }
   }
   
@@ -168,6 +274,76 @@
       font-weight: $weight-bold;
       color: var(--mdd-black);
       margin-bottom: $space-sm;
+    }
+    
+    .theme-description {
+      color: #666;
+      font-size: $font-body-content;
+      margin-bottom: $space-md;
+      flex-grow: 1;
+    }
+    
+    .theme-actions {
+      margin-top: auto;
+    }
+  }
+  
+  &--profile {
+    text-align: center;
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto $space-md;
+      background: var(--mdd-selection-bg);
+    }
+  }
+}
+
+// === LIENS SPÉCIAUX ===
+.link {
+  &--primary {
+    color: var(--mdd-primary-violet);
+    text-decoration: none;
+    font-weight: $weight-semi-bold;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  // Note: .link--logout supprimé car géré dans .navbar__link--logout
+}
+
+// === COMPOSANTS NAVBAR ===
+.navbar {
+  // Note: Les styles détaillés de navbar sont maintenant dans navbar.component.scss
+  // On garde ici seulement les classes utilitaires génériques
+  
+  &__logo {
+    height: 81px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    @include mobile {
+      height: 53px;
+    }
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+  
+  &__user-icon {
+    height: 24px; 
+    width: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+      opacity: 1;
     }
   }
 }

@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   // PROPRIÉTÉS DU COMPOSANT
   // ===========================
   userEmail: string = '';
+  articles: any[] = []; 
   hasFeedComponent: boolean = false; // ✅ AJOUTÉ - Pour gérer l'affichage conditionnel
   isLoading: boolean = false;
   

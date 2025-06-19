@@ -1,60 +1,59 @@
-<div
-  class="login-container"
-  [ngClass]="{
-    'mobile-form': isMobile$ | async,
-    'desktop-form': !(isMobile$ | async)
-  }"
->
+<!-- login.component.html -->
+<div class="page-auth">
+  <div class="content-auth slide-up">
+    <!-- Formulaire avec classes harmonisées -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full">
+      <h2 class="text-center mb-lg">Se connecter</h2>
 
-
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-    <h2>Se connecter</h2>
-
-    <!-- Erreur globale -->
-    <mat-error
-      *ngIf="errorService.error$ | async as globalError"
-      class="error-text"
-    >
-      {{ globalError }}
-    </mat-error>
-
-    <!-- Champ Email -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" type="email" />
-      <mat-error *ngIf="hasFieldError('email')">
-        {{ getFieldError("email") }}
-      </mat-error>
-      <mat-error
-        *ngIf="(errorService.validationErrors$ | async)?.['email'] as emailError"
+      <!-- Erreur globale -->
+      <div
+        class="form__error mb-md"
+        *ngIf="errorService.error$ | async as globalError"
       >
-        {{ emailError }}
-      </mat-error>
-    </mat-form-field>
+        {{ globalError }}
+      </div>
 
-    <!-- Champ Mot de passe -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Mot de passe</mat-label>
-      <input matInput formControlName="password" type="password" />
-      <mat-error *ngIf="hasFieldError('password')">
-        {{ getFieldError("password") }}
-      </mat-error>
-      <mat-error
-        *ngIf="(errorService.validationErrors$ | async)?.['password'] as passwordError"
-      >
-        {{ passwordError }}
-      </mat-error>
-    </mat-form-field>
+      <!-- Champ Email -->
+      <div class="form__group">
+        <label class="form__label">Email</label>
+        <input
+          class="form__field"
+          [class.form__field--error]="hasFieldError('email')"
+          formControlName="email"
+          type="email"
+          placeholder="votre@email.com"
+        />
+        <span class="form__error" *ngIf="hasFieldError('email')">
+          {{ getFieldError("email") }}
+        </span>
+      </div>
 
-    <!-- Bouton submit -->
-    <button
-      mat-raised-button
-      color="primary"
-      class="w-full"
-      type="submit"
-      [disabled]="loading"
-    >
-      {{ loading ? "Connexion..." : "Se connecter" }}
-    </button>
-  </form>
+      <!-- Champ Mot de passe -->
+      <div class="form__group">
+        <label class="form__label">Mot de passe</label>
+        <input
+          class="form__field"
+          [class.form__field--error]="hasFieldError('password')"
+          formControlName="password"
+          type="password"
+          placeholder="Votre mot de passe"
+        />
+        <span class="form__error" *ngIf="hasFieldError('password')">
+          {{ getFieldError("password") }}
+        </span>
+      </div>
+
+      <!-- Submit button -->
+      <div class="form__group">
+        <button
+          class="btn btn--primary btn--auth"
+          [class.loading]="loading"
+          type="submit"
+          [disabled]="loading"
+        >
+          {{ loading ? "Connexion..." : "Se connecter" }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

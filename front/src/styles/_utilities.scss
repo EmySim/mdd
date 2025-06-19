@@ -1,0 +1,264 @@
+// ============================================================================
+// UTILITIES SCSS - Classes utilitaires réutilisables MDD
+// ============================================================================
+
+/**
+ * Fichier de classes utilitaires inspiré de Tailwind CSS
+ * 
+ * Ces classes permettent un développement rapide et cohérent
+ * en appliquant directement des styles via des classes atomiques
+ * 
+ * Convention de nommage :
+ * - Préfixe selon la propriété (mb = margin-bottom, p = padding, etc.)
+ * - Suffixe selon la taille (xs, sm, md, lg, xl)
+ * - Utilisation de !important pour surcharger les styles spécifiques
+ */
+
+// ===========================
+// ESPACEMENTS (MARGINS)
+// ===========================
+
+/**
+ * Classes de marge inférieure (margin-bottom)
+ * 
+ * Utilisées pour espacer verticalement les éléments
+ * Les valeurs correspondent aux variables d'espacement définies
+ */
+.mb-xs { margin-bottom: $space-xs !important; }  // 4px
+.mb-sm { margin-bottom: $space-sm !important; }  // 8px  
+.mb-md { margin-bottom: $space-md !important; }  // 16px
+.mb-lg { margin-bottom: $space-lg !important; }  // 24px
+.mb-xl { margin-bottom: $space-xl !important; }  // 32px
+
+/**
+ * Classes de marge supérieure (margin-top)
+ * 
+ * Moins utilisées mais utiles pour des cas spécifiques
+ */
+.mt-xs { margin-top: $space-xs !important; }
+.mt-sm { margin-top: $space-sm !important; }
+.mt-md { margin-top: $space-md !important; }
+.mt-lg { margin-top: $space-lg !important; }
+.mt-xl { margin-top: $space-xl !important; }
+
+// ===========================
+// ESPACEMENTS (PADDINGS)
+// ===========================
+
+/**
+ * Classes de padding uniforme sur tous les côtés
+ * 
+ * Utilisées pour l'espacement interne des conteneurs
+ */
+.p-sm { padding: $space-sm !important; }         // 8px partout
+.p-md { padding: $space-md !important; }         // 16px partout  
+.p-lg { padding: $space-lg !important; }         // 24px partout
+.p-xl { padding: $space-xl !important; }         // 32px partout
+
+/**
+ * Classes de padding directionnel
+ * 
+ * px = padding horizontal (left + right)
+ * py = padding vertical (top + bottom)
+ */
+.px-md { padding-left: $space-md !important; padding-right: $space-md !important; }
+.py-md { padding-top: $space-md !important; padding-bottom: $space-md !important; }
+
+// ===========================
+// ALIGNEMENT DE TEXTE
+// ===========================
+
+/**
+ * Classes d'alignement de texte standard
+ * 
+ * Couramment utilisées, surtout text-center pour les formulaires
+ */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+// ===========================
+// LAYOUT FLEXBOX
+// ===========================
+
+/**
+ * Classes Flexbox pour des layouts rapides
+ * 
+ * Combinaisons fréquentes packagées pour éviter la répétition
+ */
+
+/** Centrage complet (horizontal + vertical) */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/** Distribution espace entre éléments (navbar pattern) */
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/** Layout vertical (formulaires, sections) */
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * Classes de gap Flexbox
+ * 
+ * Espacement uniforme entre les éléments flex
+ */
+.flex-gap-sm { gap: $space-sm; }    // 8px entre éléments
+.flex-gap-md { gap: $space-md; }    // 16px entre éléments  
+.flex-gap-lg { gap: $space-lg; }    // 24px entre éléments
+
+// ===========================
+// DIMENSIONS
+// ===========================
+
+/**
+ * Classes de taille courantes
+ * 
+ * Particulièrement utiles pour les formulaires et containers
+ */
+.w-full { width: 100%; }          // Largeur complète
+.h-full { height: 100%; }         // Hauteur complète
+
+/**
+ * Classes de largeur maximale
+ * 
+ * Pour limiter la largeur du contenu selon le contexte
+ */
+.max-w-sm { max-width: 400px; }   // Formulaires
+.max-w-md { max-width: 600px; }   // Contenu centré
+.max-w-lg { max-width: 800px; }   // Articles, contenu large
+
+// ===========================
+// RESPONSIVE UTILITIES  
+// ===========================
+
+/**
+ * Classes de visibilité responsive
+ * 
+ * Permettent d'afficher/masquer des éléments selon la taille d'écran
+ * Utilisent les mixins définis dans _mixins.scss
+ */
+
+/** Masquer sur mobile uniquement */
+.hidden-mobile {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+/** Masquer sur desktop uniquement */
+.hidden-desktop {
+  @include desktop {
+    display: none !important;
+  }
+}
+
+/** Afficher SEULEMENT sur mobile (masquer tablet + desktop) */
+.mobile-only {
+  @include tablet {
+    display: none !important;
+  }
+  @include desktop {
+    display: none !important;
+  }
+}
+
+// ===========================
+// COULEURS UTILITAIRES
+// ===========================
+
+/**
+ * Classes de couleur de texte
+ * 
+ * Utilisent les custom properties CSS pour cohérence avec le theme
+ */
+.text-primary { color: var(--mdd-primary-violet); }   // Violet principal MDD
+.text-secondary { color: #666; }                      // Gris pour texte secondaire
+.text-error { color: var(--mdd-logout-red); }         // Rouge pour erreurs
+.text-success { color: #22c55e; }                     // Vert pour succès
+
+/**
+ * Classes de couleur de fond
+ * 
+ * Arrière-plans fréquemment utilisés
+ */
+.bg-primary { background-color: var(--mdd-primary-violet); }
+.bg-light { background-color: var(--mdd-card-bg); }           // Gris clair
+.bg-white { background-color: var(--mdd-white); }
+
+// ===========================
+// ÉTATS D'INTERFACE
+// ===========================
+
+/**
+ * Classes d'état pour les interactions
+ * 
+ * Appliquées dynamiquement via JavaScript/Angular
+ */
+
+/** État de chargement - désactive les interactions */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;  // Empêche les clics
+  cursor: wait;          // Curseur d'attente
+}
+
+/** État désactivé - visuel + fonctionnel */
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;   // Curseur d'interdiction
+}
+
+// ===========================
+// ANIMATIONS SIMPLES
+// ===========================
+
+/**
+ * Classes d'animation prêtes à l'emploi
+ * 
+ * Animations légères pour améliorer l'UX sans surcharger
+ */
+
+/** Animation d'apparition en fondu */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/** Animation d'apparition par glissement vertical */
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/**
+ * Définitions des keyframes d'animation
+ * 
+ * Animations courtes et subtiles pour une UX moderne
+ */
+
+/** Keyframe pour fondu d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/** Keyframe pour glissement vers le haut */
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);   // Décalage initial vers le bas
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);      // Position finale
+  }
+}

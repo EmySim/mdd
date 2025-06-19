@@ -1,66 +1,208 @@
-<div class="register-container">
+<!-- ============================================================================ -->
+<!-- REGISTER TEMPLATE - Formulaire d'inscription MDD -->
+<!-- ============================================================================ -->
 
-  <!-- Titre -->
-  <h1>Inscription</h1>
+<!-- 
+  Layout page auth avec navbar simple (logo seulement)
+  Utilise .page-auth qui prend en compte la hauteur de la navbar (calc(100vh - 64px))
+-->
+<div class="page-auth">
+  <!-- 
+    Container de contenu centré avec styles d'authentification
+    .content-auth : background blanc, shadow, padding responsive
+    .slide-up : animation d'apparition fluide
+  -->
+  <div class="content-auth slide-up">
+    <!-- ============================= -->
+    <!-- FORMULAIRE PRINCIPAL -->
+    <!-- ============================= -->
 
-  <!-- Formulaire -->
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    
-    <!-- Nom d'utilisateur -->
-    <div class="form-group">
-      <label>Nom d'utilisateur</label>
-      <input 
-        type="text" 
-        formControlName="username"
-        placeholder="Votre nom d'utilisateur"
-        [class.error]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
-      
-      <div class="field-error" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
-        <span *ngIf="registerForm.get('username')?.errors?.['required']">Nom d'utilisateur obligatoire</span>
-        <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Au moins 3 caractères</span>
+    <!-- 
+      Formulaire réactif Angular avec validation
+      - [formGroup] : lie le FormGroup défini dans le composant
+      - (ngSubmit) : gère la soumission avec validation
+      - .w-full : largeur complète (classe utilitaire)
+    -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="w-full">
+      <!-- Titre principal centré -->
+      <h1 class="text-center mb-lg">Inscription</h1>
+
+      <!-- ============================= -->
+      <!-- GESTION D'ERREURS GLOBALES -->
+      <!-- ============================= -->
+
+      <!-- 
+        Affichage conditionnel des erreurs générales (401, 500, etc.)
+        - errorService.error$ : Observable des erreurs du ErrorService
+        - async pipe : souscription automatique avec désabonnement
+        - *ngIf avec alias : affiche seulement si erreur présente
+      -->
+      <div
+        class="form__error mb-md"
+        *ngIf="errorService.error$ | async as globalError"
+      >
+        {{ globalError }}
       </div>
-    </div>
 
-    <!-- Email -->
-    <div class="form-group">
-      <label>Adresse e-mail</label>
-      <input 
-        type="email" 
-        formControlName="email"
-        placeholder="votre@email.com"
-        [class.error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-      
-      <div class="field-error" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-        <span *ngIf="registerForm.get('email')?.errors?.['required']">Email obligatoire</span>
-        <span *ngIf="registerForm.get('email')?.errors?.['email']">Email invalide</span>
-      </div>
-    </div>
+      <!-- ============================= -->
+      <!-- CHAMP NOM D'UTILISATEUR -->
+      <!-- ============================= -->
 
-    <!-- Mot de passe -->
-    <div class="form-group">
-      <label>Mot de passe</label>
-      <input 
-        type="password" 
-        formControlName="password"
-        placeholder="Votre mot de passe"
-        [class.error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-      
-      <div class="field-error" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-        <span *ngIf="registerForm.get('password')?.errors?.['required']">Mot de passe obligatoire</span>
-        <span *ngIf="registerForm.get('password')?.errors?.['invalidPassword']">
-          8+ caractères, majuscule, minuscule, chiffre
+      <div class="form__group">
+        <!-- Label associé au champ pour l'accessibilité -->
+        <label class="form__label">Nom d'utilisateur</label>
+
+        <!-- 
+          Input avec gestion d'erreurs double (frontend + backend)
+          - formControlName : lie au contrôle du FormGroup
+          - [class.form__field--error] : applique style d'erreur si conditions vraies
+          - Condition complexe : erreur frontend OU erreur backend pour ce champ
+        -->
+        <input
+          class="form__field"
+          [class.form__field--error]="hasFieldError('username') || (errorService.validationErrors$ | async)?.['username']"
+          formControlName="username"
+          placeholder="Votre nom d'utilisateur"
+        />
+
+        <!-- 
+          Affichage erreur de validation frontend
+          - hasFieldError() : méthode du composant vérifiant si champ touché et invalide
+          - getFieldError() : récupère le message d'erreur approprié
+        -->
+        <span class="form__error" *ngIf="hasFieldError('username')">
+          {{ getFieldError("username") }}
+        </span>
+
+        <!-- 
+          Affichage erreur de validation backend (statut 400)
+          - errorService.validationErrors$ : Observable des erreurs par champ
+          - ?.['username'] : safe navigation pour éviter les erreurs si null
+          - as usernameError : alias pour utiliser la valeur dans le template
+        -->
+        <span
+          class="form__error"
+          *ngIf="(errorService.validationErrors$ | async)?.['username'] as usernameError"
+        >
+          {{ usernameError }}
         </span>
       </div>
-    </div>
 
-    <!-- Bouton -->
-    <button 
-      type="submit" 
-      [disabled]="!registerForm.valid || isLoading"
-      class="submit-btn">
-      {{ isLoading ? 'Inscription...' : "S'inscrire" }}
-    </button>
+      <!-- ============================= -->
+      <!-- CHAMP EMAIL -->
+      <!-- ============================= -->
 
-  </form>
+      <div class="form__group">
+        <label class="form__label">Adresse e-mail</label>
 
+        <!-- 
+          Input email avec même logique d'erreurs que username
+          - type="email" : validation HTML5 automatique du format
+          - Même système double de gestion d'erreurs (frontend + backend)
+        -->
+        <input
+          class="form__field"
+          [class.form__field--error]="hasFieldError('email') || (errorService.validationErrors$ | async)?.['email']"
+          formControlName="email"
+          type="email"
+          placeholder="votre@email.com"
+        />
+
+        <!-- Messages d'erreur frontend (required, email format, etc.) -->
+        <span class="form__error" *ngIf="hasFieldError('email')">
+          {{ getFieldError("email") }}
+        </span>
+
+        <!-- Messages d'erreur backend (email déjà utilisé, format invalide, etc.) -->
+        <span
+          class="form__error"
+          *ngIf="(errorService.validationErrors$ | async)?.['email'] as emailError"
+        >
+          {{ emailError }}
+        </span>
+      </div>
+
+      <!-- ============================= -->
+      <!-- CHAMP MOT DE PASSE -->
+      <!-- ============================= -->
+
+      <div class="form__group">
+        <label class="form__label">Mot de passe</label>
+
+        <!-- 
+          Input password avec validation complexe
+          - type="password" : masque la saisie pour la sécurité
+          - Même système de double validation que les autres champs
+        -->
+        <input
+          class="form__field"
+          [class.form__field--error]="hasFieldError('password') || (errorService.validationErrors$ | async)?.['password']"
+          formControlName="password"
+          type="password"
+          placeholder="Votre mot de passe"
+        />
+
+        <!-- 
+          Erreurs frontend : longueur, complexité (maj, min, chiffre)
+          Gérées par le validateur personnalisé passwordValidator()
+        -->
+        <span class="form__error" *ngIf="hasFieldError('password')">
+          {{ getFieldError("password") }}
+        </span>
+
+        <!-- Erreurs backend : validation serveur, politiques de sécurité -->
+        <span
+          class="form__error"
+          *ngIf="(errorService.validationErrors$ | async)?.['password'] as passwordError"
+        >
+          {{ passwordError }}
+        </span>
+      </div>
+
+      <!-- ============================= -->
+      <!-- BOUTON DE SOUMISSION -->
+      <!-- ============================= -->
+
+      <div class="form__group">
+        <!-- 
+          Bouton de soumission avec états visuels
+          - .btn .btn--primary .btn--auth : styles harmonisés
+          - [class.loading] : applique animation de chargement si isLoading
+          - [disabled] : désactive si formulaire invalide OU en cours de chargement
+          - Texte dynamique selon l'état de chargement
+        -->
+        <button
+          class="btn btn--primary btn--auth"
+          [class.loading]="isLoading"
+          type="submit"
+          [disabled]="!registerForm.valid || isLoading"
+        >
+          {{ isLoading ? "Inscription..." : "S'inscrire" }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<!-- 
+  NOTES TECHNIQUES :
+  
+  1. GESTION D'ERREURS DOUBLE :
+     - Frontend : Validation instantanée (required, format, longueur)
+     - Backend : Validation métier (email unique, politiques)
+  
+  2. RESPONSIVE :
+     - .page-auth : layout adaptatif mobile/desktop
+     - .content-auth : padding et shadow responsive
+  
+  3. ACCESSIBILITÉ :
+     - Labels associés aux inputs
+     - Messages d'erreur descriptifs
+     - États disabled clairement indiqués
+  
+  4. UX :
+     - Animation slide-up à l'ouverture
+     - États de chargement visuels
+     - Validation en temps réel
+     - Navigation fluide entre formulaires
+-->

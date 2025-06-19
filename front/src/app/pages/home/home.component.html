@@ -1,11 +1,29 @@
-<div class="home-page">
-  <div class="home-page__header">
-    <h1 class="page-title">Mon fil d'actualité</h1>
-    <p class="page-subtitle" *ngIf="userEmail">
-      Bienvenue {{ userEmail }} ! Voici les derniers articles.
-    </p>
+<!-- home.component.html -->
+<div class="page-with-navbar">
+  
+  <!-- Header réutilisable -->
+  <div class="page-with-navbar__header">
+    <div class="container">
+      <h1 class="page-title">Mon fil d'actualité</h1>
+      <p class="page-subtitle" *ngIf="userEmail">
+        Bienvenue {{ userEmail }} ! Voici les derniers articles.
+      </p>
+    </div>
   </div>
-  <div class="home-page__content">
-    <!-- Contenu du fil d'actualité -->
+  
+  <!-- Contenu principal -->
+  <div class="page-with-navbar__content">
+    <div class="container">
+      <!-- Le contenu du fil sera ici -->
+      <div class="grid grid--articles" *ngIf="articles?.length">
+        <!-- Articles grid -->
+      </div>
+      
+      <!-- État vide -->
+      <div class="text-center p-xl" *ngIf="!articles?.length">
+        <p class="text-secondary">Aucun article pour le moment</p>
+      </div>
+    </div>
   </div>
+  
 </div>
