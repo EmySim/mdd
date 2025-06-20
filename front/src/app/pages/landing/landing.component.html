@@ -1,10 +1,11 @@
-<!-- landing.component.html -->
 <div class="page-fullscreen">
   <div class="content-centered fade-in">
     
-    <!-- Logo section réutilisable -->
-    <div class="logo-section">
-      <img src="/assets/logo_landing_dsk.png" alt="MDD" class="logo">
+    <!-- Logo landing avec tailles spécifiques -->
+    <div class="logo-section logo-section--landing">
+      <img src="/assets/logo_landing_dsk.png" 
+           alt="MDD" 
+           class="logo logo--landing">
     </div>
     
     <!-- Actions section réutilisable -->
@@ -14,7 +15,7 @@
         Se connecter
       </button>
       
-      <button class="btn btn--outline-neutral btn--landing"
+      <button class="btn btn--outline-primary btn--landing"
               (click)="navigateToRegister()">
         S'inscrire
       </button>

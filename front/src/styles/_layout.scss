@@ -1,29 +1,12 @@
 // ============================================================================
-// LAYOUT SCSS - Architecture responsive et layouts de pages MDD
+// _layout.scss - STRUCTURE ET LAYOUTS MDD
 // ============================================================================
 
-// ===========================
-// GRILLES GLOBALES RÉUTILISABLES
-// ===========================
-
-/**
- * Système de grille flexible pour l'affichage de contenu
- * 
- * Utilise CSS Grid avec breakpoints responsive pour s'adapter 
- * automatiquement aux différentes tailles d'écran
- */
+// === GRILLES GLOBALES ===
 .grid {
   display: grid;
-  gap: $space-md; // Espacement uniforme entre les éléments
+  gap: $space-md;
   
-  /**
-   * Grille pour articles - Layout adaptatif
-   * 
-   * Comportement responsive :
-   * - Mobile : 1 colonne (lecture verticale optimale)
-   * - Tablet : 2 colonnes (équilibre entre lisibilité et densité)
-   * - Desktop : 3 colonnes (exploitation maximale de l'espace)
-   */
   &--articles {
     grid-template-columns: 1fr;
     
@@ -36,16 +19,9 @@
     }
   }
   
-  /**
-   * Grille pour thèmes - Layout progressif
-   * 
-   * Progression fluide du mobile au desktop pour maximiser
-   * l'utilisation de l'espace disponible
-   */
   &--themes {
     grid-template-columns: 1fr;
     
-    // Breakpoint intermédiaire pour petit tablet
     @media (min-width: #{$breakpoint-mobile-min}) {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -60,28 +36,17 @@
   }
 }
 
-// ===========================
-// SYSTÈME DE CONTAINERS
-// ===========================
-
-/**
- * Container principal pour centrer et limiter le contenu
- * 
- * Utilise des paddings responsive pour maintenir une lisibilité
- * optimale sur tous les devices tout en utilisant l'espace disponible
- */
+// === CONTAINER GLOBAL ===
 .container {
   width: 100%;
-  max-width: 1200px; // Largeur maximale pour éviter les lignes trop longues
-  margin: 0 auto;    // Centrage horizontal
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 0 $space-md;
   
-  // Padding réduit pour très petits écrans
   @media (max-width: 374px) {
     padding: 0 $space-sm;
   }
   
-  // Padding augmenté pour grands écrans
   @include tablet {
     padding: 0 $space-lg;
   }
@@ -91,49 +56,34 @@
   }
 }
 
-// ===========================
-// LAYOUTS DE PAGES PRINCIPAUX
-// ===========================
+// === LAYOUTS DE PAGES ===
 
-/**
- * Layout page plein écran - SEULEMENT pour landing page
- * 
- * Utilisé uniquement pour la page d'accueil publique qui n'a AUCUNE navbar
- * Centrage vertical et horizontal du contenu sur toute la hauteur de l'écran
- */
+// Landing page - AUCUNE navbar
 .page-fullscreen {
-  min-height: 100vh;        // Hauteur complète de la fenêtre
+  min-height: 100vh;
   display: flex;
-  align-items: center;      // Centrage vertical
-  justify-content: center;  // Centrage horizontal
+  align-items: center;
+  justify-content: center;
   padding: $space-lg $space-md;
   
-  // Padding réduit pour très petits écrans
   @media (max-width: 374px) {
     padding: $space-md $space-sm;
   }
   
-  // Padding augmenté pour grands écrans avec plus d'espace
   @include desktop {
     padding: $space-xxl $space-lg;
   }
 }
 
-/**
- * Layout page auth - Avec navbar SIMPLE (logo seulement)
- * 
- * Utilisé pour les pages d'authentification (/auth/login, /auth/register)
- * Prend en compte la hauteur de la navbar simple (64px)
- */
+// Pages auth - Navbar simple desktop, AUCUNE navbar mobile
 .page-auth {
-  min-height: calc(100vh - 64px); // Hauteur écran moins navbar simple
+  min-height: calc(100vh - 64px); // Desktop avec navbar
   display: flex;
   align-items: center;
   justify-content: center;
   padding: $space-lg $space-md;
   background-color: var(--mdd-white);
   
-  // Responsive padding pour petits écrans
   @media (max-width: 374px) {
     padding: $space-md $space-sm;
   }
@@ -141,33 +91,23 @@
   @include desktop {
     padding: $space-xxl $space-lg;
   }
+  
+  // 🎯 Mobile : plein écran (pas de navbar)
+  @include mobile {
+    min-height: 100vh;
+  }
 }
 
-/**
- * Layout page avec navbar COMPLÈTE - Pour pages application
- * 
- * Utilisé pour toutes les pages de l'application avec navigation complète
- * (home, articles, themes, profile, etc.)
- */
+// Pages app - Navbar complète
 .page-with-navbar {
-  min-height: calc(100vh - 64px); // Hauteur écran moins navbar complète
+  min-height: calc(100vh - 64px);
   background-color: var(--mdd-white);
   
-  /**
-   * Header de page avec titre et sous-titre
-   * 
-   * Section standardisée pour les en-têtes de pages avec
-   * séparation visuelle via border-bottom
-   */
   &__header {
     background-color: var(--mdd-white);
-    border-bottom: 1px solid #e0e0e0; // Séparation subtile
+    border-bottom: 1px solid #e0e0e0;
     padding: $space-lg 0;
     
-    /**
-     * Titre principal de la page
-     * Centré sur mobile, aligné à gauche sur desktop
-     */
     .page-title {
       font-family: $mdd-font-family;
       font-size: $font-page-title;
@@ -177,17 +117,14 @@
       text-align: center;
       
       @include desktop {
-        text-align: left; // Alignement gauche sur grands écrans
+        text-align: left;
       }
     }
     
-    /**
-     * Sous-titre optionnel (ex: message de bienvenue)
-     */
     .page-subtitle {
       font-family: $mdd-font-family;
       font-size: $font-body-content;
-      color: #666; // Couleur plus douce que le titre
+      color: #666;
       text-align: center;
       
       @include desktop {
@@ -196,111 +133,71 @@
     }
   }
   
-  /**
-   * Contenu principal de la page
-   * 
-   * Zone où s'affiche le contenu spécifique à chaque page
-   */
   &__content {
     padding: $space-lg 0;
   }
 }
 
-// ===========================
-// SECTIONS DE CONTENU RÉUTILISABLES
-// ===========================
+// === SECTIONS DE CONTENU ===
 
-/**
- * Section de contenu centré - Pour landing et formulaires
- * 
- * Layout flexible pour centrer du contenu avec espacement adaptatif
- */
+// Contenu centré (landing, auth)
 .content-centered {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-xxl;
-  max-width: 600px;  // Largeur optimale pour lisibilité
+  max-width: 600px;
   width: 100%;
   
-  // Espacement réduit et largeur limitée sur mobile
   @include mobile {
     gap: $space-lg;
     max-width: 400px;
   }
 }
 
-/**
- * Container spécialisé pour formulaires d'authentification
- * 
- * Extend de content-centered avec styles visuels supplémentaires
- * (background, shadow, etc.)
- */
+// Container auth spécialisé
 .content-auth {
-  @extend .content-centered;
-  max-width: 400px;                           // Largeur fixe pour formulaires
+  max-width: 400px;
   background: var(--mdd-white);
   border-radius: 8px;
   padding: $space-xxl;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);   // Ombre subtile pour élévation
+  //box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   
-  // Simplification sur mobile (pas d'ombre, moins de padding)
   @include mobile {
     padding: $space-lg;
     margin: $space-md;
-    box-shadow: none; // Supprime l'ombre sur mobile pour design plus épuré
+    box-shadow: none;
   }
 }
 
-// ===========================
-// SECTIONS SPÉCIALISÉES
-// ===========================
+// === SECTIONS SPÉCIALISÉES ===
 
-/**
- * Section logo réutilisable - Landing, auth, etc.
- * 
- * Centrage et dimensionnement responsive des logos
- */
+// Section logo pour landing
 .logo-section {
   display: flex;
   justify-content: center;
   align-items: center;
   
-  .logo {
-    height: 150px;    // Taille par défaut
-    width: auto;      // Préserve les proportions
-    
-    // Responsive sizing pour différents contextes
-    @include tablet {
-      height: 120px;
-    }
+  &--landing {
+    margin-bottom: $space-xxl;
     
     @include mobile {
-      height: 100px;
+      margin-bottom: $space-lg;
     }
+  }
+  
+  // 🎯 Section logo auth - visible seulement mobile
+  &--auth {
+    display: none; // Cachée desktop (navbar présente)
     
-    /**
-     * Variante logo petit - Pour headers ou espaces restreints
-     */
-    &--small {
-      height: 80px;
-      
-      @include tablet {
-        height: 60px;
-      }
-      
-      @include mobile {
-        height: 50px;
-      }
+    @include mobile {
+      display: flex; // Visible mobile (remplace navbar)
+      margin-bottom: $space-lg;
     }
   }
 }
 
-/**
- * Section actions - Boutons, formulaires, controls
- * 
- * Layout flexible pour organiser les éléments d'action
- */
+// Section actions (boutons)
 .actions-section {
   display: flex;
   gap: $space-lg;
@@ -308,26 +205,19 @@
   align-items: center;
   width: 100%;
   
-  // Stack vertical sur mobile pour meilleure utilisation de l'espace
   @include mobile {
     flex-direction: column;
     gap: $space-md;
   }
   
-  /**
-   * Variante toujours verticale
-   */
   &--vertical {
     flex-direction: column;
     gap: $space-md;
   }
   
-  /**
-   * Variante pour formulaires - Étirement des éléments
-   */
   &--form {
     flex-direction: column;
     gap: $space-lg;
-    align-items: stretch; // Les éléments prennent toute la largeur
+    align-items: stretch;
   }
 }

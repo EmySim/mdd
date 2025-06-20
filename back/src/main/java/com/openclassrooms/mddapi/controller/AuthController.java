@@ -39,7 +39,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
     private final JwtUtils jwtUtils;
 
     /**
@@ -50,16 +50,7 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         log.info("🔐 Inscription: {}", registerRequest.getEmail());
 
-        // DB-FIRST : Construction + save direct
-        // Si email/username duplicate → DataIntegrityViolationException → GlobalExceptionHandler (409)
-        User user = User.builder()
-                .email(registerRequest.getEmail())
-                .username(registerRequest.getUsername())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .build();
 
-        User savedUser = userRepository.save(user);
-        log.info("✅ Utilisateur créé: {} (ID: {})", savedUser.getEmail(), savedUser.getId());
 
         return ResponseEntity.ok(MessageResponse.success("Inscription réussie"));
     }

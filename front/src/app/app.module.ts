@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { LayoutModule } from '@angular/cdk/layout';
 
 // Modules de l'application
 import { AppRoutingModule } from './app-routing.module';
@@ -81,6 +82,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatCardModule,
     MatInputModule,
     MatFormFieldModule,
+    LayoutModule,
   ],
   providers: [
     // Services des features

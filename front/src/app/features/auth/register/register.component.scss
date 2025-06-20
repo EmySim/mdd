@@ -1,5 +1,5 @@
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 :host {
   display: block;
 }
@@ -10,68 +10,30 @@
   padding: 2rem;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .header {
   display: flex;
   align-items: center;
   margin-bottom: 2rem;
-  
-  .back-button {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-right: 1rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    
-    &:hover {
-      background: #f5f5f5;
-    }
-  }
-  
+
   .logo {
     height: 40px;
     margin: 0 auto;
   }
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #333;
-}
-
 .form-group {
   margin-bottom: 1.5rem;
-  
+
   label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #555;
+    color: $mdd-black;
   }
+
   
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
-    
-    &:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-    
-    &.error {
-      border-color: #e74c3c;
-    }
-  }
 }
 
 .field-error {
@@ -82,7 +44,7 @@ h1 {
 
 .submit-btn {
   width: 100%;
-  background: #667eea;
+  background: orangered;
   color: white;
   border: none;
   padding: 0.875rem;
@@ -91,17 +53,16 @@ h1 {
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
-  
+
   &:hover:not(:disabled) {
     background: #5a6fd8;
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
 }
-
 
 @media (max-width: 480px) {
   .register-container {

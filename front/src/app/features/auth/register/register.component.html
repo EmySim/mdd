@@ -1,85 +1,32 @@
-<!-- ============================================================================ -->
-<!-- REGISTER TEMPLATE - Formulaire d'inscription MDD -->
-<!-- ============================================================================ -->
-
-<!-- 
-  Layout page auth avec navbar simple (logo seulement)
-  Utilise .page-auth qui prend en compte la hauteur de la navbar (calc(100vh - 64px))
--->
-<div class="page-auth">
-  <!-- 
-    Container de contenu centré avec styles d'authentification
-    .content-auth : background blanc, shadow, padding responsive
-    .slide-up : animation d'apparition fluide
-  -->
+<!-- register.component.html -->
+<div class="page-fullscreen">
   <div class="content-auth slide-up">
-    <!-- ============================= -->
-    <!-- FORMULAIRE PRINCIPAL -->
-    <!-- ============================= -->
+    <!-- Logo auth (même comportement que landing) -->
+    <div class="logo-section--auth">
+      <img
+        src="/assets/logo_landing_dsk.png"
+        alt="MDD"
+        class="logo logo--auth"
+      />
+    </div>
 
-    <!-- 
-      Formulaire réactif Angular avec validation
-      - [formGroup] : lie le FormGroup défini dans le composant
-      - (ngSubmit) : gère la soumission avec validation
-      - .w-full : largeur complète (classe utilitaire)
-    -->
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="w-full">
-      <!-- Titre principal centré -->
       <h1 class="text-center mb-lg">Inscription</h1>
-
-      <!-- ============================= -->
-      <!-- GESTION D'ERREURS GLOBALES -->
-      <!-- ============================= -->
-
-      <!-- 
-        Affichage conditionnel des erreurs générales (401, 500, etc.)
-        - errorService.error$ : Observable des erreurs du ErrorService
-        - async pipe : souscription automatique avec désabonnement
-        - *ngIf avec alias : affiche seulement si erreur présente
-      -->
-      <div
-        class="form__error mb-md"
-        *ngIf="errorService.error$ | async as globalError"
-      >
-        {{ globalError }}
-      </div>
-
-      <!-- ============================= -->
-      <!-- CHAMP NOM D'UTILISATEUR -->
-      <!-- ============================= -->
 
       <div class="form__group">
         <!-- Label associé au champ pour l'accessibilité -->
         <label class="form__label">Nom d'utilisateur</label>
 
-        <!-- 
-          Input avec gestion d'erreurs double (frontend + backend)
-          - formControlName : lie au contrôle du FormGroup
-          - [class.form__field--error] : applique style d'erreur si conditions vraies
-          - Condition complexe : erreur frontend OU erreur backend pour ce champ
-        -->
         <input
           class="form__field"
           [class.form__field--error]="hasFieldError('username') || (errorService.validationErrors$ | async)?.['username']"
           formControlName="username"
-          placeholder="Votre nom d'utilisateur"
         />
 
-        <!-- 
-          Affichage erreur de validation frontend
-          - hasFieldError() : méthode du composant vérifiant si champ touché et invalide
-          - getFieldError() : récupère le message d'erreur approprié
-        -->
         <span class="form__error" *ngIf="hasFieldError('username')">
           {{ getFieldError("username") }}
         </span>
 
-        <!-- 
-          Affichage erreur de validation backend (statut 400)
-          - errorService.validationErrors$ : Observable des erreurs par champ
-          - ?.['username'] : safe navigation pour éviter les erreurs si null
-          - as usernameError : alias pour utiliser la valeur dans le template
-        -->
         <span
           class="form__error"
           *ngIf="(errorService.validationErrors$ | async)?.['username'] as usernameError"
@@ -95,17 +42,11 @@
       <div class="form__group">
         <label class="form__label">Adresse e-mail</label>
 
-        <!-- 
-          Input email avec même logique d'erreurs que username
-          - type="email" : validation HTML5 automatique du format
-          - Même système double de gestion d'erreurs (frontend + backend)
-        -->
         <input
           class="form__field"
           [class.form__field--error]="hasFieldError('email') || (errorService.validationErrors$ | async)?.['email']"
           formControlName="email"
           type="email"
-          placeholder="votre@email.com"
         />
 
         <!-- Messages d'erreur frontend (required, email format, etc.) -->
@@ -139,7 +80,6 @@
           [class.form__field--error]="hasFieldError('password') || (errorService.validationErrors$ | async)?.['password']"
           formControlName="password"
           type="password"
-          placeholder="Votre mot de passe"
         />
 
         <!-- 

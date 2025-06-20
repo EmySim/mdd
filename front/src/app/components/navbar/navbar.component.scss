@@ -1,5 +1,4 @@
-// navbar.component.scss - STYLES SPÉCIFIQUES AU COMPOSANT
-
+// navbar.component.scss - STYLES SPÉCIFIQUES NAVBAR
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 
@@ -8,7 +7,6 @@
 }
 
 .navbar {
-  // Layout spécifique au composant
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -22,20 +20,6 @@
     justify-content: space-between;
     align-items: center;
     padding: $space-md;
-  }
-  
-  &__logo {
-    height: 81px;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-
-    @include mobile {
-      height: 53px;
-    }
-    
-    &:hover {
-      opacity: 0.8;
-    }
   }
   
   &__menu {
@@ -63,7 +47,7 @@
       color: var(--mdd-navbar-active);
     }
     
-    // ✅ STYLE SPÉCIFIQUE LOGOUT - défini ici car utilisé SEULEMENT dans navbar
+    // 🎯 STYLE LOGOUT - Spécifique à la navbar
     &--logout {
       font-family: $mdd-font-family;
       font-size: $font-logout-link;
