@@ -1,0 +1,72 @@
+@import "src/styles/variables";
+@import "src/styles/mixins";
+:host {
+  display: block;
+}
+
+.register-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .logo {
+    height: 40px;
+    margin: 0 auto;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: $mdd-black;
+  }
+
+  
+}
+
+.field-error {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.submit-btn {
+  width: 100%;
+  background: orangered;
+  color: white;
+  border: none;
+  padding: 0.875rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #5a6fd8;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}

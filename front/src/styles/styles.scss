@@ -1,4 +1,95 @@
-/* You can add global styles to this file, and also import other style files */
+// ============================================================================
+// STYLES PRINCIPAUX MDD - VERSION OPTIMISÉE
+// ============================================================================
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// === IMPORTS DANS L'ORDRE CORRECT ===
+
+// 1. Configuration de base
+@import 'variables';        // Couleurs, typographie, breakpoints
+@import 'mixins';          // Mixins responsive
+
+// 2. Styles de base
+@import 'base';            // Reset CSS + styles globaux
+
+// 3. Layout et utilitaires  
+@import 'layout';          // Grilles, containers, layouts de pages
+@import 'utilities';       // Classes utilitaires (nouveau)
+
+// 4. Composants réutilisables
+@import 'components';      // Boutons, formulaires, cartes, etc.
+
+// ============================================================================
+// CUSTOM PROPERTIES CSS (pour cohérence avec Angular Material)
+// ============================================================================
+
+:root {
+  // Couleurs principales
+  --mdd-primary-violet: #{$mdd-primary-violet};
+  --mdd-navbar-active: #{$mdd-navbar-active};
+  --mdd-black: #{$mdd-black};
+  --mdd-white: #{$mdd-white};
+  --mdd-logout-red: #{$mdd-logout-red};
+  --mdd-button-disabled: #{$mdd-button-disabled};
+  --mdd-card-bg: #{$mdd-card-bg};
+  --mdd-selection-bg: #{$mdd-selection-bg};
+  
+  // Couleurs dérivées (pour états, hover, etc.)
+  --mdd-text-gray: #666666;
+  --mdd-border-light: #e0e0e0;
+  --mdd-shadow-light: rgba(0, 0, 0, 0.1);
+  
+  // Espacements (pour calculs dynamiques)
+  --space-xs: #{$space-xs};
+  --space-sm: #{$space-sm};
+  --space-md: #{$space-md};
+  --space-lg: #{$space-lg};
+  --space-xl: #{$space-xl};
+  --space-xxl: #{$space-xxl};
+}
+
+// ============================================================================
+// OVERRIDES ANGULAR MATERIAL (si nécessaire)
+// ============================================================================
+
+// Harmoniser les boutons Material avec votre design
+.mat-raised-button.mat-primary {
+  background-color: var(--mdd-primary-violet) !important;
+  
+  &:hover:not(:disabled) {
+    background-color: var(--mdd-navbar-active) !important;
+  }
+}
+
+// Harmoniser les champs Material
+.mat-form-field.mat-form-field {
+  font-family: $mdd-font-family;
+  
+  .mat-form-field-label {
+    color: var(--mdd-text-gray);
+  }
+  
+  &.mat-focused .mat-form-field-label {
+    color: var(--mdd-primary-violet);
+  }
+  
+  .mat-form-field-underline {
+    background-color: var(--mdd-border-light);
+  }
+  
+  &.mat-focused .mat-form-field-ripple {
+    background-color: var(--mdd-primary-violet);
+  }
+}
+
+// ============================================================================
+// STYLES DE DEBUG (à supprimer en production)
+// ============================================================================
+
+// Uncomment pour visualiser la grille en développement
+// .grid > * {
+//   border: 1px dashed rgba(255, 0, 0, 0.3);
+// }
+
+// .container {
+//   border: 1px dashed rgba(0, 255, 0, 0.3);
+// }

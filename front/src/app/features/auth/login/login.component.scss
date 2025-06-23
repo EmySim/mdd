@@ -1,0 +1,27 @@
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
+// login.component.scss  
+.auth-container {
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(135deg, var(--mdd-primary-violet) 0%, #9085D4 100%);
+  
+  .auth-card {
+    border-radius: var(--mdd-radius-lg);
+    box-shadow: none; // Selon wireframes
+    
+    .submit-btn {
+      background-color: var(--mdd-primary-violet) !important;
+      color: var(--mdd-white) !important;
+      height: 48px;
+      
+      @include mobile {
+        height: 44px;
+      }
+    }
+  }
+}

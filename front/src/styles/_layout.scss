@@ -1,0 +1,223 @@
+// ============================================================================
+// _layout.scss - STRUCTURE ET LAYOUTS MDD
+// ============================================================================
+
+// === GRILLES GLOBALES ===
+.grid {
+  display: grid;
+  gap: $space-md;
+  
+  &--articles {
+    grid-template-columns: 1fr;
+    
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include desktop {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  &--themes {
+    grid-template-columns: 1fr;
+    
+    @media (min-width: #{$breakpoint-mobile-min}) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include tablet {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @include desktop {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// === CONTAINER GLOBAL ===
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-md;
+  
+  @media (max-width: 374px) {
+    padding: 0 $space-sm;
+  }
+  
+  @include tablet {
+    padding: 0 $space-lg;
+  }
+  
+  @include desktop {
+    padding: 0 $space-xl;
+  }
+}
+
+// === LAYOUTS DE PAGES ===
+
+// Landing page - AUCUNE navbar
+.page-fullscreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-lg $space-md;
+  
+  @media (max-width: 374px) {
+    padding: $space-md $space-sm;
+  }
+  
+  @include desktop {
+    padding: $space-xxl $space-lg;
+  }
+}
+
+// Pages auth - Navbar simple desktop, AUCUNE navbar mobile
+.page-auth {
+  min-height: calc(100vh - 64px); // Desktop avec navbar
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-lg $space-md;
+  background-color: var(--mdd-white);
+  
+  @media (max-width: 374px) {
+    padding: $space-md $space-sm;
+  }
+  
+  @include desktop {
+    padding: $space-xxl $space-lg;
+  }
+  
+  // 🎯 Mobile : plein écran (pas de navbar)
+  @include mobile {
+    min-height: 100vh;
+  }
+}
+
+// Pages app - Navbar complète
+.page-with-navbar {
+  min-height: calc(100vh - 64px);
+  background-color: var(--mdd-white);
+  
+  &__header {
+    background-color: var(--mdd-white);
+    border-bottom: 1px solid #e0e0e0;
+    padding: $space-lg 0;
+    
+    .page-title {
+      font-family: $mdd-font-family;
+      font-size: $font-page-title;
+      font-weight: $weight-bold;
+      color: var(--mdd-black);
+      margin-bottom: $space-sm;
+      text-align: center;
+      
+      @include desktop {
+        text-align: left;
+      }
+    }
+    
+    .page-subtitle {
+      font-family: $mdd-font-family;
+      font-size: $font-body-content;
+      color: #666;
+      text-align: center;
+      
+      @include desktop {
+        text-align: left;
+      }
+    }
+  }
+  
+  &__content {
+    padding: $space-lg 0;
+  }
+}
+
+// === SECTIONS DE CONTENU ===
+
+// Contenu centré (landing, auth)
+.content-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-xxl;
+  max-width: 600px;
+  width: 100%;
+  
+  @include mobile {
+    gap: $space-lg;
+    max-width: 400px;
+  }
+}
+
+// Container auth spécialisé
+.content-auth {
+  max-width: 400px;
+  background: var(--mdd-white);
+  border-radius: 8px;
+  padding: $space-xxl;
+  //box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  
+  @include mobile {
+    padding: $space-lg;
+    margin: $space-md;
+    box-shadow: none;
+  }
+}
+
+// === SECTIONS SPÉCIALISÉES ===
+
+// Section logo pour landing
+.logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  &--landing {
+    margin-bottom: $space-xxl;
+    
+    @include mobile {
+      margin-bottom: $space-lg;
+    }
+  }
+  
+  // 🎯 Section logo auth - visible seulement mobile
+  &--auth {
+    display: none; // Cachée desktop (navbar présente)
+    
+    @include mobile {
+      display: flex; // Visible mobile (remplace navbar)
+      margin-bottom: $space-lg;
+    }
+  }
+}
+
+// Section actions (boutons)
+.actions-section {
+  display: flex;
+  gap: $space-lg;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  
+  @include mobile {
+    flex-direction: column;
+    gap: $space-md;
+  }
+  
+  &--vertical {
+    flex-direction: column;
+    gap: $space-md;
+  }
+  
+  &--form {
+    flex-direction: column;
+    gap: $space-lg;
+    align-items: stretch;
+  }
+}

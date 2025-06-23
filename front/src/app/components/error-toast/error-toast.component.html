@@ -1,0 +1,26 @@
+<!-- src/app/shared/error-toast/error-toast.component.html -->
+
+<!-- Toast pour erreurs générales -->
+<div 
+  class="error-toast" 
+  *ngIf="message"
+>
+  <span class="toast-message">{{ message }}</span>
+  <button class="toast-close" (click)="close()" aria-label="Fermer">✖</button>
+</div>
+
+<!-- Toast pour erreurs de validation (400) -->
+<div 
+  class="validation-errors" 
+  *ngIf="validationErrors && hasValidationErrors()"
+>
+  <div class="validation-header">
+    <span>Veuillez corriger les erreurs suivantes :</span>
+    <button class="toast-close" (click)="closeValidation()" aria-label="Fermer">✖</button>
+  </div>
+  <ul class="validation-list">
+    <li *ngFor="let error of getValidationErrorsList()">
+      <strong>{{ error.field }}:</strong> {{ error.message }}
+    </li>
+  </ul>
+</div>

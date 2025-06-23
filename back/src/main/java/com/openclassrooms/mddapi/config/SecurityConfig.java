@@ -18,19 +18,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Configuration de sécurité pour l'API MDD.
- *
- * Cette classe configure :
- * - L'authentification JWT
- * - Les autorisations par endpoint
- * - Le cryptage des mots de passe
- * - La gestion des erreurs d'authentification
- *
+ * 
+ * Gère l'authentification JWT, les autorisations et le cryptage des mots de passe.
+ * Endpoints publics : /api/auth/**, /actuator/health
+ * Endpoints protégés : /api/** (nécessitent un token JWT valide)
+ * 
  * @author Équipe MDD
- * @version 1.0
+ * @version 2.0
  */
 @Configuration
 @EnableWebSecurity
@@ -45,90 +42,60 @@ public class SecurityConfig {
 
     /**
      * Configuration de la chaîne de filtres de sécurité.
-     *
-     * Définit les règles d'autorisation :
-     * - Endpoints publics : /api/auth/*
-     * - Endpoints protégés : tout le reste
-     * - Sessions : stateless (JWT)
-     *
-     * @param http l'objet HttpSecurity à configurer
-     * @return la chaîne de filtres configurée
-     * @throws Exception en cas d'erreur de configuration
+     * Sessions stateless avec authentification JWT.
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("🔒 Configuration du SecurityFilterChain pour l'API MDD");
+        log.info("🔒 Configuration SecurityFilterChain");
 
-        http
+        http.cors() // Active CORS
+                .and()
                 .csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/api/auth/login"),
-                                new AntPathRequestMatcher("/api/auth/register"),
-                                new AntPathRequestMatcher("/h2-console/**")
-                        ).permitAll()
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/api/posts/**"),
-                                new AntPathRequestMatcher("/api/topics/**"),
-                                new AntPathRequestMatcher("/api/users/**")
-                        ).authenticated()
+                .authorizeRequests(authz -> authz
+                        .antMatchers("/api/auth/**").permitAll()
+                        .antMatchers("/actuator/health").permitAll()
+                        .antMatchers("/h2-console/**").permitAll()
+                        .antMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 );
 
-        // Configuration du provider d'authentification
         http.authenticationProvider(authenticationProvider());
-
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        log.info("✅ SecurityFilterChain configuré avec succès");
-        log.info("🔓 Endpoints publics : /api/auth/login, /api/auth/register, /h2-console/**");
-        log.info("🔒 Endpoints protégés : /api/posts/**, /api/topics/**, /api/users/**");
-
+        log.info("✅ SecurityFilterChain configuré - Publics: /api/auth/**, /actuator/health");
+        log.info("🔒 Endpoints protégés: /api/** (JWT requis)");
+        
         return http.build();
     }
 
     /**
-     * Bean pour l'encodage des mots de passe.
-     * Utilise BCrypt avec un coût de 12 pour la sécurité renforcée.
-     *
-     * @return l'encodeur de mot de passe BCrypt
+     * Encodeur BCrypt pour les mots de passe.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("🔐 Configuration de l'encodeur BCrypt (strength: 12)");
+        log.info("🔐 PasswordEncoder BCrypt configuré (strength: 12)");
         return new BCryptPasswordEncoder(12);
     }
 
     /**
-     * Bean pour le gestionnaire d'authentification.
-     * Nécessaire pour l'authentification programmatique dans les services.
-     *
-     * @param authConfig la configuration d'authentification
-     * @return le gestionnaire d'authentification
-     * @throws Exception en cas d'erreur
+     * Gestionnaire d'authentification pour l'injection dans les services.
      */
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig) throws Exception {
-        log.info("🎯 Configuration de l'AuthenticationManager");
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        log.info("🎯 AuthenticationManager configuré");
         return authConfig.getAuthenticationManager();
     }
 
     /**
-     * Configuration du provider d'authentification DAO.
-     * Lie le service UserDetailsService avec l'encodeur de mots de passe.
-     *
-     * @return provider d'authentification configuré
+     * Provider d'authentification liant UserDetailsService et PasswordEncoder.
      */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        log.info("🔗 Configuration du DaoAuthenticationProvider");
+        log.info("🔗 DaoAuthenticationProvider configuré");
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());

@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.lang.NonNull;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -31,9 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         try {
             String jwt = parseJwt(request);
@@ -55,11 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    log.debug("✅ Utilisateur authentifié: {}", user.getUsername());
+                    log.debug("✅ [AUTH] Utilisateur authentifié: {}", user.getUsername());
                 }
             }
         } catch (Exception e) {
-            log.error("❌ Erreur JWT: {}", e.getMessage());
+            log.error("❌ [AUTH] Erreur JWT: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
@@ -84,7 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.startsWith("/api/auth/") ||
                 path.startsWith("/actuator/") ||
