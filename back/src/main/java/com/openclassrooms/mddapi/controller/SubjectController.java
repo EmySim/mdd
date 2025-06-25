@@ -3,20 +3,29 @@ package com.openclassrooms.mddapi.controller;
 import com.openclassrooms.mddapi.dto.SubjectDTO;
 import com.openclassrooms.mddapi.dto.response.MessageResponse;
 import com.openclassrooms.mddapi.service.SubjectService;
+import com.openclassrooms.mddapi.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.List;
 
 /**
- * Contrôleur REST Subject - CRUD basique.
+ * Contrôleur REST Subject - MVP STRICT.
+ *
+ * **ENDPOINTS MVP UNIQUEMENT :**
+ * - GET /api/subjects : Liste des sujets avec statut d'abonnement
+ * - GET /api/subjects/{id} : Détail d'un sujet avec statut d'abonnement
+ * - POST /api/subjects/{id}/subscribe : S'abonner à un sujet
+ * - DELETE /api/subjects/{id}/subscribe : Se désabonner d'un sujet
+ *
+ * **RÈGLES MÉTIER MVP :**
+ * - Visible uniquement pour utilisateurs connectés
+ * - Affichage avec statut d'abonnement (bouton S'abonner/Se désabonner)
+ * - Pagination simple
  *
  * @author Équipe MDD
  * @version 1.0
@@ -29,130 +38,75 @@ public class SubjectController {
 
     private final SubjectService subjectService;
 
-    // ============================================================================
-    // PUBLIC ENDPOINTS
-    // ============================================================================
-
     /**
-     * Liste paginée des sujets.
+     * Liste paginée de tous les sujets avec statut d'abonnement.
+     *
+     * @param page numéro de page (0-based, défaut: 0)
+     * @param size taille de page (défaut: 20, max: 100)
+     * @return Page de SubjectDTO avec statut d'abonnement
      */
     @GetMapping
     public ResponseEntity<Page<SubjectDTO>> getAllSubjects(
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
 
-        log.debug("📄 GET /api/subjects - Page: {}, Size: {}", page, size);
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        log.debug("📄 GET /api/subjects - Utilisateur: {}, Page: {}, Size: {}", userEmail, page, size);
 
-        Page<SubjectDTO> subjects = subjectService.getAllSubjects(page, size);
+        Page<SubjectDTO> subjects = subjectService.getAllSubjects(userEmail, page, size);
 
-        log.info("✅ {} sujets retournés", subjects.getNumberOfElements());
+        log.info("✅ {} sujets retournés pour {}", subjects.getNumberOfElements(), userEmail);
         return ResponseEntity.ok(subjects);
     }
 
     /**
-     * Détail d'un sujet par ID.
+     * Détail d'un sujet par son ID avec statut d'abonnement.
+     *
+     * @param id ID du sujet
+     * @return SubjectDTO avec statut d'abonnement
      */
     @GetMapping("/{id}")
     public ResponseEntity<SubjectDTO> getSubjectById(@PathVariable Long id) {
-        log.debug("🔍 GET /api/subjects/{}", id);
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        log.debug("🔍 GET /api/subjects/{} - Utilisateur: {}", id, userEmail);
 
-        SubjectDTO subject = subjectService.getSubjectById(id);
+        SubjectDTO subject = subjectService.getSubjectById(id, userEmail);
 
-        log.info("✅ Sujet retourné: {}", subject.getName());
+        log.info("✅ Sujet retourné: '{}' (ID: {}) pour {}", subject.getName(), id, userEmail);
         return ResponseEntity.ok(subject);
     }
 
     /**
-     * Tous les sujets (pour listes déroulantes).
+     * S'abonner à un sujet.
+     *
+     * @param id ID du sujet
+     * @return Message de confirmation
      */
-    @GetMapping("/all")
-    public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
-        log.debug("📋 GET /api/subjects/all");
+    @PostMapping("/{id}/subscribe")
+    public ResponseEntity<MessageResponse> subscribeToSubject(@PathVariable Long id) {
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        log.info("📌 POST /api/subjects/{}/subscribe - Utilisateur: {}", id, userEmail);
 
-        List<SubjectDTO> subjects = subjectService.getAllSubjects();
+        subjectService.subscribeToSubject(id, userEmail);
 
-        log.info("📊 {} sujets retournés", subjects.size());
-        return ResponseEntity.ok(subjects);
-    }
-
-    // ============================================================================
-    // AUTHENTICATED ENDPOINTS
-    // ============================================================================
-
-    /**
-     * Création d'un sujet.
-     */
-    @PostMapping
-    public ResponseEntity<SubjectDTO> createSubject(@Valid @RequestBody SubjectDTO subjectDTO) {
-        log.info("📝 POST /api/subjects - Création: {}", subjectDTO.getName());
-
-        SubjectDTO createdSubject = subjectService.createSubject(subjectDTO);
-
-        log.info("✅ Sujet créé: {} (ID: {})", createdSubject.getName(), createdSubject.getId());
-        return new ResponseEntity<>(createdSubject, HttpStatus.CREATED);
+        log.info("✅ Abonnement réussi: sujet ID {} par {}", id, userEmail);
+        return ResponseEntity.ok(MessageResponse.success("Abonnement réussi"));
     }
 
     /**
-     * Mise à jour d'un sujet.
+     * Se désabonner d'un sujet.
+     *
+     * @param id ID du sujet
+     * @return Message de confirmation
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<SubjectDTO> updateSubject(
-            @PathVariable Long id,
-            @Valid @RequestBody SubjectDTO subjectDTO) {
+    @DeleteMapping("/{id}/subscribe")
+    public ResponseEntity<MessageResponse> unsubscribeFromSubject(@PathVariable Long id) {
+        String userEmail = SecurityUtils.getCurrentUserEmail();
+        log.info("📌 DELETE /api/subjects/{}/subscribe - Utilisateur: {}", id, userEmail);
 
-        log.info("🔄 PUT /api/subjects/{}", id);
+        subjectService.unsubscribeFromSubject(id, userEmail);
 
-        SubjectDTO updatedSubject = subjectService.updateSubject(id, subjectDTO);
-
-        log.info("✅ Sujet mis à jour: {}", updatedSubject.getName());
-        return ResponseEntity.ok(updatedSubject);
-    }
-
-    /**
-     * Suppression d'un sujet.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteSubject(@PathVariable Long id) {
-        log.info("🗑️ DELETE /api/subjects/{}", id);
-
-        subjectService.deleteSubject(id);
-
-        log.info("✅ Sujet supprimé: ID {}", id);
-        return ResponseEntity.ok(MessageResponse.success("Subject deleted successfully"));
-    }
-
-    // ============================================================================
-    // UTILITY ENDPOINTS
-    // ============================================================================
-
-    /**
-     * Vérification disponibilité nom.
-     */
-    @GetMapping("/check-name")
-    public ResponseEntity<Boolean> checkNameAvailability(@RequestParam String name) {
-        log.debug("✔️ GET /api/subjects/check-name?name={}", name);
-
-        boolean available = !subjectService.existsByName(name);
-
-        log.debug("📋 Nom '{}' disponible: {}", name, available);
-        return ResponseEntity.ok(available);
-    }
-
-    /**
-     * Health check du service.
-     */
-    @GetMapping("/health")
-    public ResponseEntity<MessageResponse> getHealthStatus() {
-        try {
-            long subjectCount = subjectService.countAllSubjects();
-
-            String message = String.format("Subject service operational - %d subjects available", subjectCount);
-            return ResponseEntity.ok(MessageResponse.info(message));
-
-        } catch (Exception e) {
-            log.error("❌ Erreur health check: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body(MessageResponse.error("Subject service unavailable"));
-        }
+        log.info("✅ Désabonnement réussi: sujet ID {} par {}", id, userEmail);
+        return ResponseEntity.ok(MessageResponse.success("Désabonnement réussi"));
     }
 }

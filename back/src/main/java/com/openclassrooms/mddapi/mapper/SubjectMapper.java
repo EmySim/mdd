@@ -3,39 +3,43 @@ package com.openclassrooms.mddapi.mapper;
 import com.openclassrooms.mddapi.dto.SubjectDTO;
 import com.openclassrooms.mddapi.entity.Subject;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
 /**
- * Mapper pour conversion Subject Entity ↔ SubjectDTO.
+ * Mapper MapStruct pour Subject - MVP STRICT.
+ *
+ * **FONCTIONNALITÉS MVP UNIQUEMENT :**
+ * - Conversion Entity ↔ DTO
+ * - Mapping du statut d'abonnement
  *
  * @author Équipe MDD
  * @version 1.0
  */
-@Mapper(componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(
+        componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
 public interface SubjectMapper {
 
     /**
-     * Convertit Entity → DTO.
+     * Convertit Subject Entity → SubjectDTO.
+     * isSubscribed sera défini par le service.
      */
+    @Mapping(target = "isSubscribed", ignore = true)
     SubjectDTO toDTO(Subject subject);
 
     /**
-     * Convertit DTO → Entity.
-     */
-    Subject toEntity(SubjectDTO subjectDTO);
-
-    /**
-     * Convertit Liste Entity → Liste DTO.
+     * Convertit List<Subject> → List<SubjectDTO>.
      */
     List<SubjectDTO> toDTOList(List<Subject> subjects);
 
     /**
-     * Met à jour une Entity existante avec les données du DTO.
-     * Ignore les valeurs null du DTO.
+     * Convertit SubjectDTO → Subject Entity.
      */
-    void updateEntityFromDTO(SubjectDTO subjectDTO, @MappingTarget Subject subject);
+    @Mapping(target = "subscribers", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    Subject toEntity(SubjectDTO subjectDTO);
 }

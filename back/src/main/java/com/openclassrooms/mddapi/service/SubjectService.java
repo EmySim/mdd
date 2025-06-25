@@ -2,8 +2,10 @@ package com.openclassrooms.mddapi.service;
 
 import com.openclassrooms.mddapi.dto.SubjectDTO;
 import com.openclassrooms.mddapi.entity.Subject;
+import com.openclassrooms.mddapi.entity.User;
 import com.openclassrooms.mddapi.mapper.SubjectMapper;
 import com.openclassrooms.mddapi.repository.SubjectRepository;
+import com.openclassrooms.mddapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,10 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 /**
- * Service métier Subject - CRUD avec Mapper.
+ * Service métier Subject - MVP STRICT.
+ *
+ * **FONCTIONNALITÉS MVP UNIQUEMENT :**
+ * - Affichage des sujets pour utilisateurs connectés
+ * - Abonnement/désabonnement d'un utilisateur à un sujet
+ * - Pagination simple
  *
  * @author Équipe MDD
  * @version 1.0
@@ -28,137 +34,112 @@ import java.util.List;
 public class SubjectService {
 
     private final SubjectRepository subjectRepository;
+    private final UserRepository userRepository;
     private final SubjectMapper subjectMapper;
 
     /**
-     * Crée un nouveau sujet.
+     * Récupère tous les sujets avec statut d'abonnement pour l'utilisateur connecté.
+     *
+     * @param userEmail email de l'utilisateur connecté
+     * @param page numéro de page
+     * @param size taille de page
+     * @return Page de SubjectDTO avec statut d'abonnement
      */
-    @Transactional
-    public SubjectDTO createSubject(SubjectDTO subjectDTO) {
-        log.info("📝 Création sujet: {}", subjectDTO.getName());
+    public Page<SubjectDTO> getAllSubjects(String userEmail, int page, int size) {
+        log.debug("📄 Liste sujets pour: {} - Page: {}, Size: {}", userEmail, page, size);
 
-        // Validation unicité nom
-        if (subjectRepository.existsByName(subjectDTO.getName())) {
-            throw new IllegalArgumentException("Subject name already exists: " + subjectDTO.getName());
-        }
-
-        // Conversion DTO → Entity
-        Subject subject = subjectMapper.toEntity(subjectDTO);
-
-        // Sauvegarde (DB gère l'auto-increment et created_at)
-        Subject savedSubject = subjectRepository.save(subject);
-
-        log.info("✅ Sujet créé: {} (ID: {})", savedSubject.getName(), savedSubject.getId());
-
-        // Conversion Entity → DTO
-        return subjectMapper.toDTO(savedSubject);
-    }
-
-    /**
-     * Met à jour un sujet existant.
-     */
-    @Transactional
-    public SubjectDTO updateSubject(Long id, SubjectDTO subjectDTO) {
-        log.info("🔄 Mise à jour sujet ID: {}", id);
-
-        // Récupération sujet existant
-        Subject existingSubject = subjectRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Subject not found with id: " + id));
-
-        // Validation unicité nom si changement
-        if (subjectDTO.getName() != null && !subjectDTO.getName().equals(existingSubject.getName())) {
-            if (subjectRepository.existsByName(subjectDTO.getName())) {
-                throw new IllegalArgumentException("Subject name already exists: " + subjectDTO.getName());
-            }
-        }
-
-        // Mise à jour avec Mapper (ignore les valeurs null)
-        subjectMapper.updateEntityFromDTO(subjectDTO, existingSubject);
-
-        // Sauvegarde
-        Subject updatedSubject = subjectRepository.save(existingSubject);
-
-        log.info("✅ Sujet mis à jour: {}", updatedSubject.getName());
-
-        return subjectMapper.toDTO(updatedSubject);
-    }
-
-    /**
-     * Supprime un sujet.
-     */
-    @Transactional
-    public void deleteSubject(Long id) {
-        log.info("🗑️ Suppression sujet ID: {}", id);
-
-        Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Subject not found with id: " + id));
-
-        subjectRepository.delete(subject);
-
-        log.info("✅ Sujet supprimé: {}", subject.getName());
-    }
-
-    /**
-     * Récupère un sujet par ID.
-     */
-    public SubjectDTO getSubjectById(Long id) {
-        log.debug("🔍 Recherche sujet ID: {}", id);
-
-        Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Subject not found with id: " + id));
-
-        return subjectMapper.toDTO(subject);
-    }
-
-    /**
-     * Récupère un sujet par nom.
-     */
-    public SubjectDTO getSubjectByName(String name) {
-        log.debug("🔍 Recherche sujet par nom: {}", name);
-
-        Subject subject = subjectRepository.findByName(name)
-                .orElseThrow(() -> new EntityNotFoundException("Subject not found with name: " + name));
-
-        return subjectMapper.toDTO(subject);
-    }
-
-    /**
-     * Liste paginée de tous les sujets.
-     */
-    public Page<SubjectDTO> getAllSubjects(int page, int size) {
-        log.debug("📄 Liste sujets - Page: {}, Size: {}", page, size);
+        // Récupération utilisateur connecté
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé: " + userEmail));
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Subject> subjectsPage = subjectRepository.findAll(pageable);
+        Page<Subject> subjectsPage = subjectRepository.findAllByOrderByNameAsc(pageable);
 
-        log.debug("📊 {} sujets trouvés", subjectsPage.getTotalElements());
-
-        // Conversion Page<Entity> → Page<DTO>
-        return subjectsPage.map(subjectMapper::toDTO);
+        // Conversion avec statut d'abonnement
+        return subjectsPage.map(subject -> {
+            SubjectDTO dto = subjectMapper.toDTO(subject);
+            dto.setIsSubscribed(subjectRepository.isUserSubscribedToSubject(subject.getId(), user.getId()));
+            return dto;
+        });
     }
 
     /**
-     * Tous les sujets (pour listes déroulantes).
+     * Récupère un sujet par son ID avec statut d'abonnement.
+     *
+     * @param id ID du sujet
+     * @param userEmail email de l'utilisateur connecté
+     * @return SubjectDTO avec statut d'abonnement
      */
-    public List<SubjectDTO> getAllSubjects() {
-        log.debug("📋 Récupération tous sujets");
+    public SubjectDTO getSubjectById(Long id, String userEmail) {
+        log.debug("🔍 Recherche sujet ID: {} pour: {}", id, userEmail);
 
-        List<Subject> subjects = subjectRepository.findAll();
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sujet non trouvé avec ID: " + id));
 
-        return subjectMapper.toDTOList(subjects);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé: " + userEmail));
+
+        SubjectDTO dto = subjectMapper.toDTO(subject);
+        dto.setIsSubscribed(subjectRepository.isUserSubscribedToSubject(id, user.getId()));
+
+        return dto;
     }
 
     /**
-     * Vérifie si un nom de sujet existe.
+     * Abonne un utilisateur à un sujet.
+     *
+     * @param subjectId ID du sujet
+     * @param userEmail email de l'utilisateur connecté
+     * @throws IllegalStateException si déjà abonné
      */
-    public boolean existsByName(String name) {
-        return subjectRepository.existsByName(name);
+    @Transactional
+    public void subscribeToSubject(Long subjectId, String userEmail) {
+        log.info("📌 Abonnement sujet ID: {} par: {}", subjectId, userEmail);
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé: " + userEmail));
+
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new EntityNotFoundException("Sujet non trouvé avec ID: " + subjectId));
+
+        // Vérification si déjà abonné
+        if (subjectRepository.isUserSubscribedToSubject(subjectId, user.getId())) {
+            throw new IllegalStateException("Vous êtes déjà abonné à ce sujet");
+        }
+
+        // Ajout de l'abonnement
+        user.getSubscribedSubjects().add(subject);
+        userRepository.save(user);
+
+        log.info("✅ Abonné à '{}' par {}", subject.getName(), userEmail);
     }
 
     /**
-     * Compte le nombre total de sujets.
+     * Désabonne un utilisateur d'un sujet.
+     *
+     * @param subjectId ID du sujet
+     * @param userEmail email de l'utilisateur connecté
+     * @throws IllegalStateException si pas abonné
      */
-    public long countAllSubjects() {
-        return subjectRepository.count();
+    @Transactional
+    public void unsubscribeFromSubject(Long subjectId, String userEmail) {
+        log.info("📌 Désabonnement sujet ID: {} par: {}", subjectId, userEmail);
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé: " + userEmail));
+
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new EntityNotFoundException("Sujet non trouvé avec ID: " + subjectId));
+
+        // Vérification si abonné
+        if (!subjectRepository.isUserSubscribedToSubject(subjectId, user.getId())) {
+            throw new IllegalStateException("Vous n'êtes pas abonné à ce sujet");
+        }
+
+        // Suppression de l'abonnement
+        user.getSubscribedSubjects().remove(subject);
+        userRepository.save(user);
+
+        log.info("✅ Désabonné de '{}' par {}", subject.getName(), userEmail);
     }
 }
