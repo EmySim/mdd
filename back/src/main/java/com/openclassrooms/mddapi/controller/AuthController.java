@@ -46,7 +46,7 @@ public class AuthController {
         log.info("✅ Inscription réussie: {} (ID: {})", userDTO.getEmail(), "new_user");
 
         return ResponseEntity.status(201)
-                .body(MessageResponse.success("Inscription réussie"));
+                .body(MessageResponse.success("Inscription reussie"));
     }
 
     /**
@@ -71,7 +71,7 @@ public class AuthController {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
-        log.info("✅ Connexion réussie: {} (ID: {})", user.getEmail(), user.getId());
+        log.info("✅ Connexion reussie: {} (ID: {})", user.getEmail(), user.getId());
 
         return ResponseEntity.ok(JwtResponse.builder()
                 .token(jwt)
