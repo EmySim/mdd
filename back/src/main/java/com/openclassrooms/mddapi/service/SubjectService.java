@@ -142,4 +142,85 @@ public class SubjectService {
 
         log.info("✅ Désabonné de '{}' par {}", subject.getName(), userEmail);
     }
+
+    /**
+     * Check if a subject name already exists.
+     *
+     * @param name subject name to check
+     * @return true if exists, false otherwise
+     */
+    public boolean existsByName(String name) {
+        log.debug("🔍 Vérification existence nom sujet: {}", name);
+        return subjectRepository.existsByNameIgnoreCase(name);
+    }
+
+    /**
+     * Create a new subject.
+     *
+     * @param subjectDTO subject data
+     * @return created subject DTO
+     */
+    @Transactional
+    public SubjectDTO createSubject(SubjectDTO subjectDTO) {
+        log.info("📝 Création sujet: {}", subjectDTO.getName());
+
+        // Check if name already exists
+        if (existsByName(subjectDTO.getName())) {
+            throw new IllegalStateException("Un sujet avec ce nom existe déjà");
+        }
+
+        Subject subject = subjectMapper.toEntity(subjectDTO);
+        Subject savedSubject = subjectRepository.save(subject);
+
+        log.info("✅ Sujet créé: '{}' (ID: {})", savedSubject.getName(), savedSubject.getId());
+        return subjectMapper.toDTO(savedSubject);
+    }
+
+    /**
+     * Update an existing subject.
+     *
+     * @param id subject ID
+     * @param subjectDTO updated subject data
+     * @return updated subject DTO
+     */
+    @Transactional
+    public SubjectDTO updateSubject(Long id, SubjectDTO subjectDTO) {
+        log.info("🔄 Mise à jour sujet ID: {}", id);
+
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sujet non trouvé avec ID: " + id));
+
+        // Check if new name already exists (if changed)
+        if (!subject.getName().equalsIgnoreCase(subjectDTO.getName()) && 
+            existsByName(subjectDTO.getName())) {
+            throw new IllegalStateException("Un sujet avec ce nom existe déjà");
+        }
+
+        subject.setName(subjectDTO.getName());
+        Subject updatedSubject = subjectRepository.save(subject);
+
+        log.info("✅ Sujet mis à jour: '{}' (ID: {})", updatedSubject.getName(), id);
+        return subjectMapper.toDTO(updatedSubject);
+    }
+
+    /**
+     * Delete a subject.
+     *
+     * @param id subject ID
+     */
+    @Transactional
+    public void deleteSubject(Long id) {
+        log.info("🗑️ Suppression sujet ID: {}", id);
+
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sujet non trouvé avec ID: " + id));
+
+        // Check if subject has articles
+        if (subjectRepository.countArticlesBySubjectId(id) > 0) {
+            throw new IllegalStateException("Impossible de supprimer un sujet qui contient des articles");
+        }
+
+        subjectRepository.delete(subject);
+        log.info("✅ Sujet supprimé: '{}' (ID: {})", subject.getName(), id);
+    }
 }

@@ -4,7 +4,7 @@ import com.openclassrooms.mddapi.dto.SubjectDTO;
 import com.openclassrooms.mddapi.entity.Subject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
@@ -18,11 +18,10 @@ import java.util.List;
  * @author Équipe MDD
  * @version 1.0
  */
-@Mapper(
-        componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-)
+@Mapper(componentModel = "spring")
 public interface SubjectMapper {
+
+    SubjectMapper INSTANCE = Mappers.getMapper(SubjectMapper.class);
 
     /**
      * Convertit Subject Entity → SubjectDTO.

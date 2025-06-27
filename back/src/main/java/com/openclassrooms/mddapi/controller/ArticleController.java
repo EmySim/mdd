@@ -44,6 +44,7 @@ import javax.validation.constraints.Min;
  */
 @RestController
 @RequestMapping("/api/articles")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequiredArgsConstructor
 @Slf4j
 public class ArticleController {

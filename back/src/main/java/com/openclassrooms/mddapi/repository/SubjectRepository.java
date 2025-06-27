@@ -59,4 +59,21 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
      * @return Page de sujets triés par nom
      */
     Page<Subject> findAllByOrderByNameAsc(Pageable pageable);
+
+    /**
+     * Vérifie l'existence d'un sujet par son nom en ignorant la casse.
+     *
+     * @param name Nom du sujet à vérifier
+     * @return true si le sujet existe
+     */
+    boolean existsByNameIgnoreCase(String name);
+
+    /**
+     * Compte le nombre d'articles pour un sujet spécifique.
+     *
+     * @param subjectId ID du sujet
+     * @return nombre d'articles
+     */
+    @Query("SELECT COUNT(a) FROM Article a WHERE a.subject.id = :subjectId")
+    long countArticlesBySubjectId(@Param("subjectId") Long subjectId);
 }

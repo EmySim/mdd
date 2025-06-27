@@ -18,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 
 /**
  * Configuration de sécurité pour l'API MDD.
@@ -100,5 +103,32 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
+    }
+
+    /**
+     * Configuration du HttpFirewall pour gérer les doubles slashs dans les URLs.
+     * Permet d'éviter les RequestRejectedException avec "//" dans les URLs.
+     */
+    @Bean
+    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowUrlEncodedSlash(true);
+        firewall.setAllowUrlEncodedPercent(true);
+        firewall.setAllowUrlEncodedPeriod(true);
+        log.info("🔓 HttpFirewall configuré - URL slashes autorisés");
+        return firewall;
+    }
+
+    /**
+     * Personnalisation de la sécurité web.
+     * - Configure le firewall personnalisé pour gérer les URL avec doubles slashes
+     * - Ignore la sécurité pour H2 console en développement
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> {
+            web.httpFirewall(allowUrlEncodedSlashHttpFirewall());
+            web.ignoring().antMatchers("/h2-console/**");
+        };
     }
 }

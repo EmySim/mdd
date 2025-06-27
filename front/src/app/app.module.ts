@@ -22,8 +22,10 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { ThemeComponent } from './features/themes/theme.component';
-import { ProfileComponent } from './features/profile/profile.component';
 import { ArticleComponent } from './features/articles/article.component';
+
+// Modules de features
+import { ProfileModule } from './features/profile/profile.module';
 
 // Composants réutilisables
 import { ErrorToastComponent } from './components/error-toast/error-toast.component';
@@ -58,7 +60,6 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
     // Features
     ThemeComponent,
-    ProfileComponent,
     ArticleComponent,
 
     // Composants réutilisables
@@ -83,6 +84,9 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatInputModule,
     MatFormFieldModule,
     LayoutModule,
+
+    // Feature modules
+    ProfileModule,
   ],
   providers: [
     // Services des features
