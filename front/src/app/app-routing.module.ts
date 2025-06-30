@@ -9,7 +9,7 @@ import { LandingComponent } from './pages/landing/landing.component';
 // Features 
 import { ProfileComponent } from './features/profile/profile.component';
 import { ArticleComponent } from './features/articles/article.component';
-import { ThemeComponent } from './features/themes/theme.component';
+import { ThemeComponent } from './features/subjects/subject.component';
 
 // Guards
 import { AuthGuard } from './features/auth/auth.guard';

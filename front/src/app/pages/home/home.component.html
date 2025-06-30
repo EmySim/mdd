@@ -1,28 +1,104 @@
-<!-- home.component.html -->
+<!-- home.component.html - CONNECTÉ AUX DONNÉES API -->
 <div class="page-with-navbar">
   
-  <!-- Header réutilisable -->
+  <!-- Header avec info utilisateur -->
   <div class="page-with-navbar__header">
     <div class="container">
       <h1 class="page-title">Mon fil d'actualité</h1>
       <p class="page-subtitle" *ngIf="userEmail">
-        Bienvenue {{ userEmail }} ! Voici les derniers articles.
+        Bienvenue {{ userEmail }} ! Voici les derniers articles de vos abonnements.
       </p>
+      
+      <!-- Actions header -->
+      <div class="flex-between mt-md">
+        <button class="btn btn--secondary btn--sm" (click)="refreshFeed()" [disabled]="isLoading">
+          🔄 Actualiser
+        </button>
+        <button class="btn btn--primary btn--sm" routerLink="/articles/new">
+          ✏️ Nouvel article
+        </button>
+      </div>
     </div>
   </div>
   
   <!-- Contenu principal -->
   <div class="page-with-navbar__content">
     <div class="container">
-      <!-- Le contenu du fil sera ici -->
-      <div class="grid grid--articles" *ngIf="articles?.length">
-        <!-- Articles grid -->
+      
+      <!-- Loading initial -->
+      <div class="text-center p-xl" *ngIf="isLoading && articles.length === 0">
+        <div class="loading-spinner"></div>
+        <p class="text-secondary mt-md">Chargement de votre fil d'actualité...</p>
+      </div>
+
+      <!-- Articles du fil -->
+      <div class="grid grid--articles" *ngIf="articles.length > 0">
+        <article 
+          class="card card--article card--clickable" 
+          *ngFor="let article of articles; trackBy: trackByArticleId"
+          (click)="viewArticle(article)">
+          
+          <!-- Métadonnées article -->
+          <div class="article-meta mb-sm">
+            <span class="article-author">{{ article.authorUsername }}</span>
+            <span class="article-date">{{ article.createdAt | date:'short' }}</span>
+            <span 
+              class="article-theme"
+              (click)="viewSubject(article.subjectId, article.subjectName); $event.stopPropagation()">
+              {{ article.subjectName }}
+            </span>
+          </div>
+
+          <!-- Titre article -->
+          <h3 class="article-title">{{ article.title }}</h3>
+          
+          <!-- Extrait contenu -->
+          <p class="article-content">
+            {{ article.content.length > 200 ? (article.content | slice:0:200) + '...' : article.content }}
+          </p>
+
+          <!-- Actions article -->
+          <div class="article-actions mt-md">
+            <button class="btn btn--sm btn--secondary" (click)="viewArticle(article); $event.stopPropagation()">
+              Lire la suite
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <!-- Load more button -->
+      <div class="text-center mt-lg" *ngIf="hasMoreArticles && articles.length > 0">
+        <button 
+          class="btn btn--secondary"
+          (click)="loadMoreArticles()"
+          [disabled]="isLoading">
+          {{ isLoading ? 'Chargement...' : 'Charger plus d\'articles' }}
+        </button>
+      </div>
+
+      <!-- État vide -->
+      <div class="text-center p-xl" *ngIf="!isLoading && articles.length === 0">
+        <div class="empty-state">
+          <h3>Aucun article dans votre fil</h3>
+          <p class="text-secondary mb-lg">
+            Abonnez-vous à des sujets qui vous intéressent pour voir des articles ici.
+          </p>
+          <button class="btn btn--primary" routerLink="/themes">
+            Découvrir les sujets
+          </button>
+        </div>
+      </div>
+
+      <!-- Fin du fil -->
+      <div class="text-center p-md" *ngIf="!hasMoreArticles && articles.length > 0">
+        <p class="text-secondary">
+          🎉 Vous avez vu tous les articles de votre fil !
+        </p>
+        <button class="btn btn--secondary btn--sm mt-sm" (click)="refreshFeed()">
+          Actualiser pour voir les nouveautés
+        </button>
       </div>
       
-      <!-- État vide -->
-      <div class="text-center p-xl" *ngIf="!articles?.length">
-        <p class="text-secondary">Aucun article pour le moment</p>
-      </div>
     </div>
   </div>
   
