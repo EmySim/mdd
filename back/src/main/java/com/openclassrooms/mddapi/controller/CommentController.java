@@ -22,7 +22,6 @@ import javax.validation.constraints.Min;
  * - GET /api/articles/{articleId}/comments : Liste des commentaires d'un article
  * - POST /api/articles/{articleId}/comments : Créer un commentaire sur un article
  * - GET /api/comments/{id} : Détail d'un commentaire
- * - DELETE /api/comments/{id} : Supprimer son propre commentaire
  *
  * **RÈGLES MÉTIER MVP RESPECTÉES** :
  * - Auteur défini automatiquement (utilisateur connecté via SecurityUtils)
@@ -99,7 +98,7 @@ public class CommentController {
     @PostMapping("/articles/{articleId}/comments")
     public ResponseEntity<CommentDTO> createComment(
             @PathVariable Long articleId,
-            @Valid @RequestBody CommentDTO commentDTO) {
+            @RequestBody CommentDTO commentDTO) {
 
         String userEmail = SecurityUtils.getCurrentUserEmail();
         log.info("💬 POST /api/articles/{}/comments - Création par: {}", articleId, userEmail);
@@ -113,25 +112,7 @@ public class CommentController {
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 
-    /**
-     * Compte le nombre de commentaires d'un article.
-     * Endpoint utilitaire pour l'affichage dans l'interface.
-     *
-     * @param articleId ID de l'article
-     * @return Objet avec le nombre de commentaires
-     */
-    @GetMapping("/articles/{articleId}/comments/count")
-    public ResponseEntity<MessageResponse> getCommentsCount(@PathVariable Long articleId) {
-        log.debug("📊 GET /api/articles/{}/comments/count", articleId);
 
-        long count = commentService.countCommentsByArticle(articleId);
-
-        log.debug("📊 {} commentaires pour l'article ID: {}", count, articleId);
-
-        return ResponseEntity.ok(MessageResponse.info(
-                String.format("Article contient %d commentaire(s)", count)
-        ));
-    }
 
     // ============================================================================
     // ENDPOINTS LIÉS AUX COMMENTAIRES
@@ -154,76 +135,7 @@ public class CommentController {
         return ResponseEntity.ok(comment);
     }
 
-    /**
-     * Suppression d'un commentaire.
-     * <p>
-     * RÈGLE MÉTIER MVP : Seul l'auteur peut supprimer son propre commentaire.
-     * La vérification est effectuée côté service.
-     *
-     * @param id ID du commentaire à supprimer
-     * @return Message de confirmation
-     */
-    @DeleteMapping("/comments/{id}")
-    public ResponseEntity<MessageResponse> deleteComment(@PathVariable Long id) {
-        String userEmail = SecurityUtils.getCurrentUserEmail();
-        log.info("🗑️ DELETE /api/comments/{} - Suppression par: {}", id, userEmail);
 
-        commentService.deleteComment(id, userEmail);
-
-        log.info("✅ Commentaire supprimé (ID: {}) par {}", id, userEmail);
-        return ResponseEntity.ok(MessageResponse.success("Commentaire supprimé avec succès"));
-    }
-
-    // ============================================================================
-    // ENDPOINTS UTILISATEUR (OPTIONNELS MVP)
-    // ============================================================================
-
-    /**
-     * Liste des commentaires de l'utilisateur connecté.
-     * Utile pour profil utilisateur ou historique.
-     *
-     * @param page numéro de page (0-based, défaut: 0)
-     * @param size taille de page (défaut: 20, max: 100)
-     * @return Page de CommentDTO de l'utilisateur
-     */
-    @GetMapping("/user/comments")
-    public ResponseEntity<Page<CommentDTO>> getCurrentUserComments(
-            @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-
-        String userEmail = SecurityUtils.getCurrentUserEmail();
-        log.debug("👤 GET /api/user/comments - Utilisateur: {}, Page: {}, Size: {}",
-                userEmail, page, size);
-
-        Page<CommentDTO> comments = commentService.getCommentsByUser(userEmail, page, size);
-
-        log.info("👤 {} commentaires retournés pour l'utilisateur: {}",
-                comments.getNumberOfElements(), userEmail);
-
-        return ResponseEntity.ok(comments);
-    }
-
-    /**
-     * Vérifie si l'utilisateur connecté a déjà commenté un article.
-     * Utile pour l'interface utilisateur (afficher/masquer le formulaire).
-     *
-     * @param articleId ID de l'article
-     * @return Statut de commentaire de l'utilisateur
-     */
-    @GetMapping("/articles/{articleId}/comments/my-status")
-    public ResponseEntity<MessageResponse> getMyCommentStatus(@PathVariable Long articleId) {
-        String userEmail = SecurityUtils.getCurrentUserEmail();
-        log.debug("🔍 GET /api/articles/{}/comments/my-status - Utilisateur: {}",
-                articleId, userEmail);
-
-        boolean hasCommented = commentService.hasUserCommentedArticle(articleId, userEmail);
-
-        String message = hasCommented ?
-                "Vous avez déjà commenté cet article" :
-                "Vous n'avez pas encore commenté cet article";
-
-        return ResponseEntity.ok(MessageResponse.info(message));
-    }
 
     // ============================================================================
     // HEALTH CHECK
