@@ -1,4 +1,4 @@
-// src/app/app.component.ts - VERSION FINALE
+// src/app/app.component.ts 
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';

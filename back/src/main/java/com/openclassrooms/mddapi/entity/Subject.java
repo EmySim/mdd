@@ -10,17 +10,28 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Entité Subject - Correspondance exacte avec la table subjects.
+ * Entité Subject (Sujet/Thème) - MVP STRICT.
  *
- * **DB-FIRST** : Structure basée sur la table MySQL existante.
+ * **FONCTIONNALITÉS MVP UNIQUEMENT :**
+ * - Affichage des sujets pour utilisateurs connectés
+ * - Abonnement/désabonnement d'un utilisateur à un sujet
+ * - Nom unique obligatoire
+ * - Peut ne pas avoir d'articles
+ * - Peut ne pas avoir d'abonnés
  *
  * Table: subjects
  * - id: bigint AUTO_INCREMENT PRIMARY KEY
  * - name: varchar(100) NOT NULL UNIQUE
- * - description: text NULL
  * - created_at: timestamp DEFAULT CURRENT_TIMESTAMP
+ * - updated_at: timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+ *
+ * INDEX DB :
+ * - PRIMARY sur id
+ * - UNIQUE sur name
  *
  * @author Équipe MDD
  * @version 1.0
@@ -34,7 +45,7 @@ import java.time.LocalDateTime;
 public class Subject {
 
     /**
-     * ID auto-généré - Correspondance avec colonne id.
+     * ID auto-généré.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +53,8 @@ public class Subject {
     private Long id;
 
     /**
-     * Nom du sujet - Correspondance avec colonne name.
-     * Contrainte d'unicité gérée par la DB.
+     * Nom du sujet - IDENTIFIANT MÉTIER UNIQUE.
+     * Exemples : "Java", "Angular", "DevOps"
      */
     @NotBlank(message = "Subject name is mandatory")
     @Size(max = 100, message = "Subject name must not exceed 100 characters")
@@ -51,17 +62,24 @@ public class Subject {
     private String name;
 
     /**
-     * Description du sujet - Correspondance avec colonne description.
-     * Optionnelle (nullable = true).
-     */
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
-    /**
-     * Date de création - Correspondance avec colonne created_at.
-     * Auto-générée par Hibernate.
+     * Date de création.
      */
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    /**
+     * Utilisateurs abonnés à ce sujet.
+     * RÈGLE MVP : Un utilisateur connecté peut s'abonner/se désabonner.
+     */
+    @ManyToMany(mappedBy = "subscribedSubjects", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<User> subscribers = new HashSet<>();
+
+    /**
+     * Constructeur pour création de sujet.
+     */
+    public Subject(String name) {
+        this.name = name;
+    }
 }
