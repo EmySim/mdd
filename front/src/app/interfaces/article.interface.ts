@@ -66,7 +66,7 @@ export interface CreateArticleRequest {
   content: string;
   
   /** ID du sujet associé */
-  subjectId: string;
+  subjectId: number;
 }
 
 /**
@@ -80,7 +80,7 @@ export interface UpdateArticleRequest {
   content?: string;
   
   /** Nouveau sujet (optionnel) */
-  subjectId?: string;
+  subjectId?: number;
 }
 
 /**
@@ -91,7 +91,7 @@ export interface FeedFilters {
   sortBy?: 'asc' | 'desc';
   
   /** Filtrer par sujet spécifique */
-  subjectId?: string;
+  subjectId?: number;
   
   /** Pagination - page courante */
   page?: number;

@@ -12,6 +12,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+
 
 /**
  * Entité représentant un utilisateur du réseau social MDD.
@@ -54,6 +58,18 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    /**
+     * Sujets auxquels l'utilisateur est abonné.
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "subscriptions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+    )
+    @Builder.Default
+    private Set<Subject> subscribedSubjects = new HashSet<>();
 
     public User(String username, String email, String password) {
         this.username = username;
