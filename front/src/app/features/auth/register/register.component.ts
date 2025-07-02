@@ -212,25 +212,38 @@ export class RegisterComponent implements OnInit {
       };
       
       // Appel API d'inscription
-      this.authService.register(registerData).subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          console.log('✅ Inscription réussie:', response.message);
-          // ✅ Navigation automatique vers login après inscription réussie
-          this.router.navigate(['/auth/login']);
-        },
-        error: (httpError: HttpErrorResponse) => {
-          this.isLoading = false;
-          // ✅ Délégation complète de la gestion d'erreur au ErrorService
-          // Gère automatiquement les erreurs 400 (validation), 409 (conflit), etc.
-          this.errorService.handleHttpError(httpError);
-        }
-      });
-    } else {
-      // Formulaire invalide - afficher toutes les erreurs
-      this.markFormGroupTouched();
-    }
+    this.authService.register(registerData).subscribe({
+      next: (response) => {
+        console.log('✅ Inscription réussie:', response.message);
+        
+        // ✅ Connexion automatique après inscription réussie
+        const loginData = {
+          email: registerData.email,
+          password: registerData.password
+        };
+        
+        this.authService.login(loginData).subscribe({
+          next: (loginResponse) => {
+            this.isLoading = false;
+            console.log('✅ Connexion automatique réussie');
+            this.router.navigate(['/home']);
+          },
+          error: (loginError) => {
+            this.isLoading = false;
+            console.log('❌ Erreur connexion auto, redirection vers login');
+            this.router.navigate(['/auth/login']);
+          }
+        });
+      },
+      error: (httpError: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.errorService.handleHttpError(httpError);
+      }
+    });
+  } else {
+    this.markFormGroupTouched();
   }
+}
 
   // ===========================
   // MÉTHODES DE NAVIGATION
