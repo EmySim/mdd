@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * DTO pour Subject - MVP STRICT.
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
  * **FONCTIONNALITÉS MVP UNIQUEMENT :**
  * - Affichage des sujets
  * - Statut d'abonnement (pour bouton S'abonner/Se désabonner)
+ * - Liste des abonnés
  *
  * @author Équipe MDD
  * @version 1.0
@@ -50,6 +52,18 @@ public class SubjectDTO {
      * Utilisé pour afficher le bon bouton (S'abonner/Se désabonner).
      */
     private Boolean isSubscribed;
+
+    /**
+     * Liste des emails des utilisateurs abonnés à ce sujet.
+     * Utilisé pour les statistiques et la gestion des abonnements.
+     */
+    private Set<String> subscribers;
+
+    /**
+     * Nombre total d'abonnés à ce sujet.
+     * Calculé automatiquement à partir de la liste des abonnements.
+     */
+    private Integer subscriberCount;
 
     /**
      * Constructeur pour création.

@@ -69,8 +69,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <optional>true</optional>
+            <version>1.18.28</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Database -->
@@ -121,7 +121,7 @@
                 </configuration>
             </plugin>
 
-            <!-- FIX LOMBOK/JACKSON : SEULE PARTIE IMPORTANTE -->
+            <!-- LOMBOK/MAPSTRUCT CONFIGURATION -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -149,7 +149,7 @@
                     <compilerArgs>
                         <compilerArg>-Amapstruct.defaultComponentModel=spring</compilerArg>
                         <compilerArg>-Amapstruct.unmappedTargetPolicy=IGNORE</compilerArg>
-						<compilerArg>-Amapstruct.verbose=true</compilerArg>
+                        <compilerArg>-Amapstruct.verbose=true</compilerArg>
                     </compilerArgs>
                 </configuration>
             </plugin>
