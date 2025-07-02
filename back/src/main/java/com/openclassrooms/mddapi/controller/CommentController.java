@@ -16,29 +16,11 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 /**
- * Contrôleur REST Comment - API selon spécifications MVP MDD strictes.
- *
- * **ENDPOINTS MVP IMPLÉMENTÉS** (selon règles métier) :
- * - GET /api/articles/{articleId}/comments : Liste des commentaires d'un article
- * - POST /api/articles/{articleId}/comments : Créer un commentaire sur un article
- * - GET /api/comments/{id} : Détail d'un commentaire
- *
- * **RÈGLES MÉTIER MVP RESPECTÉES** :
- * - Auteur défini automatiquement (utilisateur connecté via SecurityUtils)
- * - Date définie automatiquement
- * - Contenu obligatoire
- * - Appartient obligatoirement à UN article
- * - Pas de sous-commentaires (pas de récursivité)
- * - Visible dans la consultation détaillée de l'article
- * - Affichage par ordre chronologique (plus ancien en premier)
- * - Seul l'auteur peut supprimer son commentaire
- *
- * **GESTION D'ERREURS** : Déléguée au GlobalExceptionHandler
- * - 400 : Validation échouée (Bean Validation)
- * - 403 : Tentative de suppression du commentaire d'autrui
- * - 404 : Ressource non trouvée (EntityNotFoundException)
- * - 409 : Utilisateur non authentifié (IllegalStateException)
- *
+ * Contrôleur REST pour la gestion des commentaires.
+ * 
+ * Gère les commentaires associés aux articles avec authentification JWT.
+ * Tri chronologique par défaut (plus ancien en premier).
+ * 
  * @author Équipe MDD
  * @version 1.0
  */
@@ -51,20 +33,8 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    // ============================================================================
-    // ENDPOINTS LIÉS AUX ARTICLES
-    // ============================================================================
-
     /**
      * Liste paginée des commentaires d'un article.
-     * <p>
-     * RÈGLE MÉTIER MVP : Affichage par ordre chronologique
-     * (plus ancien en premier pour faciliter la lecture des échanges).
-     *
-     * @param articleId ID de l'article
-     * @param page      numéro de page (0-based, défaut: 0)
-     * @param size      taille de page (défaut: 20, max: 100)
-     * @return Page de CommentDTO de l'article
      */
     @GetMapping("/articles/{articleId}/comments")
     public ResponseEntity<Page<CommentDTO>> getCommentsByArticle(
@@ -76,33 +46,22 @@ public class CommentController {
 
         Page<CommentDTO> comments = commentService.getCommentsByArticle(articleId, page, size);
 
-        log.info("✅ {} commentaires retournés pour l'article ID: {}",
+        log.info("✅ {} commentaires retournés pour l'article ID: {}", 
                 comments.getNumberOfElements(), articleId);
 
         return ResponseEntity.ok(comments);
     }
 
     /**
-     * Création d'un nouveau commentaire sur un article.
-     * <p>
-     * RÈGLES MÉTIER MVP :
-     * - Auteur défini automatiquement (utilisateur connecté via SecurityUtils)
-     * - Date définie automatiquement
-     * - Contenu obligatoire (validation Bean Validation)
-     * - Appartient obligatoirement à l'article spécifié
-     *
-     * @param articleId  ID de l'article à commenter
-     * @param commentDTO données du commentaire à créer
-     * @return CommentDTO créé avec statut 201 Created
+     * Création d'un commentaire sur un article.
      */
     @PostMapping("/articles/{articleId}/comments")
     public ResponseEntity<CommentDTO> createComment(
             @PathVariable Long articleId,
-            @RequestBody CommentDTO commentDTO) {
+            @Valid @RequestBody CommentDTO commentDTO) {
 
         String userEmail = SecurityUtils.getCurrentUserEmail();
         log.info("💬 POST /api/articles/{}/comments - Création par: {}", articleId, userEmail);
-        log.debug("💬 Contenu: '{}'", commentDTO.getContent());
 
         CommentDTO createdComment = commentService.createComment(articleId, commentDTO, userEmail);
 
@@ -112,18 +71,8 @@ public class CommentController {
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 
-
-
-    // ============================================================================
-    // ENDPOINTS LIÉS AUX COMMENTAIRES
-    // ============================================================================
-
     /**
-     * Détail complet d'un commentaire par son ID.
-     * Utile pour modération ou affichage détaillé.
-     *
-     * @param id ID du commentaire
-     * @return CommentDTO complet
+     * Détail d'un commentaire par son ID.
      */
     @GetMapping("/comments/{id}")
     public ResponseEntity<CommentDTO> getCommentById(@PathVariable Long id) {
@@ -135,20 +84,11 @@ public class CommentController {
         return ResponseEntity.ok(comment);
     }
 
-
-
-    // ============================================================================
-    // HEALTH CHECK
-    // ============================================================================
-
     /**
-     * Health check endpoint pour les commentaires.
-     *
-     * @return Status message
+     * Health check endpoint.
      */
     @GetMapping("/comments/health")
     public ResponseEntity<MessageResponse> getHealth() {
-        log.debug("🔍 GET /api/comments/health - Health check");
         return ResponseEntity.ok(MessageResponse.success("Comments service is operational"));
     }
 }
