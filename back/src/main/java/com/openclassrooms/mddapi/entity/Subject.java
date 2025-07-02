@@ -2,7 +2,8 @@ package com.openclassrooms.mddapi.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -38,7 +39,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "subjects")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
