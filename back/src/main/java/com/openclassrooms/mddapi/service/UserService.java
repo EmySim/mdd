@@ -43,7 +43,7 @@ public class UserService {
 
         log.info("✅ Utilisateur créé: {} (ID: {})", savedUser.getEmail(), savedUser.getId());
 
-        return userMapper.toUserDTO(savedUser);
+        return userMapper.toDto(savedUser);
     }
 
     /**
@@ -54,7 +54,7 @@ public class UserService {
         log.debug("📖 Consultation profil avec abonnements: {}", email);
 
         User user = findUserByEmail(email);
-        UserDTO userDTO = userMapper.toUserDTO(user);
+        UserDTO userDTO = userMapper.toDto(user);
 
         // TODO: Ajouter les abonnements quand les Sujets seront implémentés
 
@@ -87,7 +87,7 @@ public class UserService {
 
         log.info("✅ Profil mis à jour: {}", updatedUser.getEmail());
 
-        return userMapper.toUserDTO(updatedUser);
+        return userMapper.toDto(updatedUser);
     }
 
     /**

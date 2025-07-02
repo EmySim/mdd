@@ -3,13 +3,16 @@ package com.openclassrooms.mddapi.mapper;
 import com.openclassrooms.mddapi.dto.UserDTO;
 import com.openclassrooms.mddapi.dto.request.RegisterRequest;
 import com.openclassrooms.mddapi.entity.User;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper MapStruct pour les conversions User/UserDTO.
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface UserMapper {
+@Component
+@Mapper(componentModel = "spring")
+public interface UserMapper extends EntityMapper<UserDTO, User> {
 
     /**
      * Convertit RegisterRequest vers User.
@@ -17,11 +20,13 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "password", ignore = true)
     User toUser(RegisterRequest registerRequest);
 
     /**
-     * Convertit User vers UserDTO.
+     * Override pour ignorer le password dans la conversion vers DTO.
      */
-    UserDTO toUserDTO(User user);
-
+    @Override
+    @Mapping(target = "password", ignore = true)
+    UserDTO toDto(User user);
 }

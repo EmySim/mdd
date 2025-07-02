@@ -33,7 +33,8 @@ export interface ArticlesPage {
   number: number;
   last: boolean;        
   first: boolean;       
-  empty: boolean;    
+  empty: boolean;   
+  numberOfElements: number; 
 }
 
 @Injectable({
