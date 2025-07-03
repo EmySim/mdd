@@ -1,11 +1,19 @@
+<!-- src/app/features/articles/article.component.html - MIS À JOUR POUR THEME -->
 <div class="grid grid--articles">
-  <div class="card card--article" *ngFor="let article of articles" (click)="viewArticle(article)">
+  <div class="card card--article" *ngFor="let article of articles; trackBy: trackByArticleId" (click)="viewArticle(article)">
     <h3 class="article-title">{{ article.title }}</h3>
     <div class="article-meta">
-      <span class="article-author">{{ article.author }}</span>
-      <span class="article-date">{{ article.date | date:'short' }}</span>
-      <span class="article-theme">{{ article.theme }}</span>
+      <span class="article-author">{{ article.authorUsername }}</span>
+      <span class="article-date">{{ article.createdAt | date:'short' }}</span>
+      <span 
+        class="article-theme"
+        (click)="viewTheme(article.themeId, article.themeName); $event.stopPropagation()"
+      >
+        {{ article.themeName }}
+      </span>
     </div>
-    <p class="article-content">{{ article.excerpt }}</p>
+    <p class="article-content">
+      {{ article.content.length > 200 ? (article.content | slice:0:200) + '...' : article.content }}
+    </p>
   </div>
 </div>

@@ -1,4 +1,4 @@
-// src/app/pages/home/home.component.ts - CORRECTION STOCKAGE TOKEN
+// src/app/pages/home/home.component.ts 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../features/auth/auth.service';
@@ -38,13 +38,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🔧 CORRECTION: Utilise AuthService au lieu du localStorage direct
+   * Charge les informations utilisateur
    */
   private loadUserInfo(): void {
-    // ✅ AVANT (incorrect):
-    // const token = localStorage.getItem('token');
-    
-    // ✅ APRÈS (correct):
     this.authService.currentUser$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(user => {
@@ -53,7 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         console.log(`👤 Utilisateur connecté: ${this.userEmail}`);
       } else {
         // Fallback si pas d'Observable user mais token présent
-        const token = this.authService.getToken(); // Utilise la méthode du service
+        const token = this.authService.getToken();
         if (token) {
           try {
             const payload = JSON.parse(atob(token.split('.')[1]));
@@ -67,7 +63,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Le reste des méthodes reste identique...
+  /**
+   * Charge le fil d'actualité personnalisé
+   */
   loadPersonalizedFeed(page = 0): void {
     console.log(`📱 Chargement du fil page ${page}`);
     this.isLoading = true;
@@ -97,26 +95,38 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Charge plus d'articles (pagination)
+   */
   loadMoreArticles(): void {
     if (!this.isLoading && this.hasMoreArticles) {
       this.loadPersonalizedFeed(this.currentPage + 1);
     }
   }
 
+  /**
+   * Rafraîchit le fil d'actualité
+   */
   refreshFeed(): void {
     console.log('🔄 Rafraîchissement du fil');
     this.currentPage = 0;
     this.loadPersonalizedFeed(0);
   }
 
+  /**
+   * Affiche un article
+   */
   viewArticle(article: Article): void {
     console.log(`👀 Ouverture article: ${article.title}`);
     // TODO: Navigation vers article détaillé
   }
 
-  viewSubject(subjectId: number, subjectName: string): void {
-    console.log(`📂 Ouverture sujet: ${subjectName}`);
-    // TODO: Navigation vers articles du sujet
+  /**
+   * Affiche les articles d'un thème
+   */
+  viewTheme(themeId: number, themeName: string): void {  // ✅ Renommé de viewSubject
+    console.log(`🎨 Ouverture thème: ${themeName}`);
+    // TODO: Navigation vers articles du thème
   }
 
   /**

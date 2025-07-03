@@ -1,14 +1,24 @@
-// src/app/features/profile/profile.component.ts - MIS À JOUR POUR THEME
+// ============================================================================
+// PROFILE COMPONENT - IMPORTS CORRIGÉS
+// src/app/features/profile/profile.component.ts
+// ============================================================================
+
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
-import { ProfileService, UserProfile, UpdateProfileRequest } from './profile.service';
-import { ThemeService } from '../themes/theme.service';
-import { Theme } from '../../interfaces/theme.interface';
-import { ErrorService } from '../../services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../auth/auth.service';
+import { ProfileService } from './profile.service';
+import { ThemeService } from '../themes/theme.service';
+import { ErrorService } from '../../services/error.service';
+// ✅ Import depuis les interfaces existantes
+import { User } from '../auth/interfaces/auth.interface';
+import { UpdateUserRequest } from '../../interfaces/user.interface';
+import { Theme } from '../../interfaces/theme.interface';
 
+/**
+ * Composant de profil utilisateur - Simple pour MVP
+ */
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -17,25 +27,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ProfileComponent implements OnInit, OnDestroy {
   
   // ===========================
-  // PROPRIÉTÉS DU COMPOSANT
+  // PROPRIÉTÉS
   // ===========================
   
-  /** Formulaire réactif du profil */
   profileForm: FormGroup;
+  currentUser: User | null = null;
+  subscribedThemes: Theme[] = [];
   
-  /** États de chargement */
-  isLoading: boolean = false;
-  isSaving: boolean = false;
-  isLoadingSubscriptions: boolean = false;
+  // États de chargement
+  isLoading = false;
+  isSaving = false;
+  isLoadingSubscriptions = false;
   
-  /** Données utilisateur */
-  currentUser: UserProfile | null = null;
-  subscribedThemes: Theme[] = [];  // ✅ Renommé de subscribedSubjects
-  
-  /** ID utilisateur récupéré du token */
-  private userId: number | null = null;
-  
-  /** Subject pour gérer les désabonnements */
   private destroy$ = new Subject<void>();
 
   // ===========================
@@ -46,19 +49,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private profileService: ProfileService,
-    private themeService: ThemeService,  // ✅ Renommé de subjectService
+    private themeService: ThemeService,
     public errorService: ErrorService
   ) {
     this.profileForm = this.createProfileForm();
   }
 
   // ===========================
-  // CYCLE DE VIE ANGULAR
+  // CYCLE DE VIE
   // ===========================
   
   ngOnInit(): void {
-    this.loadUserProfile();
-    console.log('👤 Page profil chargée');
+    this.loadCurrentUser();
   }
 
   ngOnDestroy(): void {
@@ -67,138 +69,108 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   // ===========================
-  // CONFIGURATION DU FORMULAIRE
-  // ===========================
-  
-  /**
-   * Création du formulaire réactif avec validations
-   * (même validations que register mais password optionnel)
-   */
-  private createProfileForm(): FormGroup {
-    return this.formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', []] // Optionnel - validation ajoutée dynamiquement si rempli
-    });
-  }
-
-  // ===========================
   // CHARGEMENT DES DONNÉES
   // ===========================
   
-  /**
-   * Charge le profil utilisateur et ses abonnements
-   */
-  private loadUserProfile(): void {
+  private loadCurrentUser(): void {
+    this.authService.currentUser$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(user => {
+      this.currentUser = user;
+      if (user) {
+        this.loadUserProfile(user.id);
+      }
+    });
+  }
+
+  private loadUserProfile(userId: number): void {
     this.isLoading = true;
     this.errorService.clearAll();
     
-    // Récupérer l'ID utilisateur du token
-    this.userId = this.extractUserIdFromToken();
-    
-    if (!this.userId) {
-      this.errorService.showError('Impossible de récupérer les informations utilisateur');
-      this.isLoading = false;
-      return;
-    }
-
-    // Charger le profil
-    this.profileService.getUserProfile(this.userId).pipe(
+    this.profileService.getUserProfile(userId).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (profile: UserProfile) => {
-        this.currentUser = profile;
-        this.populateForm(profile);
+      next: (user: User) => {
+        this.currentUser = user;
+        this.populateForm(user);
         this.loadUserSubscriptions();
         this.isLoading = false;
-        console.log('✅ Profil chargé:', profile.username);
       },
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;
         console.error('❌ Erreur chargement profil:', error);
-        // Le service gère déjà l'affichage d'erreur via ErrorService
       }
     });
   }
 
-  /**
-   * Charge les abonnements de l'utilisateur
-   */
   private loadUserSubscriptions(): void {
     this.isLoadingSubscriptions = true;
     
-    // Récupérer tous les thèmes et filtrer ceux auxquels l'utilisateur est abonné
-    this.themeService.getAllThemes(0, 1000).pipe(  // ✅ Renommé
+    this.themeService.getAllThemes(0, 1000).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
       next: (response) => {
-        this.subscribedThemes = response.content.filter(theme => theme.isSubscribed);  // ✅ Renommé
+        this.subscribedThemes = response.content.filter(theme => theme.isSubscribed);
         this.isLoadingSubscriptions = false;
-        console.log('📌 Abonnements chargés:', this.subscribedThemes.length);
       },
       error: (error) => {
         this.isLoadingSubscriptions = false;
         console.error('❌ Erreur chargement abonnements:', error);
-        // Le service gère déjà l'affichage d'erreur via ErrorService
       }
     });
   }
 
-  /**
-   * Remplit le formulaire avec les données du profil
-   */
-  private populateForm(profile: UserProfile): void {
+  // ===========================
+  // FORMULAIRE
+  // ===========================
+  
+  private createProfileForm(): FormGroup {
+    return this.formBuilder.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: [''] // Optionnel
+    });
+  }
+
+  private populateForm(user: User): void {
     this.profileForm.patchValue({
-      username: profile.username,
-      email: profile.email,
-      password: '' // Toujours vide pour sécurité
+      username: user.username,
+      email: user.email,
+      password: ''
     });
   }
 
   // ===========================
-  // SAUVEGARDE DU PROFIL
+  // SAUVEGARDE
   // ===========================
   
-  /**
-   * Sauvegarde les modifications du profil
-   */
   onSaveProfile(): void {
-    if (this.profileForm.valid && !this.isSaving && this.userId) {
+    if (this.profileForm.valid && !this.isSaving && this.currentUser) {
       this.isSaving = true;
       this.errorService.clearAll();
 
-      // Préparer les données à sauvegarder
-      const updateData: UpdateProfileRequest = {
+      const updateData: UpdateUserRequest = {
         username: this.profileForm.value.username.trim(),
         email: this.profileForm.value.email.trim()
       };
 
-      // Ajouter le mot de passe seulement s'il est rempli
       const password = this.profileForm.value.password;
       if (password && password.trim()) {
         updateData.password = password.trim();
       }
 
-      // Appel API de mise à jour
-      this.profileService.updateUserProfile(this.userId, updateData).pipe(
+      this.profileService.updateUserProfile(this.currentUser.id, updateData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
-        next: (updatedProfile: UserProfile) => {
+        next: (updatedUser: User) => {
           this.isSaving = false;
-          this.currentUser = updatedProfile;
-          this.populateForm(updatedProfile);
-          console.log('✅ Profil sauvegardé:', updatedProfile.username);
-          
-          // Message de succès temporaire via errorService
-          // TODO: Remplacer par un vrai service de notification/toast
-          setTimeout(() => {
-            console.log('ℹ️ Message de succès affiché');
-          }, 100);
+          this.currentUser = updatedUser;
+          this.populateForm(updatedUser);
+          console.log('✅ Profil sauvegardé');
         },
         error: (error: HttpErrorResponse) => {
           this.isSaving = false;
           console.error('❌ Erreur sauvegarde profil:', error);
-          // Le service gère déjà l'affichage d'erreur via ErrorService
         }
       });
     } else {
@@ -207,45 +179,32 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   // ===========================
-  // GESTION DES ABONNEMENTS
+  // ABONNEMENTS
   // ===========================
   
-  /**
-   * Se désabonner d'un thème
-   */
-  unsubscribeFromTheme(theme: Theme): void {  // ✅ Renommé de unsubscribeFromSubject
-    console.log(`🗑️ Désabonnement de: ${theme.name}`);
-    
-    this.themeService.unsubscribeFromTheme(theme.id).pipe(  // ✅ Renommé
+  unsubscribeFromTheme(theme: Theme): void {
+    this.themeService.unsubscribeFromTheme(theme.id).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
       next: () => {
-        // Retirer le thème de la liste locale
-        this.subscribedThemes = this.subscribedThemes.filter(t => t.id !== theme.id);  // ✅ Renommé
+        this.subscribedThemes = this.subscribedThemes.filter(t => t.id !== theme.id);
         console.log(`✅ Désabonné de: ${theme.name}`);
       },
       error: (error) => {
         console.error('❌ Erreur désabonnement:', error);
-        // Le service gère déjà l'affichage d'erreur via ErrorService
       }
     });
   }
 
   // ===========================
-  // VALIDATION ET UTILITAIRES
+  // VALIDATION
   // ===========================
   
-  /**
-   * Vérifie si un champ a une erreur et a été touché
-   */
   hasFieldError(fieldName: string): boolean {
     const field = this.profileForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
   }
 
-  /**
-   * Récupère le message d'erreur pour un champ
-   */
   getFieldError(fieldName: string): string {
     const field = this.profileForm.get(fieldName);
     if (field && field.errors && field.touched) {
@@ -263,48 +222,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
       
       if (field.errors['minlength']) {
-        const requiredLength = field.errors['minlength'].requiredLength;
-        return `Le nom d'utilisateur doit contenir au moins ${requiredLength} caractères`;
+        return `Le nom d'utilisateur doit contenir au moins 3 caractères`;
       }
     }
     return '';
   }
 
-  /**
-   * Marque tous les champs comme touchés
-   */
   private markFormGroupTouched(): void {
     Object.keys(this.profileForm.controls).forEach(key => {
       this.profileForm.get(key)?.markAsTouched();
     });
   }
 
-  /**
-   * TrackBy pour optimiser le rendu de la liste des abonnements
-   */
-  trackByThemeId(index: number, theme: Theme): number {  // ✅ Renommé
+  trackByThemeId(index: number, theme: Theme): number {
     return theme.id;
-  }
-
-  // ===========================
-  // MÉTHODES PRIVÉES
-  // ===========================
-  
-  /**
-   * Extrait l'ID utilisateur du token JWT
-   */
-  private extractUserIdFromToken(): number | null {
-    const token = this.authService.getToken();
-    if (!token) {
-      return null;
-    }
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.id || payload.sub || null;
-    } catch (error) {
-      console.warn('Impossible de décoder le token JWT', error);
-      return null;
-    }
   }
 }

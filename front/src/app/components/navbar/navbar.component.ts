@@ -1,4 +1,4 @@
-// src/app/components/navbar/navbar.component.ts - COMPLET
+// src/app/components/navbar/navbar.component.ts - MIS À JOUR POUR THEME
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
@@ -24,8 +24,9 @@ export class NavbarComponent {
     private router: Router,
     private authService: AuthService
   ) {}
-// ===========================
-  // NAVIGATION LOGO ✅ NOUVEAU
+
+  // ===========================
+  // NAVIGATION LOGO ✅
   // ===========================
 
   /**
@@ -46,7 +47,6 @@ export class NavbarComponent {
     this.closeMobileMenu();
   }
 
-
   // ===========================
   // MÉTHODES DE NAVIGATION ✅
   // ===========================
@@ -63,7 +63,7 @@ export class NavbarComponent {
   /**
    * Navigation vers Thèmes
    */
-  goToThemes(): void {
+  goToThemes(): void {  // ✅ Renommé de goToThemes (était déjà correct)
     console.log('🔄 Navigation vers /themes');
     this.router.navigate(['/themes']);
     this.closeMobileMenu();

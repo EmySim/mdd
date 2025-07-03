@@ -1,44 +1,61 @@
-// src/app/interfaces/topic.interface.ts
+// src/app/interfaces/theme.interface.ts
 
 /**
- * Interface représentant un sujet/thème du réseau social MDD
- * Correspond à l'entité Subject côté backend
+ * Interface représentant un thème du réseau social MDD
+ * Correspond à l'entité Subject côté backend (mais nommée Theme côté frontend)
  */
-export interface Topic {
-  /** Identifiant unique du sujet */
-  id: string;
+export interface Theme {
+  /** Identifiant unique du thème */
+  id: number;
   
-  /** Nom du sujet (ex: "Angular", "Spring Boot") */
+  /** Nom du thème (ex: "Angular", "Spring Boot") */
   name: string;
   
-  /** Description détaillée du sujet */
-  description: string;
+  /** Date de création du thème */
+  createdAt: string;
   
-  /** Date de création du sujet */
-  createdAt?: Date;
+  /** Indique si l'utilisateur actuel est abonné à ce thème */
+  isSubscribed: boolean;
   
-  /** Nombre d'abonnés à ce sujet (optionnel pour l'affichage) */
+  /** Description détaillée du thème (optionnel pour évolutions futures) */
+  description?: string;
+  
+  /** Nombre d'abonnés à ce thème (optionnel pour l'affichage) */
   subscribersCount?: number;
   
-  /** Nombre d'articles publiés sur ce sujet (optionnel) */
+  /** Nombre d'articles publiés sur ce thème (optionnel) */
   articlesCount?: number;
-  
-  /** Indique si l'utilisateur actuel est abonné à ce sujet */
-  isSubscribed?: boolean;
 }
 
 /**
- * DTO pour créer un nouveau sujet (usage administratif futur)
+ * Réponse paginée pour les thèmes
+ * Correspond à la structure de pagination standard du backend
  */
-export interface CreateTopicRequest {
+export interface ThemesPage {
+  content: Theme[];
+  pageable: any;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  last: boolean;
+  first: boolean;
+  empty: boolean;
+  numberOfElements: number;
+}
+
+/**
+ * DTO pour créer un nouveau thème (usage administratif futur)
+ */
+export interface CreateThemeRequest {
   name: string;
-  description: string;
+  description?: string;
 }
 
 /**
- * DTO pour mettre à jour un sujet
+ * DTO pour mettre à jour un thème
  */
-export interface UpdateTopicRequest {
+export interface UpdateThemeRequest {
   name?: string;
   description?: string;
 }
