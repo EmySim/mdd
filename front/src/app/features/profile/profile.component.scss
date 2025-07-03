@@ -1,2 +1,184 @@
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
+// ===========================
+// SECTION FORMULAIRE PROFIL
+// ===========================
+
+.profile-form-section {
+  max-width: 500px;
+  margin: 0 auto $space-xxl;
+  
+  @include mobile {
+    max-width: 100%;
+    margin-bottom: $space-xl;
+  }
+}
+
+.profile-form {
+  background-color: var(--mdd-white);
+  border-radius: 8px;
+  padding: $space-xl;
+  box-shadow: 0 2px 8px rgba($mdd-black, 0.1);
+  
+  @include mobile {
+    padding: $space-lg;
+    box-shadow: none;
+  }
+}
+
+// ===========================
+// SÉPARATEUR ENTRE SECTIONS
+// ===========================
+
+.section-separator {
+  border: none;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: $space-xxl 0;
+  
+  @include mobile {
+    margin: $space-xl 0;
+  }
+}
+
+// ===========================
+// SECTION ABONNEMENTS
+// ===========================
+
+.subscriptions-section {
+  .section-title {
+    font-family: $mdd-font-family;
+    font-size: $font-page-title;
+    font-weight: $weight-bold;
+    color: var(--mdd-black);
+    text-align: center;
+    margin-bottom: $space-xl;
+    
+    @include mobile {
+      margin-bottom: $space-lg;
+    }
+  }
+}
+
+// Réutilisation des styles de subjects (grid des thèmes)
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $space-lg;
+  
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $space-md;
+  }
+}
+
+.subject-card {
+  background-color: $mdd-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba($mdd-black, 0.1);
+  padding: $space-lg;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  @include mobile {
+    padding: $space-md;
+  }
+}
+
+.subject-title {
+  font-size: $font-article-title;
+  font-weight: $weight-bold;
+  color: $mdd-black;
+  margin-top: 0;
+  margin-bottom: $space-sm;
+}
+
+.subject-description {
+  font-size: $font-body-content;
+  color: lighten($mdd-black, 30%);
+  line-height: 1.5;
+  margin-bottom: $space-md;
+  flex-grow: 1;
+}
+
+.subject-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ===========================
+// BOUTONS SPÉCIFIQUES PROFIL
+// ===========================
+
+.unsubscribe-button {
+  padding: $space-sm $space-md;
+  border-radius: 4px;
+  font-weight: $weight-semi-bold;
+  font-size: $font-button-text;
+  cursor: pointer;
+  transition: $transition-base;
+  min-width: 120px;
+  text-align: center;
+  
+  // Style "Se désabonner" - Rouge pour indiquer une action de suppression
+  background-color: var(--mdd-logout-red);
+  color: var(--mdd-white);
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($mdd-logout-red, 10%);
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--mdd-button-disabled);
+  }
+}
+
+// ===========================
+// ÉTATS VIDES
+// ===========================
+
+.no-subscriptions-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: $space-xxl;
+  
+  .text-secondary {
+    font-size: $font-body-content;
+    color: lighten($mdd-black, 40%);
+    margin-bottom: $space-md;
+  }
+  
+  .btn {
+    display: inline-flex;
+  }
+}
+
+// ===========================
+// RESPONSIVE
+// ===========================
+
+@include tablet {
+  .profile-form-section {
+    max-width: 600px;
+  }
+  
+  .subjects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include desktop {
+  .subjects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
