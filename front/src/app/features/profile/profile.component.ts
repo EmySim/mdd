@@ -1,10 +1,11 @@
-// src/app/features/profile/profile.component.ts - COMPLET ET FONCTIONNEL
+// src/app/features/profile/profile.component.ts - MIS À JOUR POUR THEME
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { ProfileService, UserProfile, UpdateProfileRequest } from './profile.service';
-import { SubjectService, Subject as SubjectModel } from '../subjects/subject.service';
+import { ThemeService } from '../themes/theme.service';
+import { Theme } from '../../interfaces/theme.interface';
 import { ErrorService } from '../../services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -29,7 +30,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
   /** Données utilisateur */
   currentUser: UserProfile | null = null;
-  subscribedSubjects: SubjectModel[] = [];
+  subscribedThemes: Theme[] = [];  // ✅ Renommé de subscribedSubjects
   
   /** ID utilisateur récupéré du token */
   private userId: number | null = null;
@@ -45,7 +46,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private profileService: ProfileService,
-    private subjectService: SubjectService,
+    private themeService: ThemeService,  // ✅ Renommé de subjectService
     public errorService: ErrorService
   ) {
     this.profileForm = this.createProfileForm();
@@ -126,14 +127,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private loadUserSubscriptions(): void {
     this.isLoadingSubscriptions = true;
     
-    // Récupérer tous les sujets et filtrer ceux auxquels l'utilisateur est abonné
-    this.subjectService.getAllSubjects(0, 1000).pipe(
+    // Récupérer tous les thèmes et filtrer ceux auxquels l'utilisateur est abonné
+    this.themeService.getAllThemes(0, 1000).pipe(  // ✅ Renommé
       takeUntil(this.destroy$)
     ).subscribe({
       next: (response) => {
-        this.subscribedSubjects = response.content.filter(subject => subject.isSubscribed);
+        this.subscribedThemes = response.content.filter(theme => theme.isSubscribed);  // ✅ Renommé
         this.isLoadingSubscriptions = false;
-        console.log('📌 Abonnements chargés:', this.subscribedSubjects.length);
+        console.log('📌 Abonnements chargés:', this.subscribedThemes.length);
       },
       error: (error) => {
         this.isLoadingSubscriptions = false;
@@ -210,18 +211,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
   // ===========================
   
   /**
-   * Se désabonner d'un sujet
+   * Se désabonner d'un thème
    */
-  unsubscribeFromSubject(subject: SubjectModel): void {
-    console.log(`🗑️ Désabonnement de: ${subject.name}`);
+  unsubscribeFromTheme(theme: Theme): void {  // ✅ Renommé de unsubscribeFromSubject
+    console.log(`🗑️ Désabonnement de: ${theme.name}`);
     
-    this.subjectService.unsubscribeFromSubject(subject.id).pipe(
+    this.themeService.unsubscribeFromTheme(theme.id).pipe(  // ✅ Renommé
       takeUntil(this.destroy$)
     ).subscribe({
       next: () => {
-        // Retirer le sujet de la liste locale
-        this.subscribedSubjects = this.subscribedSubjects.filter(s => s.id !== subject.id);
-        console.log(`✅ Désabonné de: ${subject.name}`);
+        // Retirer le thème de la liste locale
+        this.subscribedThemes = this.subscribedThemes.filter(t => t.id !== theme.id);  // ✅ Renommé
+        console.log(`✅ Désabonné de: ${theme.name}`);
       },
       error: (error) => {
         console.error('❌ Erreur désabonnement:', error);
@@ -281,8 +282,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   /**
    * TrackBy pour optimiser le rendu de la liste des abonnements
    */
-  trackBySubjectId(index: number, subject: SubjectModel): number {
-    return subject.id;
+  trackByThemeId(index: number, theme: Theme): number {  // ✅ Renommé
+    return theme.id;
   }
 
   // ===========================

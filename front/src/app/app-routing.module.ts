@@ -1,4 +1,4 @@
-// src/app/app-routing.module.ts 
+// src/app/app-routing.module.ts - MIS À JOUR POUR THEME
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { LandingComponent } from './pages/landing/landing.component';
 // Features 
 import { ProfileComponent } from './features/profile/profile.component';
 import { ArticleComponent } from './features/articles/article.component';
-import { SubjectComponent } from './features/subjects/subject.component';
+import { ThemeComponent } from './features/themes/theme.component';  // ✅ Renommé de SubjectComponent
 
 // Guards
 import { AuthGuard } from './features/auth/auth.guard';
@@ -57,8 +57,8 @@ const routes: Routes = [
 
   // Autres features : DIRECT (simples, 1 composant chacune)
   { 
-    path: 'themes', 
-    component: SubjectComponent,
+    path: 'themes',   // ✅ Reste "themes" (était déjà correct)
+    component: ThemeComponent,  // ✅ Renommé de SubjectComponent
     canActivate: [AuthGuard]
   },
   

@@ -1,32 +1,16 @@
-// src/app/features/themes/subject.service.ts - RENOMMÉ ET ALIGNÉ
+// src/app/features/themes/theme.service.ts - REFACTORISÉ
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorService } from '../../services/error.service';
-
-// Interface alignée avec SubjectDTO backend  
-export interface Subject {
-  id: number;
-  name: string;
-  createdAt: string;
-  isSubscribed: boolean;
-}
-
-export interface SubjectsPage {
-  content: Subject[];
-  pageable: any;
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}
+import { Theme, ThemesPage } from '../../interfaces/theme.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SubjectService {
-  private readonly API_URL = '/api/subjects';
+export class ThemeService {
+  private readonly API_URL = '/api/subjects'; // Backend utilise encore "subjects"
 
   constructor(
     private http: HttpClient,
@@ -34,37 +18,37 @@ export class SubjectService {
   ) {}
 
   /**
-   * Récupère tous les sujets avec statut d'abonnement
+   * Récupère tous les thèmes avec statut d'abonnement
    */
-  getAllSubjects(page = 0, size = 20): Observable<SubjectsPage> {
+  getAllThemes(page = 0, size = 20): Observable<ThemesPage> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<SubjectsPage>(this.API_URL, { params })
+    return this.http.get<ThemesPage>(this.API_URL, { params })
       .pipe(catchError(this.handleError));
   }
 
   /**
-   * Récupère un sujet par ID
+   * Récupère un thème par ID
    */
-  getSubjectById(id: number): Observable<Subject> {
-    return this.http.get<Subject>(`${this.API_URL}/${id}`)
+  getThemeById(id: number): Observable<Theme> {
+    return this.http.get<Theme>(`${this.API_URL}/${id}`)
       .pipe(catchError(this.handleError));
   }
 
   /**
-   * S'abonner à un sujet
+   * S'abonner à un thème
    */
-  subscribeToSubject(id: number): Observable<any> {
+  subscribeToTheme(id: number): Observable<any> {
     return this.http.post(`${this.API_URL}/${id}/subscribe`, {})
       .pipe(catchError(this.handleError));
   }
 
   /**
-   * Se désabonner d'un sujet
+   * Se désabonner d'un thème
    */
-  unsubscribeFromSubject(id: number): Observable<any> {
+  unsubscribeFromTheme(id: number): Observable<any> {
     return this.http.delete(`${this.API_URL}/${id}/subscribe`)
       .pipe(catchError(this.handleError));
   }
@@ -73,7 +57,7 @@ export class SubjectService {
    * Gestion d'erreurs centralisée
    */
   private handleError = (error: any): Observable<never> => {
-    console.error('SubjectService Error:', error);
+    console.error('ThemeService Error:', error);
     this.errorService.handleHttpError(error);
     return throwError(() => error);
   };

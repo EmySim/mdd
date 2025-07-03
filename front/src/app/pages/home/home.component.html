@@ -1,16 +1,14 @@
-<!-- home.component.html - CONNECTÉ AUX DONNÉES API -->
+<!-- home.component.html - MIS À JOUR POUR THEME -->
 <div class="page-with-navbar">
   <!-- Header avec info utilisateur -->
   <div class="page-with-navbar__header">
     <div class="container">
-      <h1 class="page-title">Profil utilisateur</h1>
+      <h1 class="page-title">Fil d'actualité</h1>
 
       <!-- Actions header -->
       <div class="flex-between mt-md">
-        <!-- //TO DO a corriger save button-->
-
         <button class="btn btn--primary btn--sm" routerLink="/articles/new">
-          Sauvegarder
+          Créer un article
         </button>
       </div>
     </div>
@@ -43,11 +41,11 @@
             <span
               class="article-theme"
               (click)="
-                viewSubject(article.subjectId, article.subjectName);
+                viewTheme(article.themeId, article.themeName);
                 $event.stopPropagation()
               "
             >
-              {{ article.subjectName }}
+              {{ article.themeName }}
             </span>
           </div>
 
@@ -94,11 +92,11 @@
         <div class="empty-state">
           <h1>Abonnements</h1>
           <p class="text-secondary mb-lg">
-            Abonnez-vous à des sujets qui vous intéressent pour voir des
+            Abonnez-vous à des thèmes qui vous intéressent pour voir des
             articles ici.
           </p>
           <button class="btn btn--primary" routerLink="/themes">
-            Découvrir les sujets
+            Découvrir les thèmes
           </button>
         </div>
       </div>

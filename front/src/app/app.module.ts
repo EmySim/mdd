@@ -1,4 +1,4 @@
-// src/app/app.module.ts - VERSION ULTRA-SIMPLE
+// src/app/app.module.ts - 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,7 +21,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
-import { SubjectComponent } from './features/subjects/subject.component';
+import { ThemeComponent } from './features/themes/theme.component';  
 import { ArticleComponent } from './features/articles/article.component';
 
 // Modules de features
@@ -32,7 +32,7 @@ import { ErrorToastComponent } from './components/error-toast/error-toast.compon
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 // Services globaux
-import { SubjectService } from './features/subjects/subject.service';
+import { ThemeService } from './features/themes/theme.service';  
 import { ProfileService } from './features/profile/profile.service';
 import { ArticleService } from './features/articles/article.service';
 
@@ -59,7 +59,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     LandingComponent,
 
     // Features
-    SubjectComponent,
+    ThemeComponent,  
     ArticleComponent,
 
     // Composants réutilisables
@@ -90,7 +90,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
   ],
   providers: [
     // Services des features
-    SubjectService,
+    ThemeService,  
     ProfileService,
     ArticleService,
 

@@ -1,4 +1,4 @@
-// src/app/features/articles/article.service.ts - IMPLÉMENTATION COMPLÈTE
+// src/app/features/articles/article.service.ts 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -14,14 +14,14 @@ export interface Article {
   updatedAt: string;
   authorId: number;
   authorUsername: string;
-  subjectId: number;
-  subjectName: string;
+  themeId: number;      // ✅ Renommé de subjectId
+  themeName: string;    // ✅ Renommé de subjectName
 }
 
 export interface CreateArticleRequest {
   title: string;
   content: string;
-  subjectId: number;
+  themeId: number;      // ✅ Renommé de subjectId
 }
 
 export interface ArticlesPage {
@@ -82,14 +82,15 @@ export class ArticleService {
   }
 
   /**
-   * Récupère les articles d'un sujet
+   * Récupère les articles d'un thème
    */
-  getArticlesBySubject(subjectId: number, page = 0, size = 20): Observable<ArticlesPage> {
+  getArticlesByTheme(themeId: number, page = 0, size = 20): Observable<ArticlesPage> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ArticlesPage>(`${this.API_URL}/subject/${subjectId}`, { params })
+    // Note: L'API backend utilise encore "subject" dans l'URL
+    return this.http.get<ArticlesPage>(`${this.API_URL}/subject/${themeId}`, { params })
       .pipe(catchError(this.handleError));
   }
 
@@ -97,7 +98,14 @@ export class ArticleService {
    * Crée un nouvel article
    */
   createArticle(articleData: CreateArticleRequest): Observable<Article> {
-    return this.http.post<Article>(this.API_URL, articleData)
+    // Adapter la requête pour le backend qui attend encore "subjectId"
+    const backendRequest = {
+      title: articleData.title,
+      content: articleData.content,
+      subjectId: articleData.themeId  // Conversion pour compatibilité backend
+    };
+
+    return this.http.post<Article>(this.API_URL, backendRequest)
       .pipe(catchError(this.handleError));
   }
 
