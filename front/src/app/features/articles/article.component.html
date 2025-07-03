@@ -1,19 +1,207 @@
-<!-- src/app/features/articles/article.component.html - MIS À JOUR POUR THEME -->
-<div class="grid grid--articles">
-  <div class="card card--article" *ngFor="let article of articles; trackBy: trackByArticleId" (click)="viewArticle(article)">
-    <h3 class="article-title">{{ article.title }}</h3>
-    <div class="article-meta">
-      <span class="article-author">{{ article.authorUsername }}</span>
-      <span class="article-date">{{ article.createdAt | date:'short' }}</span>
-      <span 
-        class="article-theme"
-        (click)="viewTheme(article.themeId, article.themeName); $event.stopPropagation()"
-      >
-        {{ article.themeName }}
-      </span>
+<!-- article.component.html - LISTE AVEC FILTRES -->
+<div class="page-with-navbar">
+  
+  <!-- En-tête avec filtres -->
+  <div class="page-with-navbar__header">
+    <div class="container">
+      
+      <!-- Titre et action -->
+      <div class="flex-between mb-lg">
+        <div>
+          <h1 class="page-title">Articles</h1>
+          <p class="text-secondary">
+            Découvrez les derniers articles de la communauté
+          </p>
+        </div>
+        
+        <div class="header-actions">
+          <button 
+            class="btn btn--primary"
+            (click)="createArticle()"
+          >
+            ✍️ Créer un article
+          </button>
+        </div>
+      </div>
+      
+      <!-- Filtres -->
+      <div class="filters-section">
+        <div class="flex-between flex-gap-md">
+          
+          <!-- Filtre par thème -->
+          <div class="filter-group">
+            <label class="filter-label">Thème :</label>
+            <select 
+              class="filter-select"
+              [value]="selectedThemeId"
+              (change)="filterByTheme($event.target.value ? +$event.target.value : null)"
+              [disabled]="isLoadingThemes"
+            >
+              <option [value]="null">Tous les thèmes</option>
+              <option 
+                *ngFor="let theme of themes" 
+                [value]="theme.id"
+              >
+                {{ theme.name }}
+              </option>
+            </select>
+          </div>
+          
+          <!-- Tri -->
+          <div class="filter-group">
+            <label class="filter-label">Tri :</label>
+            <button 
+              class="btn btn--secondary btn--sm"
+              (click)="changeSortDirection()"
+              [disabled]="isLoading"
+            >
+              {{ getSortText() }}
+              <span class="sort-icon">
+                {{ sortDirection === 'desc' ? '↓' : '↑' }}
+              </span>
+            </button>
+          </div>
+          
+          <!-- Reset -->
+          <div class="filter-group">
+            <button 
+              class="btn btn--secondary btn--sm"
+              (click)="resetFilters()"
+              [disabled]="isLoading"
+            >
+              🔄 Reset
+            </button>
+          </div>
+          
+        </div>
+        
+        <!-- Compteur résultats -->
+        <div class="results-info mt-md" *ngIf="!isLoading">
+          <span class="text-secondary">
+            {{ articles.length }} article{{ articles.length > 1 ? 's' : '' }}
+            <span *ngIf="selectedThemeId">dans "{{ getSelectedThemeName() }}"</span>
+          </span>
+        </div>
+      </div>
+      
     </div>
-    <p class="article-content">
-      {{ article.content.length > 200 ? (article.content | slice:0:200) + '...' : article.content }}
-    </p>
   </div>
+
+  <!-- Contenu principal -->
+  <div class="page-with-navbar__content">
+    <div class="container">
+      
+      <!-- Loading initial -->
+      <div class="text-center p-xl" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <p class="text-secondary">Chargement des articles...</p>
+      </div>
+
+      <!-- Liste des articles -->
+      <div *ngIf="!isLoading">
+        
+        <!-- Articles -->
+        <div class="grid grid--articles" *ngIf="articles.length > 0">
+          <article
+            class="card card--article card--clickable"
+            *ngFor="let article of articles; trackBy: trackByArticleId"
+            (click)="viewArticle(article)"
+          >
+            <!-- Métadonnées -->
+            <div class="article-meta mb-sm">
+              <span class="article-author">{{ article.authorUsername }}</span>
+              <span class="article-date">{{ article.createdAt | date:'short' }}</span>
+              <span
+                class="article-theme"
+                (click)="viewTheme(article.themeId, article.themeName); $event.stopPropagation()"
+              >
+                {{ article.themeName }}
+              </span>
+            </div>
+
+            <!-- Titre -->
+            <h2 class="article-title mb-sm">{{ article.title }}</h2>
+
+            <!-- Contenu tronqué -->
+            <p class="article-content mb-md">
+              {{ truncateContent(article.content) }}
+            </p>
+
+            <!-- Actions -->
+            <div class="article-actions">
+              <button
+                class="btn btn--sm btn--secondary"
+                (click)="viewArticle(article); $event.stopPropagation()"
+              >
+                Lire l'article
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <!-- État vide -->
+        <div class="empty-state" *ngIf="articles.length === 0">
+          <div class="empty-icon">📰</div>
+          <h2 class="empty-title">Aucun article trouvé</h2>
+          <p class="empty-message" *ngIf="selectedThemeId">
+            Aucun article dans "{{ getSelectedThemeName() }}" pour le moment.
+          </p>
+          <p class="empty-message" *ngIf="!selectedThemeId">
+            Aucun article disponible pour le moment.
+          </p>
+          <div class="empty-actions mt-lg">
+            <button 
+              class="btn btn--primary"
+              (click)="createArticle()"
+            >
+              Créer le premier article
+            </button>
+            <button 
+              class="btn btn--secondary ml-md"
+              (click)="resetFilters()"
+              *ngIf="selectedThemeId"
+            >
+              Voir tous les articles
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-section" *ngIf="articles.length > 0">
+        
+        <!-- Charger plus -->
+        <div class="text-center" *ngIf="hasMoreArticles">
+          <button
+            class="btn btn--secondary btn--lg"
+            (click)="loadMoreArticles()"
+            [disabled]="isLoadingMore"
+          >
+            <span *ngIf="!isLoadingMore">Charger plus d'articles</span>
+            <span *ngIf="isLoadingMore">
+              <div class="loading-spinner loading-spinner--inline"></div>
+              Chargement...
+            </span>
+          </button>
+        </div>
+
+        <!-- Fin de liste -->
+        <div class="text-center" *ngIf="!hasMoreArticles">
+          <p class="text-secondary">
+            🎉 Vous avez vu tous les articles !
+          </p>
+          <button
+            class="btn btn--secondary btn--sm mt-sm"
+            (click)="refreshArticles()"
+          >
+            🔄 Actualiser
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  
 </div>

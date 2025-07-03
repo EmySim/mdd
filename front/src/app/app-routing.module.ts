@@ -1,4 +1,4 @@
-// src/app/app-routing.module.ts - MIS À JOUR POUR THEME
+// src/app/app-routing.module.ts - ROUTING NETTOYÉ
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -6,23 +6,25 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
 
-// Features 
+// Features - tous dans AppModule maintenant
 import { ProfileComponent } from './features/profile/profile.component';
 import { ArticleComponent } from './features/articles/article.component';
-import { ThemeComponent } from './features/themes/theme.component';  // ✅ Renommé de SubjectComponent
+import { ThemeComponent } from './features/themes/theme.component';
 
 // Guards
 import { AuthGuard } from './features/auth/auth.guard';
 
 /**
- * Configuration routing MDD
- * Note : Lazy loading seulement pour auth (plus complexe)
+ * Configuration routing MDD - Architecture simplifiée
+ * 
+ * ✅ Toutes les routes principales ici
+ * ✅ Seulement AuthModule en lazy loading
+ * ✅ Routes cohérentes et simples
  */
-
 const routes: Routes = [
   
   // ===========================
-  // REDIRECTION
+  // REDIRECTION PAR DÉFAUT
   // ===========================
   { 
     path: '', 
@@ -31,7 +33,7 @@ const routes: Routes = [
   },
 
   // ===========================
-  // PAGES PRINCIPALES
+  // PAGES PUBLIQUES
   // ===========================
   
   { 
@@ -39,32 +41,23 @@ const routes: Routes = [
     component: LandingComponent 
   },
 
-  { 
-    path: 'home', 
-    component: HomeComponent,
-    canActivate: [AuthGuard]
-  },
-
   // ===========================
-  // FEATURES SIMPLES
+  // AUTHENTIFICATION
   // ===========================
   
-  // Authentification (garde le lazy loading car plus complexe : login + register)
+  // Seul module en lazy loading (login + register)
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
   },
 
-  // Autres features : DIRECT (simples, 1 composant chacune)
-  { 
-    path: 'themes',   // ✅ Reste "themes" (était déjà correct)
-    component: ThemeComponent,  // ✅ Renommé de SubjectComponent
-    canActivate: [AuthGuard]
-  },
+  // ===========================
+  // PAGES PROTÉGÉES
+  // ===========================
   
   { 
-    path: 'profile', 
-    component: ProfileComponent,
+    path: 'home', 
+    component: HomeComponent,
     canActivate: [AuthGuard]
   },
 
@@ -74,14 +67,52 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
 
+  { 
+    path: 'themes', 
+    component: ThemeComponent,
+    canActivate: [AuthGuard]
+  },
+  
+  { 
+    path: 'profile', 
+    component: ProfileComponent,
+    canActivate: [AuthGuard]
+  },
+
+  // ===========================
+  // ROUTES FUTURES (à implémenter)
+  // ===========================
+  
+  // Articles détaillés
+  // { 
+  //   path: 'articles/:id', 
+  //   component: ArticleDetailComponent,
+  //   canActivate: [AuthGuard]
+  // },
+
+  // Création d'article
+  // { 
+  //   path: 'articles/create', 
+  //   component: CreateArticleComponent,
+  //   canActivate: [AuthGuard]
+  // },
+
   // ===========================
   // FALLBACK
   // ===========================
-  { path: '**', redirectTo: '/landing' }
+  
+  { 
+    path: '**', 
+    redirectTo: '/landing' 
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule { 
+  constructor() {
+    console.log('🗺️ Routing configuré - Architecture simple');
+  }
+}
