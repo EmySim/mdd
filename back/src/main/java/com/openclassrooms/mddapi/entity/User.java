@@ -2,7 +2,8 @@ package com.openclassrooms.mddapi.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,10 +16,17 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
 /**
  * Entité représentant un utilisateur du réseau social MDD.
+ *
+ * ✅ BONNE PRATIQUE : Entité pure sans pollution sérialisation
+ * - Aucune annotation Jackson
+ * - Domaine métier isolé
+ * - Responsabilité unique : persistance
+ * - Sérialisation gérée par les DTOs
+ *
+ * @author Équipe MDD
+ * @version 2.0 - Clean Architecture
  */
 @Entity
 @Table(name = "users",
@@ -26,7 +34,8 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email"),
                 @UniqueConstraint(columnNames = "username")
         })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -61,8 +70,14 @@ public class User {
 
     /**
      * Sujets auxquels l'utilisateur est abonné.
+     *
+     * ARCHITECTURE PROPRE :
+     * - Relation JPA pure
+     * - Pas d'annotations Jackson polluantes
+     * - Sérialisation contrôlée par UserMapper
+     * - Lazy loading pour performance
      */
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "subscriptions",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -71,9 +86,55 @@ public class User {
     @Builder.Default
     private Set<Subject> subscribedSubjects = new HashSet<>();
 
+    /**
+     * Constructeur métier pour création d'utilisateur.
+     */
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    // ============================================================================
+    // MÉTHODES MÉTIER (Business Logic)
+    // ============================================================================
+
+    /**
+     * Vérifie si l'utilisateur est abonné à un sujet.
+     *
+     * @param subject le sujet à vérifier
+     * @return true si abonné
+     */
+    public boolean isSubscribedTo(Subject subject) {
+        return subscribedSubjects.contains(subject);
+    }
+
+    /**
+     * Abonne l'utilisateur à un sujet.
+     *
+     * @param subject le sujet à suivre
+     * @return true si ajouté (false si déjà abonné)
+     */
+    public boolean subscribe(Subject subject) {
+        return subscribedSubjects.add(subject);
+    }
+
+    /**
+     * Désabonne l'utilisateur d'un sujet.
+     *
+     * @param subject le sujet à ne plus suivre
+     * @return true si supprimé (false si pas abonné)
+     */
+    public boolean unsubscribe(Subject subject) {
+        return subscribedSubjects.remove(subject);
+    }
+
+    /**
+     * Retourne le nombre d'abonnements.
+     *
+     * @return nombre de sujets suivis
+     */
+    public int getSubscriptionCount() {
+        return subscribedSubjects.size();
     }
 }

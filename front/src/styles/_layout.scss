@@ -105,7 +105,6 @@
   
   &__header {
     background-color: var(--mdd-white);
-    border-bottom: 1px solid #e0e0e0;
     padding: $space-lg 0;
     
     .page-title {
@@ -117,7 +116,7 @@
       text-align: center;
       
       @include desktop {
-        text-align: left;
+        text-align: center;
       }
     }
     

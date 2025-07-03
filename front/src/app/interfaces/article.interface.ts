@@ -69,19 +69,6 @@ export interface CreateArticleRequest {
   subjectId: number;
 }
 
-/**
- * DTO pour mettre à jour un article
- */
-export interface UpdateArticleRequest {
-  /** Nouveau titre (optionnel) */
-  title?: string;
-  
-  /** Nouveau contenu (optionnel) */
-  content?: string;
-  
-  /** Nouveau sujet (optionnel) */
-  subjectId?: number;
-}
 
 /**
  * Interface pour les filtres du fil d'actualité

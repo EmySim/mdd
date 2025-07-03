@@ -2,8 +2,9 @@ package com.openclassrooms.mddapi.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO générique pour les messages de réponse de l'API.
@@ -16,7 +17,8 @@ import lombok.NoArgsConstructor;
  * @author Équipe MDD
  * @version 1.0
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

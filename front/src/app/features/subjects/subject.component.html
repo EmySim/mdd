@@ -1,0 +1,29 @@
+<main class="subjects-grid-container">
+  <div class="subjects-grid">
+    <ng-container *ngIf="isLoading; else subjectsContent">
+      <div class="loading-message">Chargement des thèmes...</div>
+    </ng-container>
+
+    <ng-template #subjectsContent>
+      <div *ngIf="subjects.length === 0 && !isLoading" class="no-subjects-message">
+        Aucun thème disponible pour le moment.
+      </div>
+
+      <div *ngFor="let subject of subjects; trackBy: trackBySubjectId" class="subject-card">
+        <h3 class="subject-title">{{ subject.name }}</h3>
+        <p class="subject-description">
+          Description: lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard...
+        </p>
+        <div class="subject-actions">
+          <button
+            [ngClass]="{'subscribe-button': !subject.isSubscribed, 'unsubscribe-button': subject.isSubscribed}"
+            (click)="toggleSubscription(subject)"
+            [disabled]="isLoading"
+          >
+            {{ subject.isSubscribed ? 'Déjà abonné' : 'S\'abonner' }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</main>

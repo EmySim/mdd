@@ -1,7 +1,6 @@
 package com.openclassrooms.mddapi.controller;
 
 import com.openclassrooms.mddapi.dto.UserDTO;
-import com.openclassrooms.mddapi.mapper.UserMapper;
 import com.openclassrooms.mddapi.dto.response.MessageResponse;
 import com.openclassrooms.mddapi.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +16,10 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    private final UserMapper userMapper;
+    
     private final UserService userService;
-
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userMapper = userMapper;
-        this.userService = userService;
-    }
 
     /**
      * ✅ Récupère le profil de l'utilisateur connecté
