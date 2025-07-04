@@ -1,4 +1,4 @@
-// src/app/components/navbar/navbar.component.ts - COMPLET
+// src/app/components/navbar/navbar.component.ts - MIS À JOUR POUR THEME
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
@@ -24,8 +24,9 @@ export class NavbarComponent {
     private router: Router,
     private authService: AuthService
   ) {}
-// ===========================
-  // NAVIGATION LOGO ✅ NOUVEAU
+
+  // ===========================
+  // NAVIGATION LOGO ✅
   // ===========================
 
   /**
@@ -46,7 +47,6 @@ export class NavbarComponent {
     this.closeMobileMenu();
   }
 
-
   // ===========================
   // MÉTHODES DE NAVIGATION ✅
   // ===========================
@@ -63,7 +63,7 @@ export class NavbarComponent {
   /**
    * Navigation vers Thèmes
    */
-  goToThemes(): void {
+  goToThemes(): void {  // ✅ Renommé de goToThemes (était déjà correct)
     console.log('🔄 Navigation vers /themes');
     this.router.navigate(['/themes']);
     this.closeMobileMenu();
@@ -116,18 +116,19 @@ export class NavbarComponent {
     this.isMobileMenuOpen = false;
   }
 
-  // ===========================
+    // ===========================
   // ÉTAT DES ROUTES ✅
   // ===========================
 
   /**
    * Vérifier si une route est active
+   * Utilisé pour appliquer les styles CSS actifs dans la navbar
    */
   isRouteActive(route: string): boolean {
     const currentUrl = this.router.url;
     const isActive = currentUrl === route || currentUrl.startsWith(route + '/');
     
-    // Debug pour voir l'état
+    // Debug pour voir l'état des routes actives
     console.log(`🔍 Route ${route} active:`, isActive, `(URL actuelle: ${currentUrl})`);
     
     return isActive;

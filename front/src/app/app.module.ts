@@ -1,11 +1,11 @@
-// src/app/app.module.ts - VERSION ULTRA-SIMPLE
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
-// Angular Material minimal
+// Angular Material
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,62 +21,44 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
-import { SubjectComponent } from './features/subjects/subject.component';
+import { ThemeComponent } from './features/themes/theme.component';
 import { ArticleComponent } from './features/articles/article.component';
-
-// Modules de features
-import { ProfileModule } from './features/profile/profile.module';
+import { ProfileComponent } from './features/profile/profile.component';
 
 // Composants réutilisables
 import { ErrorToastComponent } from './components/error-toast/error-toast.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
-// Services globaux
-import { SubjectService } from './features/subjects/subject.service';
+// Services
+import { AuthService } from './features/auth/auth.service';
+import { ThemeService } from './features/themes/theme.service';
 import { ProfileService } from './features/profile/profile.service';
 import { ArticleService } from './features/articles/article.service';
+import { CommentService } from './features/comments/comment.service';
+import { ErrorService } from './services/error.service';
 
 // Interceptor
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
-/**
- * Module racine
- *
- * ✅ Tous les composants principaux déclarés ici
- * ✅ Tous les services fournis ici
- * ✅ Seulement AuthModule en lazy loading (plus complexe)
- *
- * Avantage : Simple, tout au même endroit
- * Inconvénient : Bundle plus gros (mais OK pour MVP)
- */
 @NgModule({
   declarations: [
-    // Composant racine
     AppComponent,
-
-    // Pages principales
     HomeComponent,
     LandingComponent,
-
-    // Features
-    SubjectComponent,
+    ThemeComponent,
     ArticleComponent,
-
-    // Composants réutilisables
+    ProfileComponent,
     ErrorToastComponent,
     NavbarComponent,
-
-    // Auth reste en lazy loading → pas déclaré ici
   ],
   imports: [
-    // Modules Angular essentiels
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    ReactiveFormsModule,
-
-    // Angular Material pour MVP
+    ReactiveFormsModule, 
+    FormsModule, 
+    CommonModule, 
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
@@ -84,17 +66,14 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatInputModule,
     MatFormFieldModule,
     LayoutModule,
-
-    // Feature modules
-    ProfileModule,
   ],
   providers: [
-    // Services des features
-    SubjectService,
+    AuthService,
+    ThemeService,
     ProfileService,
     ArticleService,
-
-    // Interceptor JWT
+    CommentService,
+    ErrorService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,

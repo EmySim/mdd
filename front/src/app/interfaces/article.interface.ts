@@ -1,6 +1,6 @@
 // src/app/interfaces/article.interface.ts
 
-import { UserPublic } from '../features/auth/interfaces/user.interface';
+import { UserPublic } from './user.interface';
 import { Topic } from './theme.interface';
 import { Comment } from './comment.interface';
 

@@ -1,6 +1,6 @@
 // src/app/interfaces/comment.interface.ts
 
-import { UserPublic } from '../features/auth/interfaces/user.interface';
+import { UserPublic } from './user.interface';
 
 /**
  * Interface représentant un commentaire sur un article

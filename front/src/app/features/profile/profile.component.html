@@ -1,4 +1,4 @@
-<!-- profile.component.html - CONFORME AU WIREFRAME -->
+<!-- profile.component.html - MIS À JOUR POUR THEME -->
 <div class="page-with-navbar">
   
   <!-- Header avec titre -->
@@ -97,10 +97,10 @@
         </div>
 
         <!-- Grille des abonnements (même style que themes) -->
-        <div class="subjects-grid" *ngIf="!isLoadingSubscriptions">
+        <div class="themes-grid" *ngIf="!isLoadingSubscriptions">
           
           <!-- Message si aucun abonnement -->
-          <div *ngIf="subscribedSubjects.length === 0" class="no-subscriptions-message">
+          <div *ngIf="subscribedThemes.length === 0" class="no-subscriptions-message">
             <p class="text-secondary">Vous n'êtes abonné à aucun thème pour le moment.</p>
             <button class="btn btn--primary btn--sm mt-md" routerLink="/themes">
               Découvrir les thèmes
@@ -108,15 +108,15 @@
           </div>
 
           <!-- Cartes des thèmes abonnés -->
-          <div *ngFor="let subject of subscribedSubjects; trackBy: trackBySubjectId" class="subject-card">
-            <h3 class="subject-title">{{ subject.name }}</h3>
-            <p class="subject-description">
+          <div *ngFor="let theme of subscribedThemes; trackBy: trackByThemeId" class="theme-card">
+            <h3 class="theme-title">{{ theme.name }}</h3>
+            <p class="theme-description">
               Description: lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard...
             </p>
-            <div class="subject-actions">
+            <div class="theme-actions">
               <button
                 class="unsubscribe-button"
-                (click)="unsubscribeFromSubject(subject)"
+                (click)="unsubscribeFromTheme(theme)"
                 [disabled]="isLoadingSubscriptions"
               >
                 Se désabonner
