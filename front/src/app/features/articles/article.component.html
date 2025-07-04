@@ -28,16 +28,16 @@
       <div class="filters-section">
         <div class="flex-between flex-gap-md">
           
-          <!-- Filtre par thème -->
+                    <!-- Filtre par thème -->
           <div class="filter-group">
             <label class="filter-label">Thème :</label>
             <select 
               class="filter-select"
               [value]="selectedThemeId"
-              (change)="filterByTheme($event.target.value ? +$event.target.value : null)"
+              (change)="filterByTheme($event)"
               [disabled]="isLoadingThemes"
             >
-              <option [value]="null">Tous les thèmes</option>
+              <option value="">Tous les thèmes</option>
               <option 
                 *ngFor="let theme of themes" 
                 [value]="theme.id"

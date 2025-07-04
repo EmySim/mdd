@@ -116,18 +116,19 @@ export class NavbarComponent {
     this.isMobileMenuOpen = false;
   }
 
-  // ===========================
+    // ===========================
   // ÉTAT DES ROUTES ✅
   // ===========================
 
   /**
    * Vérifier si une route est active
+   * Utilisé pour appliquer les styles CSS actifs dans la navbar
    */
   isRouteActive(route: string): boolean {
     const currentUrl = this.router.url;
     const isActive = currentUrl === route || currentUrl.startsWith(route + '/');
     
-    // Debug pour voir l'état
+    // Debug pour voir l'état des routes actives
     console.log(`🔍 Route ${route} active:`, isActive, `(URL actuelle: ${currentUrl})`);
     
     return isActive;
