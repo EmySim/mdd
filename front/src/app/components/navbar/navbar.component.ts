@@ -1,136 +1,97 @@
-// src/app/components/navbar/navbar.component.ts - MIS À JOUR POUR THEME
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../features/auth/auth.service';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
-
-  /**
-   * Reçoit l'état depuis AppComponent
-   * true = navbar simple (logo seulement - pages auth)
-   * false = navbar complète (navigation + déconnexion - pages connectées)
-   */
+export class NavbarComponent implements OnInit, OnDestroy {
   @Input() isSimple: boolean = false;
-
-  // ✅ PROPRIÉTÉ pour menu mobile
-  isMobileMenuOpen: boolean = false;
+  
+  currentUser: User | null = null;
+  showMobileMenu = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
-  // ===========================
-  // NAVIGATION LOGO ✅
-  // ===========================
+  ngOnInit(): void {
+    this.authService.currentUser$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(user => {
+      this.currentUser = user;
+    });
+  }
 
-  /**
-   * Redirection intelligente du logo selon l'état de connexion
-   * 
-   * LOGIQUE :
-   * - Si utilisateur connecté → /home (fil d'actualité)
-   * - Si utilisateur non connecté → /landing (page publique)
-   */
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // =============================================================================
+  // NAVIGATION
+  // =============================================================================
+
   goToHomePage(): void {
-    if (this.authService.isLoggedIn()) {
-      console.log('🏠 Logo cliqué - Utilisateur connecté → /home');
-      this.router.navigate(['/home']);
-    } else {
-      console.log('🚪 Logo cliqué - Utilisateur non connecté → /landing');
-      this.router.navigate(['/landing']);
-    }
-    this.closeMobileMenu();
-  }
-
-  // ===========================
-  // MÉTHODES DE NAVIGATION ✅
-  // ===========================
-
-  /**
-   * Navigation vers Articles
-   */
-  goToArticles(): void {
-    console.log('🔄 Navigation vers /articles');
-    this.router.navigate(['/articles']);
-    this.closeMobileMenu();
-  }
-
-  /**
-   * Navigation vers Thèmes
-   */
-  goToThemes(): void {  // ✅ Renommé de goToThemes (était déjà correct)
-    console.log('🔄 Navigation vers /themes');
-    this.router.navigate(['/themes']);
-    this.closeMobileMenu();
-  }
-
-  /**
-   * Navigation vers Profil
-   */
-  goToProfile(): void {
-    console.log('🔄 Navigation vers /profile');
-    this.router.navigate(['/profile']);
-    this.closeMobileMenu();
-  }
-
-  /**
-   * Navigation vers Home (fil d'actualité)
-   */
-  goToHome(): void {
-    console.log('🔄 Navigation vers /home');
-    this.router.navigate(['/home']);
-    this.closeMobileMenu();
-  }
-
-  /**
-   * Déconnexion
-   */
-  logout(): void {
-    console.log('🚪 Déconnexion en cours');
-    this.authService.logout();
+  // Si on est en mode simple (pages auth), rediriger vers landing
+  if (this.isSimple) {
     this.router.navigate(['/landing']);
-    this.closeMobileMenu();
+    return;
+  }
+  
+  // Sinon, logique normale pour les utilisateurs connectés
+  if (this.authService.isLoggedIn()) {
+    this.router.navigate(['/articles']); // ou '/home' selon votre logique
+  } else {
+    this.router.navigate(['/landing']);
+  }
+}
+
+  goToArticles(): void {
+    this.router.navigate(['/articles']);
   }
 
-  // ===========================
-  // GESTION MENU MOBILE ✅
-  // ===========================
+  goToThemes(): void {
+    this.router.navigate(['/themes']);
+  }
 
-  /**
-   * Toggle du menu mobile
-   */
+  goToProfile(): void {
+    this.router.navigate(['/profile']);
+  }
+
+  // =============================================================================
+  // AUTHENTIFICATION
+  // =============================================================================
+
+  logout(): void {
+    if (this.authService.isLoggedIn()) {
+      this.authService.logout();
+    }
+  }
+
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  // =============================================================================
+  // MOBILE MENU
+  // =============================================================================
+
   toggleMobileMenu(): void {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    console.log('📱 Menu mobile:', this.isMobileMenuOpen ? 'ouvert' : 'fermé');
+    this.showMobileMenu = !this.showMobileMenu;
   }
 
-  /**
-   * Fermer le menu mobile
-   */
-  closeMobileMenu(): void {
-    this.isMobileMenuOpen = false;
-  }
+  // =============================================================================
+  // HELPERS
+  // =============================================================================
 
-    // ===========================
-  // ÉTAT DES ROUTES ✅
-  // ===========================
-
-  /**
-   * Vérifier si une route est active
-   * Utilisé pour appliquer les styles CSS actifs dans la navbar
-   */
   isRouteActive(route: string): boolean {
-    const currentUrl = this.router.url;
-    const isActive = currentUrl === route || currentUrl.startsWith(route + '/');
-    
-    // Debug pour voir l'état des routes actives
-    console.log(`🔍 Route ${route} active:`, isActive, `(URL actuelle: ${currentUrl})`);
-    
-    return isActive;
+    return this.router.url.startsWith(route);
   }
 }

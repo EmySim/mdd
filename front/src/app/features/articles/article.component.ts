@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { ArticleService, Article } from './article.service';
+import { ArticleService } from './article.service';
 import { ThemeService } from '../themes/theme.service';
+import { Article, ArticlesPage } from '../../interfaces/article.interface';
+import { Theme, ThemesPage } from '../../interfaces/theme.interface';
 
 @Component({
   selector: 'app-article',
@@ -10,19 +12,18 @@ import { ThemeService } from '../themes/theme.service';
   styleUrls: ['./article.component.scss']
 })
 export class ArticleComponent implements OnInit, OnDestroy {
-  // Propriétés manquantes
   articles: Article[] = [];
-  themes: any[] = [];
+  themes: Theme[] = [];
   selectedThemeId: number | null = null;
   sortDirection: 'asc' | 'desc' = 'desc';
   
   // États de chargement
-  isLoading = false;
-  isLoadingThemes = false;
-  isLoadingMore = false;
-  hasMoreArticles = true;
+  isLoading: boolean = false;
+  isLoadingThemes: boolean = false;
+  isLoadingMore: boolean = false;
+  hasMoreArticles: boolean = true;
   
-  private currentPage = 0;
+  private currentPage: number = 0;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -41,17 +42,20 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Chargement des données
+  // =============================================================================
+  // CHARGEMENT DES DONNÉES
+  // =============================================================================
+
   private loadThemes(): void {
     this.isLoadingThemes = true;
     this.themeService.getAllThemes().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response) => {
+      next: (response: ThemesPage) => {
         this.themes = response.content || [];
         this.isLoadingThemes = false;
       },
-      error: (error) => {
+      error: (error: Error) => {
         console.error('Erreur chargement thèmes:', error);
         this.isLoadingThemes = false;
       }
@@ -64,7 +68,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.articleService.getAllArticles(page, 10).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response) => {
+      next: (response: ArticlesPage) => {
         if (reset) {
           this.articles = response.content || [];
         } else {
@@ -76,7 +80,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.isLoadingMore = false;
       },
-      error: (error) => {
+      error: (error: Error) => {
         console.error('Erreur chargement articles:', error);
         this.isLoading = false;
         this.isLoadingMore = false;
@@ -84,16 +88,14 @@ export class ArticleComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Méthodes pour les actions du template
-  createArticle(): void {
-    this.router.navigate(['/articles/create']);
-  }
+  // =============================================================================
+  // FILTRES ET TRI
+  // =============================================================================
 
-  // ✅ Correction de la méthode filterByTheme
   filterByTheme(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value;
-    this.selectedThemeId = value ? parseInt(value) : null;
+    this.selectedThemeId = value ? parseInt(value, 10) : null;
     this.loadArticles(0, true);
   }
 
@@ -108,8 +110,28 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.loadArticles(0, true);
   }
 
+  // =============================================================================
+  // NAVIGATION
+  // =============================================================================
+
+  createArticle(): void {
+    this.router.navigate(['/articles/create']);
+  }
+
+  viewArticle(article: Article): void {
+    this.router.navigate(['/articles', article.id]);
+  }
+
+  viewTheme(themeId: number, themeName: string): void {
+    this.router.navigate(['/themes', themeId]);
+  }
+
+  // =============================================================================
+  // PAGINATION
+  // =============================================================================
+
   loadMoreArticles(): void {
-    if (this.hasMoreArticles && !this.isLoadingMore) {
+    if (!this.isLoadingMore && this.hasMoreArticles) {
       this.isLoadingMore = true;
       this.loadArticles(this.currentPage + 1, false);
     }
@@ -119,31 +141,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.loadArticles(0, true);
   }
 
-  // ✅ Méthodes de navigation
-  viewArticle(article: Article): void {
-    console.log(`👀 Consultation article: ${article.title}`);
-    this.router.navigate(['/articles', article.id]);
-  }
+  // =============================================================================
+  // HELPERS
+  // =============================================================================
 
-  /**
-   * ✅ CORRIGÉ - Signature alignée avec l'appel du template
-   * Navigation vers un thème avec ses articles
-   * 
-   * @param themeId ID du thème à consulter
-   * @param themeName Nom du thème (pour logging et UX)
-   */
-  viewTheme(themeId: number, themeName: string): void {
-    console.log(`🎨 Navigation vers thème: ${themeName} (ID: ${themeId})`);
-    
-    // Option 1: Filtrer les articles du thème dans la vue actuelle
-    this.selectedThemeId = themeId;
-    this.loadArticles(0, true);
-    
-    // Option 2: Navigation vers la page thèmes (alternative)
-    // this.router.navigate(['/themes'], { queryParams: { selected: themeId } });
-  }
-
-  // Méthodes utilitaires
   getSortText(): string {
     return this.sortDirection === 'asc' ? 'Plus anciens' : 'Plus récents';
   }
@@ -159,7 +160,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     return content.length > maxLength ? content.substring(0, maxLength) + '...' : content;
   }
 
-  // ✅ TrackBy pour optimisation rendu
   trackByArticleId(index: number, article: Article): number {
     return article.id;
   }

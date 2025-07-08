@@ -54,22 +54,23 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("🔑 Connexion: {}", loginRequest.getEmail());
+        log.info("🔑 Connexion: {}", loginRequest.getEmailOrUsername());
+
+        // Recherche utilisateur par email ou username
+        User user = userRepository.findByEmail(loginRequest.getEmailOrUsername())
+                .or(() -> userRepository.findByUsername(loginRequest.getEmailOrUsername()))
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
         // Authentification
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
+                        user.getEmail(), // Toujours utiliser l'email pour le token
                         loginRequest.getPassword()
                 )
         );
 
         // Génération du token JWT
-        String jwt = jwtUtils.generateTokenFromUsername(loginRequest.getEmail());
-
-        // Récupération utilisateur
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
+        String jwt = jwtUtils.generateTokenFromUsername(user.getEmail());
 
         log.info("✅ Connexion reussie: {} (ID: {})", user.getEmail(), user.getId());
 

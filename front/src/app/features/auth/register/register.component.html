@@ -13,104 +13,49 @@
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="w-full">
       <h1 class="text-center mb-lg">Inscription</h1>
 
+      <!-- Champ Username -->
       <div class="form__group">
-        <!-- Label associé au champ pour l'accessibilité -->
         <label class="form__label">Nom d'utilisateur</label>
-
         <input
           class="form__field"
-          [class.form__field--error]="hasFieldError('username') || (errorService.validationErrors$ | async)?.['username']"
+          [class.form__field--error]="hasFieldError('username')"
           formControlName="username"
         />
-
         <span class="form__error" *ngIf="hasFieldError('username')">
           {{ getFieldError("username") }}
         </span>
-
-        <span
-          class="form__error"
-          *ngIf="(errorService.validationErrors$ | async)?.['username'] as usernameError"
-        >
-          {{ usernameError }}
-        </span>
       </div>
 
-      <!-- ============================= -->
-      <!-- CHAMP EMAIL -->
-      <!-- ============================= -->
-
+      <!-- Champ Email -->
       <div class="form__group">
         <label class="form__label">Adresse e-mail</label>
-
         <input
           class="form__field"
-          [class.form__field--error]="hasFieldError('email') || (errorService.validationErrors$ | async)?.['email']"
+          [class.form__field--error]="hasFieldError('email')"
           formControlName="email"
           type="email"
         />
-
-        <!-- Messages d'erreur frontend (required, email format, etc.) -->
         <span class="form__error" *ngIf="hasFieldError('email')">
           {{ getFieldError("email") }}
         </span>
-
-        <!-- Messages d'erreur backend (email déjà utilisé, format invalide, etc.) -->
-        <span
-          class="form__error"
-          *ngIf="(errorService.validationErrors$ | async)?.['email'] as emailError"
-        >
-          {{ emailError }}
-        </span>
       </div>
 
-      <!-- ============================= -->
-      <!-- CHAMP MOT DE PASSE -->
-      <!-- ============================= -->
-
+      <!-- Champ Password -->
       <div class="form__group">
         <label class="form__label">Mot de passe</label>
-
-        <!-- 
-          Input password avec validation complexe
-          - type="password" : masque la saisie pour la sécurité
-          - Même système de double validation que les autres champs
-        -->
         <input
           class="form__field"
-          [class.form__field--error]="hasFieldError('password') || (errorService.validationErrors$ | async)?.['password']"
+          [class.form__field--error]="hasFieldError('password')"
           formControlName="password"
           type="password"
         />
-
-        <!-- 
-          Erreurs frontend : longueur, complexité (maj, min, chiffre)
-          Gérées par le validateur personnalisé passwordValidator()
-        -->
         <span class="form__error" *ngIf="hasFieldError('password')">
           {{ getFieldError("password") }}
         </span>
-
-        <!-- Erreurs backend : validation serveur, politiques de sécurité -->
-        <span
-          class="form__error"
-          *ngIf="(errorService.validationErrors$ | async)?.['password'] as passwordError"
-        >
-          {{ passwordError }}
-        </span>
       </div>
 
-      <!-- ============================= -->
-      <!-- BOUTON DE SOUMISSION -->
-      <!-- ============================= -->
-
+      <!-- Submit button -->
       <div class="form__group">
-        <!-- 
-          Bouton de soumission avec états visuels
-          - .btn .btn--primary .btn--auth : styles harmonisés
-          - [class.loading] : applique animation de chargement si isLoading
-          - [disabled] : désactive si formulaire invalide OU en cours de chargement
-          - Texte dynamique selon l'état de chargement
-        -->
         <button
           class="btn btn--primary btn--auth"
           [class.loading]="isLoading"
@@ -121,28 +66,13 @@
         </button>
       </div>
     </form>
+
+    <!-- Lien vers connexion -->
+    <div class="text-center mt-lg">
+      <p class="text-secondary">
+        Déjà un compte ?
+        <a routerLink="/auth/login" class="link">Se connecter</a>
+      </p>
+    </div>
   </div>
 </div>
-
-<!-- 
-  NOTES TECHNIQUES :
-  
-  1. GESTION D'ERREURS DOUBLE :
-     - Frontend : Validation instantanée (required, format, longueur)
-     - Backend : Validation métier (email unique, politiques)
-  
-  2. RESPONSIVE :
-     - .page-auth : layout adaptatif mobile/desktop
-     - .content-auth : padding et shadow responsive
-  
-  3. ACCESSIBILITÉ :
-     - Labels associés aux inputs
-     - Messages d'erreur descriptifs
-     - États disabled clairement indiqués
-  
-  4. UX :
-     - Animation slide-up à l'ouverture
-     - États de chargement visuels
-     - Validation en temps réel
-     - Navigation fluide entre formulaires
--->

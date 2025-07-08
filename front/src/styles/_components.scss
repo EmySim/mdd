@@ -313,6 +313,11 @@
   &--landing {
     height: 238px;
     width: 412px;
+    cursor: default; // Pas de cursor pointer
+    
+    &:hover {
+      opacity: 1; // Pas d'effet d'éclaircissement
+    }
 
     @include mobile {
       height: 130px;

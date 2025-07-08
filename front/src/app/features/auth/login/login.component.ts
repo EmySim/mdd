@@ -1,70 +1,42 @@
-// ============================================================================
-// LOGIN COMPONENT - IMPORTS CORRIGÉS
-// src/app/features/auth/login/login.component.ts
-// ============================================================================
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, Observable, takeUntil, map } from 'rxjs';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subject, takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth.service';
-import { ErrorService } from 'src/app/services/error.service';
-// ✅ Import depuis les interfaces existantes
-import { LoginRequest } from '../interfaces/auth.interface';
+import { ErrorService } from '../../../services/error.service';
+import { LoginRequest } from '../../../interfaces/user.interface';
 
-/**
- * Composant de connexion pour l'application MDD
- */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
-  // ===========================
-  // PROPRIÉTÉS DU COMPOSANT
-  // ===========================
-  
   loginForm: FormGroup;
-  loading = false;
-  isMobile$: Observable<boolean>;
+  isLoading = false;
+  
   private destroy$ = new Subject<void>();
 
-  // ===========================
-  // CONSTRUCTEUR
-  // ===========================
-  
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private breakpointObserver: BreakpointObserver,
     public errorService: ErrorService
   ) {
     this.loginForm = this.createLoginForm();
-    this.isMobile$ = this.breakpointObserver
-      .observe([Breakpoints.Handset])
-      .pipe(map(result => result.matches));
   }
 
-  // ===========================
-  // CYCLE DE VIE ANGULAR
-  // ===========================
-  
   ngOnInit(): void {
+    this.errorService.clearAll();
+    
     this.authService.isLoggedIn$.pipe(
       takeUntil(this.destroy$)
-    ).subscribe(isLoggedIn => {
+    ).subscribe((isLoggedIn: boolean) => {
       if (isLoggedIn) {
-        console.log('🔄 Utilisateur déjà connecté, redirection vers /home');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       }
     });
-    
-    console.log('🔑 Composant Login initialisé');
   }
 
   ngOnDestroy(): void {
@@ -72,60 +44,64 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ===========================
-  // FORMULAIRE
-  // ===========================
-  
   private createLoginForm(): FormGroup {
     return this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      emailOrUsername: ['', [Validators.required, this.emailOrUsernameValidator]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
-  // ===========================
-  // SOUMISSION
-  // ===========================
-  
+  // Validateur personnalisé pour email ou nom d'utilisateur
+  private emailOrUsernameValidator(control: AbstractControl): { [key: string]: any } | null {
+    if (!control.value) {
+      return null; // Laisse la validation 'required' gérer les valeurs vides
+    }
+    
+    const value = control.value.trim();
+    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/; // 3-20 caractères, lettres, chiffres, _ et -
+    
+    //if (emailRegex.test(value) || usernameRegex.test(value)) {
+    //  return null; // Valide
+    //}
+    
+    //return { invalidEmailOrUsername: true };
+    return null; // Pas de validation stricte pour l'instant
+  }
+
   onSubmit(): void {
-    if (this.loginForm.valid && !this.loading) {
-      this.loading = true;
+    if (this.loginForm.valid && !this.isLoading) {
+      this.isLoading = true;
       this.errorService.clearAll();
 
-      const credentials: LoginRequest = {
-        email: this.loginForm.value.email.trim(),
+      const loginData: LoginRequest = {
+        emailOrUsername: this.loginForm.value.emailOrUsername.trim(),
         password: this.loginForm.value.password
       };
 
-      this.authService.login(credentials).pipe(
+      console.log('🔍 Données envoyées:', loginData);
+
+      this.authService.login(loginData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
         next: (response) => {
-          this.loading = false;
-          console.log('✅ Connexion réussie, redirection vers /home');
-          this.router.navigate(['/home']);
+          console.log('✅ RÉPONSE COMPLÈTE DU BACKEND:', response); // ← Regardez ça dans la console
+          console.log('✅ Connexion réussie');
+          this.isLoading = false;
+          this.router.navigate(['/']);
         },
-        error: (httpError: HttpErrorResponse) => {
-          this.loading = false;
-          console.error('❌ Erreur de connexion:', httpError);
-          this.errorService.handleHttpError(httpError);
+        error: (error: HttpErrorResponse) => {
+          console.error('❌ Erreur complète:', error);
+          console.error('❌ Status:', error.status);
+          console.error('❌ Body:', error.error);
+          this.isLoading = false;
+          this.errorService.handleHttpError(error);
         }
       });
-    } else {
-      this.markFormGroupTouched();
     }
   }
 
-  // ===========================
-  // VALIDATION
-  // ===========================
-  
-  private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach(key => {
-      this.loginForm.get(key)?.markAsTouched();
-    });
-  }
-
+  // Méthodes de validation
   hasFieldError(fieldName: string): boolean {
     const field = this.loginForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
@@ -134,25 +110,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   getFieldError(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
     if (field && field.errors && field.touched) {
-      
       if (field.errors['required']) {
-        return `${fieldName === 'email' ? 'Email' : 'Mot de passe'} requis`;
+        return fieldName === 'emailOrUsername' ? 'Email ou nom d\'utilisateur requis' : 'Mot de passe requis';
       }
-      if (field.errors['email']) {
-        return 'Format email invalide';
+      if (field.errors['invalidEmailOrUsername']) {
+        return 'Format invalide. Utilisez un email valide ou un nom d\'utilisateur (3-20 caractères)';
       }
       if (field.errors['minlength']) {
-        return 'Le mot de passe doit contenir au moins 8 caractères';
+        return 'Le mot de passe doit contenir au moins 6 caractères';
       }
     }
     return '';
-  }
-
-  // ===========================
-  // NAVIGATION
-  // ===========================
-  
-  goToRegister(): void {
-    this.router.navigate(['/auth/register']);
   }
 }

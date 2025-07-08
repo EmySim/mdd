@@ -1,39 +1,67 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { AuthService } from '../../features/auth/auth.service';
 import { ArticleService } from '../../features/articles/article.service';
 import { ThemeService } from '../../features/themes/theme.service';
+import { User } from '../../interfaces/user.interface';
+import { Theme, ThemesPage } from '../../interfaces/theme.interface';
+import { Article, ArticlesPage } from '../../interfaces/article.interface';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  // Propriétés manquantes ajoutées
-  currentUser: any = null;
-  recentArticles: any[] = [];
-  subscribedThemes: any[] = [];
-  totalArticles = 0;
-  totalSubscriptions = 0;
+  // =============================================================================
+  // PROPRIÉTÉS PUBLIQUES
+  // =============================================================================
+  
+  currentUser: User | null = null;
+  recentArticles: Article[] = [];
+  subscribedThemes: Theme[] = [];
+  
+  // Statistiques
+  totalArticles: number = 0;        // ✅ Ajouté
+  totalSubscriptions: number = 0;   // ✅ Ajouté
   
   // États de chargement
-  isLoadingArticles = false;
-  isLoadingThemes = false;
+  isLoadingArticles: boolean = false;  // ✅ Ajouté
+  isLoadingThemes: boolean = false;    // ✅ Ajouté
   
-  private destroy$ = new Subject<void>();
+  readonly loading = {
+    initial: true,
+    articles: false,
+    themes: false
+  };
+
+  // =============================================================================
+  // PROPRIÉTÉS PRIVÉES
+  // =============================================================================
+  
+  private readonly destroy$ = new Subject<void>();
+  private readonly ARTICLES_LIMIT = 5;
+  private readonly THEMES_LIMIT = 10;
+
+  // =============================================================================
+  // CONSTRUCTEUR
+  // =============================================================================
 
   constructor(
-    private authService: AuthService,
-    private articleService: ArticleService,
-    private themeService: ThemeService,
-    private router: Router
+    private readonly authService: AuthService,
+    private readonly articleService: ArticleService,
+    private readonly themeService: ThemeService,
+    private readonly router: Router
   ) {}
 
+  // =============================================================================
+  // LIFECYCLE HOOKS
+  // =============================================================================
+
   ngOnInit(): void {
-    this.loadCurrentUser();
-    this.loadDashboardData();
+    this.initializeComponent();
   }
 
   ngOnDestroy(): void {
@@ -41,60 +69,85 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Chargement des données
+  // =============================================================================
+  // INITIALISATION
+  // =============================================================================
+
+  private initializeComponent(): void {
+    this.loadCurrentUser();
+    this.loadDashboardData();
+  }
+
   private loadCurrentUser(): void {
     this.authService.currentUser$.pipe(
       takeUntil(this.destroy$)
-    ).subscribe(user => {
-      this.currentUser = user;
+    ).subscribe({
+      next: (user: User | null) => {
+        this.currentUser = user;
+        if (user) {
+          console.log(`👤 Utilisateur connecté: ${user.username}`);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement utilisateur:', error);
+      }
     });
   }
 
   private loadDashboardData(): void {
-    this.loadRecentArticles();
-    this.loadSubscribedThemes();
-  }
-
-  private loadRecentArticles(): void {
+    this.loading.initial = true;
     this.isLoadingArticles = true;
-    this.articleService.getAllArticles(0, 5).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: (response) => {
-        this.recentArticles = response.content || [];
-        this.totalArticles = response.totalElements || 0;
-        this.isLoadingArticles = false;
-      },
-      error: (error) => {
-        console.error('Erreur chargement articles:', error);
-        this.isLoadingArticles = false;
-      }
-    });
-  }
-
-  private loadSubscribedThemes(): void {
     this.isLoadingThemes = true;
-    this.themeService.getAllThemes(0, 10).pipe(
+
+    forkJoin({
+      articles: this.articleService.getAllArticles(0, this.ARTICLES_LIMIT),
+      themes: this.themeService.getAllThemes(0, this.THEMES_LIMIT)
+    }).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response) => {
-        this.subscribedThemes = response.content?.filter(theme => theme.isSubscribed) || [];
-        this.totalSubscriptions = this.subscribedThemes.length;
+      next: ({ articles, themes }) => {
+        this.handleArticlesResponse(articles);
+        this.handleThemesResponse(themes);
+        this.loading.initial = false;
+        this.isLoadingArticles = false;
         this.isLoadingThemes = false;
       },
       error: (error) => {
-        console.error('Erreur chargement thèmes:', error);
+        console.error('❌ Erreur chargement dashboard:', error);
+        this.loading.initial = false;
+        this.isLoadingArticles = false;
         this.isLoadingThemes = false;
       }
     });
   }
 
-  // Méthodes pour les actions du template
+  // =============================================================================
+  // GESTION DES DONNÉES
+  // =============================================================================
+
+  private handleArticlesResponse(response: ArticlesPage): void {
+    this.recentArticles = response.content || [];
+    this.totalArticles = response.totalElements || 0;
+    console.log(`📰 ${this.recentArticles.length} articles chargés`);
+  }
+
+  private handleThemesResponse(response: ThemesPage): void {
+    this.subscribedThemes = response.content?.filter(
+      (theme: Theme) => theme.isSubscribed
+    ) || [];
+    this.totalSubscriptions = this.subscribedThemes.length;
+    console.log(`🎨 ${this.subscribedThemes.length} abonnements trouvés`);
+  }
+
+  // =============================================================================
+  // ACTIONS PUBLIQUES
+  // =============================================================================
+
   createArticle(): void {
     this.router.navigate(['/articles/create']);
   }
 
-  viewArticle(article: any): void {
+  viewArticle(article: Article): void {
     this.router.navigate(['/articles', article.id]);
   }
 
@@ -102,7 +155,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/articles']);
   }
 
-  viewTheme(theme: any): void {
+  viewTheme(theme: Theme): void {
     this.router.navigate(['/themes', theme.id]);
   }
 
@@ -111,20 +164,65 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   refreshDashboard(): void {
+    console.log('🔄 Actualisation du dashboard');
     this.loadDashboardData();
   }
 
-  // Méthodes utilitaires
+  // =============================================================================
+  // MÉTHODES UTILITAIRES
+  // =============================================================================
+
   truncateContent(content: string, maxLength: number = 150): string {
     if (!content) return '';
-    return content.length > maxLength ? content.substring(0, maxLength) + '...' : content;
+    return content.length > maxLength 
+      ? `${content.substring(0, maxLength)}...` 
+      : content;
   }
 
-  trackByArticleId(index: number, article: any): number {
+  formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  getGreeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Bonjour';
+    if (hour < 17) return 'Bon après-midi';
+    return 'Bonsoir';
+  }
+
+  // =============================================================================
+  // TRACK BY FUNCTIONS
+  // =============================================================================
+
+  trackByArticleId(index: number, article: Article): number {
     return article.id;
   }
 
-  trackByThemeId(index: number, theme: any): number {
+  trackByThemeId(index: number, theme: Theme): number {
     return theme.id;
+  }
+
+  // =============================================================================
+  // GETTERS (pour le template)
+  // =============================================================================
+
+  get isLoading(): boolean {
+    return this.loading.initial || this.loading.articles || this.loading.themes;
+  }
+
+  get hasArticles(): boolean {
+    return this.recentArticles.length > 0;
+  }
+
+  get hasSubscriptions(): boolean {
+    return this.subscribedThemes.length > 0;
+  }
+
+  get userName(): string {
+    return this.currentUser?.username || 'Utilisateur';
   }
 }
