@@ -45,6 +45,23 @@
     }
   }
 
+  &--sort {
+    background-color: transparent;
+    color: $mdd-black;
+    border: none;
+    font-family: $mdd-font-family;
+    font-size: $font-button-text;
+    font-weight: $weight-bold;
+    padding: 0;
+    height: auto;
+    min-width: auto;
+
+    &:hover:not(:disabled) {
+      background-color: transparent;
+      transform: none;
+    }
+  }
+
   &--outline-primary {
     background-color: transparent;
     color: var(--mdd-black);

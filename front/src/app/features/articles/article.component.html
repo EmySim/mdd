@@ -14,19 +14,16 @@
 
         <!-- Tri seulement (droite) -->
         <div class="filter-group">
-          <label class="filter-label">Trier par :</label>
           <button
-            class="btn btn--secondary btn--sm"
+            class="btn btn--sort"
             (click)="changeSortDirection()"
             [disabled]="isLoading"
           >
-            {{ getSortText() }}
-            <span class="sort-icon">
-              {{ sortDirection === "desc" ? "↓" : "↑" }}
-            </span>
+            Trier par {{ sortDirection === 'desc' ? '↓' : '↑' }}
           </button>
         </div>
       </div>
+ 
     </div>
   </div>
 
