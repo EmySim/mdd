@@ -7,8 +7,8 @@
            class="logo logo--navbar"
            (click)="goToHomePage()">
       
-      <!-- Menu principal (desktop) -->
-      <div class="flex-gap-lg hidden-mobile" *ngIf="!isSimple">
+      <!-- Menu principal (desktop) - MASQUÉ si isSimple -->
+      <div class="flex-gap-lg hidden-mobile" *ngIf="!isSimple && isLoggedIn">
         <a class="navbar__link navbar__link--logout" (click)="logout()">
           Se déconnecter
         </a>
@@ -27,13 +27,36 @@
              (click)="goToProfile()">
       </div>
       
-      <!-- Burger menu (mobile) -->
+      <!-- Burger menu (mobile) - MASQUÉ si isSimple -->
       <button class="btn btn--sm mobile-only" 
-              *ngIf="!isSimple"
+              *ngIf="!isSimple && isLoggedIn"
               (click)="toggleMobileMenu()">
-        ☰
+        {{ showMobileMenu ? '✕' : '☰' }}
       </button>
       
     </div>
   </div>
 </nav>
+
+<!-- Menu mobile overlay - MASQUÉ si isSimple -->
+<div class="mobile-menu-overlay" 
+     [class.mobile-menu-overlay--open]="showMobileMenu" 
+     (click)="closeMobileMenu()"
+     *ngIf="!isSimple && isLoggedIn">
+  <nav class="mobile-menu" (click)="$event.stopPropagation()">
+    <div class="mobile-menu__content">
+      <a class="mobile-menu__link" (click)="goToArticles(); closeMobileMenu()">
+        Articles
+      </a>
+      <a class="mobile-menu__link" (click)="goToThemes(); closeMobileMenu()">
+        Thèmes
+      </a>
+      <a class="mobile-menu__link" (click)="goToProfile(); closeMobileMenu()">
+        Profil
+      </a>
+      <a class="mobile-menu__link mobile-menu__link--logout" (click)="logout(); closeMobileMenu()">
+        Se déconnecter
+      </a>
+    </div>
+  </nav>
+</div>

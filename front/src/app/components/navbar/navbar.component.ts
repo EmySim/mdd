@@ -39,19 +39,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // =============================================================================
 
   goToHomePage(): void {
-  // Si on est en mode simple (pages auth), rediriger vers landing
-  if (this.isSimple) {
-    this.router.navigate(['/landing']);
-    return;
+    // Si on est en mode simple (pages auth), rediriger vers landing
+    if (this.isSimple) {
+      this.router.navigate(['/landing']);
+      return;
+    }
+    
+    // Sinon, logique normale pour les utilisateurs connectés
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/articles']); // ou '/home' selon votre logique
+    } else {
+      this.router.navigate(['/landing']);
+    }
   }
-  
-  // Sinon, logique normale pour les utilisateurs connectés
-  if (this.authService.isLoggedIn()) {
-    this.router.navigate(['/articles']); // ou '/home' selon votre logique
-  } else {
-    this.router.navigate(['/landing']);
-  }
-}
 
   goToArticles(): void {
     this.router.navigate(['/articles']);
@@ -85,6 +85,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleMobileMenu(): void {
     this.showMobileMenu = !this.showMobileMenu;
+  }
+
+  closeMobileMenu(): void {
+    this.showMobileMenu = false;
   }
 
   // =============================================================================
