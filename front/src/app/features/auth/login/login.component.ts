@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           console.log('✅ RÉPONSE COMPLÈTE DU BACKEND:', response); // ← Regardez ça dans la console
           console.log('✅ Connexion réussie');
           this.isLoading = false;
-          this.router.navigate(['/']);
+          this.router.navigate(['/articles']);
         },
         error: (error: HttpErrorResponse) => {
           console.error('❌ Erreur complète:', error);

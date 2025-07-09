@@ -22,10 +22,15 @@ export class ArticleService {
     private errorService: ErrorService
   ) {}
 
-  getAllArticles(page: number = 0, size: number = 10): Observable<ArticlesPage> {
+  getAllArticles(
+    page: number = 0, 
+    size: number = 10, 
+    sortDirection: 'asc' | 'desc' = 'desc'
+  ): Observable<ArticlesPage> {
     const params = new HttpParams()
       .set('page', page.toString())
-      .set('size', size.toString());
+      .set('size', size.toString())
+      .set('sort', sortDirection); // ✅ CORRECTION: Juste la direction (le backend gère createdAt)
 
     return this.http.get<ArticlesPage>(this.API_URL, { params })
       .pipe(

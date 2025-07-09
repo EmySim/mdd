@@ -15,7 +15,6 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: $transition-base;
   text-decoration: none;
   white-space: nowrap;
 
@@ -183,34 +182,22 @@
 
 // === CARTES GLOBALES ===
 .card {
-  background-color: var(--mdd-card-bg);
+  background-color: $mdd-card-bg;
   border-radius: 8px;
   padding: $space-lg;
   margin-bottom: $space-md;
-  transition: $transition-base;
+  cursor: pointer;
 
   @include mobile {
     padding: $space-md;
     margin-bottom: $space-sm;
   }
 
-  // === VARIANTES INTERACTIVES ===
-  &--clickable {
-    cursor: pointer;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    }
-  }
-
   // === VARIANTES DE CONTENU ===
   &--article {
-    @extend .card--clickable;
-
     .article-title {
       font-family: $mdd-font-family;
-      font-size: $font-article-title;
+      font-size: $font-article-title; // 16px
       font-weight: $weight-bold;
       color: var(--mdd-black);
       margin-bottom: $space-sm;
@@ -219,31 +206,18 @@
 
     .article-meta {
       display: flex;
-      gap: $space-sm;
-      font-size: $font-body-content;
-      color: #666;
+      gap: $space-lg;
       margin-bottom: $space-sm;
       flex-wrap: wrap;
-
-      .article-author {
-        font-weight: $weight-semi-bold;
-      }
-
-      .article-date {
-        color: #999;
-      }
-
-      .article-theme {
-        background: var(--mdd-primary-violet);
-        color: var(--mdd-white);
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-      }
     }
 
+    // Style commun pour TOUT le texte (sauf titre)
+    .article-meta,
     .article-content {
-      color: #666;
+      font-family: $mdd-font-family;
+      font-size: $font-body-content; // 14px
+      font-weight: $weight-regular; // 400
+      color: var(--mdd-black);
       line-height: 1.4;
     }
   }

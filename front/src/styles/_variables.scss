@@ -1,5 +1,5 @@
 // =============================================================================
-// MDD - Variables SCSS 
+// MDD - Variables SCSS - VERSION MVP
 // =============================================================================
 
 // Couleurs principales
@@ -8,7 +8,7 @@ $mdd-navbar-active: #6C5CCF;
 $mdd-black: #000000;
 $mdd-white: #FFFFFF;
 $mdd-logout-red: #A40F0F;
-$mdd-card-bg: #F8F9FA;
+$mdd-card-bg: #F5F5F5; 
 $mdd-border-gray: #E0E0E0;
 $mdd-text-gray: #666666;
 
@@ -22,16 +22,15 @@ $font-landing-title: 24px;
 $font-page-title: 24px;
 $font-navbar-link: 20px;
 $font-button-text: 16px;
-$font-article-title: 18px;
-$font-body-content: 14px;
+$font-article-title: 16px; 
+$font-body-content: 14px;   
 $font-landing-field: 16px;
 $font-logout-link: 14px;
-$font-navbar-link: 16px;
 
 // Poids de police
-$weight-regular: 400;
+$weight-regular: 400;       
 $weight-medium: 500;
-$weight-bold: 700;
+$weight-bold: 700;          
 $weight-semi-bold: 600;
 $weight-normal: 400;
 $weight-light: 300;
@@ -49,15 +48,6 @@ $space-md: 16px;
 $space-lg: 24px;
 $space-xl: 32px;
 $space-xxl: 48px;
-
-// Transitions
-$transition-base: all 0.2s ease;
-$transition-slow: all 0.3s ease;
-
-// Shadows
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
 
 // Border radius
 $radius-sm: 4px;
