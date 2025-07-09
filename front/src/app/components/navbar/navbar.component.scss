@@ -1,6 +1,6 @@
-// navbar.component.scss - VERSION MVP SIMPLE
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+// navbar.component.scss - VERSION PROPRE ET COMPLÈTE
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 .navbar {
   position: sticky;
@@ -8,47 +8,47 @@
   z-index: 1000;
   background: var(--mdd-white);
   border-bottom: 1px solid #e0e0e0;
-  
-  // 🎯 SOLUTION MVP : Masquer toute la navbar sur mobile pour pages auth
+
+  // 🎯 Masquer toute la navbar sur mobile pour pages auth
   &.navbar--simple {
     @include mobile {
       display: none !important;
     }
   }
-  
+
   &__container {
     max-width: 1200px;
     margin: 0 auto;
     padding: $space-md;
-    
-    // 🎯 SOLUTION : Appliquer flex directement sur le container
+
+    // 🎯 Appliquer flex directement sur le container
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  
+
   &__menu {
     display: flex;
     align-items: center;
     gap: $space-lg;
-    
+
     @include mobile {
       display: none;
     }
   }
-  
+
   &__burger {
     background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
     padding: $space-sm;
-    
+
     @include mobile {
       display: block;
     }
   }
-  
+
   &__link {
     font-family: $mdd-font-family;
     font-size: $font-navbar-link;
@@ -58,18 +58,18 @@
     cursor: pointer;
 
     &:hover {
-      color: var(--mdd-navbar-active); 
+      color: var(--mdd-navbar-active);
     }
-    
+
     &.active {
       color: var(--mdd-navbar-active);
     }
-    
+
     &--logout {
       font-size: $font-logout-link;
       font-weight: $weight-bold;
       color: var(--mdd-logout-red) !important;
-      
+
       &:hover {
         text-decoration: underline;
       }
@@ -77,22 +77,22 @@
   }
 
   &__user-icon {
-    height: 24px; 
+    height: 24px;
     width: 24px;
     cursor: pointer;
     opacity: 0.7;
     transition: opacity 0.2s ease;
-    
+
     &:hover {
       opacity: 1;
     }
   }
 }
 
-/* === BURGER MENU MOBILE === */
+/* === RESPONSIVE UTILITIES === */
 .mobile-only {
   display: none;
-  
+
   @media (max-width: 768px) {
     display: block;
   }
@@ -104,7 +104,7 @@
   }
 }
 
-/* Menu mobile overlay */
+/* === MENU MOBILE === */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -116,7 +116,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  
+
   &--open {
     opacity: 1;
     visibility: visible;
@@ -125,27 +125,46 @@
 
 .mobile-menu {
   position: fixed;
-  top: 64px;
   right: 0;
   width: 280px;
-  height: calc(100% - 64px);
+  height: 100%;
   background: var(--mdd-white);
   transform: translateX(100%);
   transition: transform 0.3s ease;
   z-index: 1001;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  
+
   .mobile-menu-overlay--open & {
     transform: translateX(0);
   }
-  
+
   &__content {
     padding: $space-lg;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: $space-md;
+    height: 100%;
   }
-  
+
+  &__user-icon-section {
+    margin-top: auto; // 🎯 Pousse l'icône vers le bas
+    display: flex;
+    justify-content: center;
+    padding: $space-md 0;
+  }
+
+  &__user-icon-bottom {
+    width: 32px;
+    height: 32px;
+    opacity: 0.7;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   &__link {
     display: block;
     padding: $space-md;
@@ -156,21 +175,18 @@
     font-family: $mdd-font-family;
     font-size: $font-navbar-link;
     cursor: pointer;
-    
+
     &:hover {
-      background-color: #f5f5f5;
       color: var(--mdd-navbar-active);
     }
-    
+
     &--logout {
       color: var(--mdd-logout-red) !important;
       font-weight: $weight-bold;
-      border-top: 1px solid #e0e0e0;
       margin-top: $space-md;
       padding-top: $space-lg;
-      
+
       &:hover {
-        background-color: #fff5f5;
         color: var(--mdd-logout-red) !important;
       }
     }

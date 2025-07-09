@@ -1,60 +1,79 @@
 <nav class="navbar" [class.navbar--simple]="isSimple">
   <div class="navbar__container">
-    
     <!-- Logo -->
-    <img src="assets/logo_navbar_home.png" 
-         class="logo logo--navbar"
-         (click)="goToHomePage()">
-    
+    <img
+      src="assets/logo_navbar_home.png"
+      class="logo logo--navbar"
+      (click)="goToHomePage()"
+    />
+
     <!-- Menu principal (desktop) -->
     <div class="navbar__menu" *ngIf="!isSimple && isLoggedIn">
       <a class="navbar__link navbar__link--logout" (click)="logout()">
         Se déconnecter
       </a>
-      <a class="navbar__link" 
-         [class.active]="isRouteActive('/articles')" 
-         (click)="goToArticles()">
+      <a
+        class="navbar__link"
+        [class.active]="isRouteActive('/articles')"
+        (click)="goToArticles()"
+      >
         Articles
       </a>
-      <a class="navbar__link" 
-         [class.active]="isRouteActive('/themes')" 
-         (click)="goToThemes()">
+      <a
+        class="navbar__link"
+        [class.active]="isRouteActive('/themes')"
+        (click)="goToThemes()"
+      >
         Thèmes
       </a>
-      <img src="assets/icon_user.svg" 
-           class="navbar__user-icon" 
-           (click)="goToProfile()">
+      <img
+        src="assets/icon_user.svg"
+        class="navbar__user-icon"
+        (click)="goToProfile()"
+      />
     </div>
-    
+
     <!-- Burger menu (mobile) -->
-    <button class="navbar__burger mobile-only" 
-            *ngIf="!isSimple && isLoggedIn"
-            (click)="toggleMobileMenu()">
-      {{ showMobileMenu ? '✕' : '☰' }}
+    <button
+      class="navbar__burger mobile-only"
+      *ngIf="!isSimple && isLoggedIn"
+      (click)="toggleMobileMenu()"
+    >
+      {{ showMobileMenu ? "✕" : "☰" }}
     </button>
-    
   </div>
 </nav>
 
 <!-- Menu mobile overlay -->
-<div class="mobile-menu-overlay" 
-     [class.mobile-menu-overlay--open]="showMobileMenu" 
-     (click)="closeMobileMenu()"
-     *ngIf="!isSimple && isLoggedIn">
+<div
+  class="mobile-menu-overlay"
+  [class.mobile-menu-overlay--open]="showMobileMenu"
+  (click)="closeMobileMenu()"
+  *ngIf="!isSimple && isLoggedIn"
+>
   <nav class="mobile-menu" (click)="$event.stopPropagation()">
     <div class="mobile-menu__content">
+      <!-- Liens de navigation en haut -->
+      <a
+        class="mobile-menu__link mobile-menu__link--logout"
+        (click)="logout(); closeMobileMenu()"
+      >
+        Se déconnecter
+      </a>
       <a class="mobile-menu__link" (click)="goToArticles(); closeMobileMenu()">
         Articles
       </a>
       <a class="mobile-menu__link" (click)="goToThemes(); closeMobileMenu()">
         Thèmes
       </a>
-      <a class="mobile-menu__link" (click)="goToProfile(); closeMobileMenu()">
-        Profil
-      </a>
-      <a class="mobile-menu__link mobile-menu__link--logout" (click)="logout(); closeMobileMenu()">
-        Se déconnecter
-      </a>
+
+      <div class="mobile-menu__user-icon-section">
+        <img
+          src="assets/icon_user.svg"
+          class="mobile-menu__user-icon-bottom"
+          (click)="goToProfile(); closeMobileMenu()"
+        />
+      </div>
     </div>
   </nav>
 </div>
