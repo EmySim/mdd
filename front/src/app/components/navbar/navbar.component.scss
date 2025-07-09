@@ -19,18 +19,33 @@
   &__container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: $space-md;
+    
+    // 🎯 SOLUTION : Appliquer flex directement sur le container
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: $space-md;
   }
   
   &__menu {
     display: flex;
+    align-items: center;
     gap: $space-lg;
     
     @include mobile {
       display: none;
+    }
+  }
+  
+  &__burger {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: $space-sm;
+    
+    @include mobile {
+      display: block;
     }
   }
   

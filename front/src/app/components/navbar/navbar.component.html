@@ -1,40 +1,38 @@
 <nav class="navbar" [class.navbar--simple]="isSimple">
   <div class="navbar__container">
-    <div class="flex-between">
-      
-      <!-- Logo -->
-      <img src="assets/logo_navbar_home.png" 
-           class="logo logo--navbar"
-           (click)="goToHomePage()">
-      
-      <!-- Menu principal (desktop) -->
-      <div class="flex-gap-lg hidden-mobile" *ngIf="!isSimple && isLoggedIn">
-        <a class="navbar__link navbar__link--logout" (click)="logout()">
-          Se déconnecter
-        </a>
-        <a class="navbar__link" 
-           [class.active]="isRouteActive('/articles')" 
-           (click)="goToArticles()">
-          Articles
-        </a>
-        <a class="navbar__link" 
-           [class.active]="isRouteActive('/themes')" 
-           (click)="goToThemes()">
-          Thèmes
-        </a>
-        <img src="assets/icon_user.svg" 
-             class="navbar__user-icon" 
-             (click)="goToProfile()">
-      </div>
-      
-      <!-- Burger menu (mobile) -->
-      <button class="btn btn--sm mobile-only" 
-              *ngIf="!isSimple && isLoggedIn"
-              (click)="toggleMobileMenu()">
-        {{ showMobileMenu ? '✕' : '☰' }}
-      </button>
-      
+    
+    <!-- Logo -->
+    <img src="assets/logo_navbar_home.png" 
+         class="logo logo--navbar"
+         (click)="goToHomePage()">
+    
+    <!-- Menu principal (desktop) -->
+    <div class="navbar__menu" *ngIf="!isSimple && isLoggedIn">
+      <a class="navbar__link navbar__link--logout" (click)="logout()">
+        Se déconnecter
+      </a>
+      <a class="navbar__link" 
+         [class.active]="isRouteActive('/articles')" 
+         (click)="goToArticles()">
+        Articles
+      </a>
+      <a class="navbar__link" 
+         [class.active]="isRouteActive('/themes')" 
+         (click)="goToThemes()">
+        Thèmes
+      </a>
+      <img src="assets/icon_user.svg" 
+           class="navbar__user-icon" 
+           (click)="goToProfile()">
     </div>
+    
+    <!-- Burger menu (mobile) -->
+    <button class="navbar__burger mobile-only" 
+            *ngIf="!isSimple && isLoggedIn"
+            (click)="toggleMobileMenu()">
+      {{ showMobileMenu ? '✕' : '☰' }}
+    </button>
+    
   </div>
 </nav>
 
