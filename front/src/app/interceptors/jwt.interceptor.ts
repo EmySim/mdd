@@ -1,36 +1,28 @@
-// src/app/core/interceptors/jwt.interceptor.ts - VERSION MVP
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, catchError } from 'rxjs';
-import { AuthService } from '../features/auth/auth.service';
-import { ErrorService } from '../services/error.service';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 /**
- * Intercepteur JWT MVP - Simple et efficace
+ * JWT Interceptor MVP - SANS dépendance circulaire
  * 
- * Fonctionnalités :
- * ✅ Ajoute token JWT automatiquement
- * ✅ Gère les erreurs HTTP avec ErrorService
- * ✅ Déconnexion automatique sur 401
- * ❌ Pas de retry automatique (MVP)
- * ❌ Pas de gestion complexe (MVP)
+ * 🎯 SOLUTION : Accès direct au localStorage au lieu d'injecter AuthService
  */
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
+  private readonly TOKEN_KEY = 'authToken';
   private readonly PUBLIC_ENDPOINTS = [
     '/api/auth/login',
     '/api/auth/register'
   ];
 
-  constructor(
-    private authService: AuthService,
-    private errorService: ErrorService
-  ) {}
+  constructor(private router: Router) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     
-    // Ajouter token si nécessaire
+    // 🎯 SOLUTION : Ajouter token sans injecter AuthService
     const authenticatedRequest = this.addTokenIfNeeded(request);
 
     // Exécuter avec gestion d'erreurs
@@ -43,14 +35,15 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Ajoute le token aux requêtes API privées
+   * 🎯 SOLUTION : Accès direct au localStorage
    */
   private addTokenIfNeeded(request: HttpRequest<unknown>): HttpRequest<unknown> {
     const needsToken = request.url.includes('/api/') && 
                       !this.PUBLIC_ENDPOINTS.some(endpoint => request.url.includes(endpoint));
 
     if (needsToken) {
-      const token = this.authService.getToken();
+      // ✅ Accès direct au localStorage (pas d'injection AuthService)
+      const token = localStorage.getItem(this.TOKEN_KEY);
       if (token) {
         console.log(`🔐 Token ajouté pour: ${request.method} ${request.url}`);
         return request.clone({
@@ -63,18 +56,23 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Gestion simple des erreurs HTTP
+   * 🎯 SOLUTION : Gestion d'erreurs simplifiée
    */
   private handleError(error: HttpErrorResponse): void {
     console.error(`❌ HTTP ${error.status} sur ${error.url}:`, error);
 
     if (error.status === 401) {
-      // Token expiré - déconnexion automatique
+      // Token expiré - nettoyage et redirection
       console.warn('🚫 Token expiré - déconnexion automatique');
-      this.authService.logout();
-    } else {
-      // Autres erreurs - délégation au ErrorService
-      this.errorService.handleHttpError(error);
+      
+      // ✅ Nettoyage direct du localStorage
+      localStorage.removeItem(this.TOKEN_KEY);
+      
+      // ✅ Redirection sans injecter AuthService
+      this.router.navigate(['/auth/login']);
     }
+    
+    // Pour les autres erreurs, on laisse le composant les gérer
+    // (pas d'injection ErrorService pour éviter les cycles)
   }
 }

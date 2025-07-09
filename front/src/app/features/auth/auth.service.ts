@@ -20,7 +20,6 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public readonly currentUser$ = this.currentUserSubject.asObservable();
   
-  // Observable pour le statut de connexion
   public readonly isLoggedIn$ = this.currentUser$.pipe(
     map(user => user !== null)
   );
@@ -28,6 +27,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
+    // 🎯 SOLUTION : Pas d'injection ErrorService pour éviter les cycles
   ) {
     this.loadUserFromStorage();
   }
@@ -98,8 +98,14 @@ export class AuthService {
     );
   }
 
+  /**
+   * 🎯 SOLUTION : Gestion d'erreurs simplifiée
+   * Les composants gèrent leurs propres erreurs via ErrorService
+   */
   private handleError = (error: any): Observable<never> => {
-    console.error('AuthService Error:', error);
+    console.error('❌ AuthService Error:', error);
+    
+    // Simple re-throw : les composants gèrent l'affichage
     return throwError(() => error);
   };
 }
