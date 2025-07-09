@@ -1,10 +1,6 @@
-// navbar.component.scss - STYLES SPÉCIFIQUES NAVBAR
+// navbar.component.scss - VERSION MVP SIMPLE
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
-
-:host {
-  display: block;
-}
 
 .navbar {
   position: sticky;
@@ -12,6 +8,13 @@
   z-index: 1000;
   background: var(--mdd-white);
   border-bottom: 1px solid #e0e0e0;
+  
+  // 🎯 SOLUTION MVP : Masquer toute la navbar sur mobile pour pages auth
+  &.navbar--simple {
+    @include mobile {
+      display: none !important;
+    }
+  }
   
   &__container {
     max-width: 1200px;
@@ -47,19 +50,13 @@
       color: var(--mdd-navbar-active);
     }
     
-    // 🎯 STYLE LOGOUT - Spécifique à la navbar
     &--logout {
-      font-family: $mdd-font-family;
       font-size: $font-logout-link;
       font-weight: $weight-bold;
       color: var(--mdd-logout-red) !important;
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.2s ease;
       
       &:hover {
         text-decoration: underline;
-        color: var(--mdd-logout-red) !important;
       }
     }
   }
@@ -75,35 +72,9 @@
       opacity: 1;
     }
   }
-  
-  &__mobile-menu {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 280px;
-    height: 100vh;
-    background: var(--mdd-white);
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    z-index: 1001;
-    padding: $space-lg;
-    
-    &--open {
-      transform: translateX(0);
-    }
-  }
 }
 
-/* === STYLES POUR LE MENU MOBILE === */
-
-/* Responsive - masquer le menu desktop sur mobile */
-.hidden-mobile {
-  @media (max-width: 768px) {
-    display: none !important;
-  }
-}
-
-/* Burger menu visible uniquement sur mobile */
+/* === BURGER MENU MOBILE === */
 .mobile-only {
   display: none;
   
@@ -112,7 +83,13 @@
   }
 }
 
-/* Overlay du menu mobile */
+.hidden-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* Menu mobile overlay */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -131,7 +108,6 @@
   }
 }
 
-/* Menu mobile qui slide */
 .mobile-menu {
   position: fixed;
   top: 64px;
