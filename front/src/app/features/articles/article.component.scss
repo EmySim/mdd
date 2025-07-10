@@ -1,7 +1,3 @@
-// ============================================================================
-// article.component.scss - MVP 
-// ============================================================================
-
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 
@@ -10,25 +6,7 @@
 }
 
 // ===========================
-// GRILLE ARTICLES
-// ===========================
-
-.grid--articles {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-lg;
-  
-  @include tablet {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @include desktop {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-// ===========================
-// CARTE ARTICLE
+// CARTE ARTICLE SPÉCIFIQUE
 // ===========================
 
 .card--article {
@@ -61,7 +39,7 @@
 }
 
 // ===========================
-// BOUTON TRI
+// BOUTON TRI SPÉCIFIQUE ARTICLES
 // ===========================
 
 .btn--sort {
@@ -76,7 +54,7 @@
 }
 
 // ===========================
-// ACTIONS HEADER
+// ACTIONS HEADER ARTICLES
 // ===========================
 
 .header-actions {

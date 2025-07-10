@@ -27,7 +27,6 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
-    // 🎯 SOLUTION : Pas d'injection ErrorService pour éviter les cycles
   ) {
     this.loadUserFromStorage();
   }
@@ -52,8 +51,11 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     this.currentUserSubject.next(null);
     this.router.navigate(['/auth/login']);
+    console.log('✅ Déconnexion - Token et userId supprimés');
   }
 
   getCurrentUser(): User | null {
@@ -73,39 +75,85 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  checkAuthStatus(): Observable<User> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      this.logout();
+      return throwError(() => new Error('No token found'));
+    }
+
+    // Récupérer l'ID utilisateur depuis le localStorage
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+      console.log('❌ Aucun userId trouvé dans localStorage');
+      this.logout();
+      return throwError(() => new Error('No user ID found'));
+    }
+
+    return this.http.get<any>(`/api/user/${userId}`).pipe(
+      tap(userProfile => {
+        console.log('✅ Profil utilisateur récupéré:', userProfile);
+        const user: User = {
+          id: userProfile.id,
+          username: userProfile.username,
+          email: userProfile.email,
+          createdAt: userProfile.createdAt,
+          updatedAt: userProfile.updatedAt
+        };
+        this.updateCurrentUser(user);
+      }),
+      map(userProfile => ({
+        id: userProfile.id,
+        username: userProfile.username,
+        email: userProfile.email,
+        createdAt: userProfile.createdAt,
+        updatedAt: userProfile.updatedAt
+      })),
+      catchError(error => {
+        console.log('❌ Échec vérification auth:', error);
+        this.logout();
+        return throwError(() => error);
+      })
+    );
+  }
+
   // =============================================================================
   // MÉTHODES PRIVÉES
   // =============================================================================
 
   private handleAuthSuccess(response: AuthResponse): void {
+    console.log('🔍 handleAuthSuccess - response:', response);
+    
     localStorage.setItem(this.TOKEN_KEY, response.token);
-    this.currentUserSubject.next(response.user);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('userId', response.id.toString()); // ✅ CORRIGÉ - utiliser response.id directement
+    
+    // Créer l'objet User à partir de la réponse
+    const user: User = {
+      id: response.id,
+      username: response.username,
+      email: response.email,
+      createdAt: response.createdAt,
+      updatedAt: response.updatedAt
+    };
+    
+    this.currentUserSubject.next(user);
   }
 
   private loadUserFromStorage(): void {
     const token = this.getToken();
     if (token) {
-      this.getCurrentUserFromAPI().subscribe({
+      this.checkAuthStatus().subscribe({
         next: (user) => this.currentUserSubject.next(user),
         error: () => this.logout()
       });
     }
   }
 
-  private getCurrentUserFromAPI(): Observable<User> {
-    return this.http.get<User>(`${this.API_URL}/me`).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  /**
-   * 🎯 SOLUTION : Gestion d'erreurs simplifiée
-   * Les composants gèrent leurs propres erreurs via ErrorService
-   */
   private handleError = (error: any): Observable<never> => {
     console.error('❌ AuthService Error:', error);
-    
-    // Simple re-throw : les composants gèrent l'affichage
     return throwError(() => error);
   };
 }

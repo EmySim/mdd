@@ -1,4 +1,3 @@
-// src/app/features/profile/profile.component.scss 
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 
@@ -7,7 +6,7 @@
 }
 
 // ===========================
-// SECTION FORMULAIRE PROFIL
+// SECTION FORMULAIRE PROFILE
 // ===========================
 
 .profile-form-section {
@@ -66,17 +65,11 @@
   }
 }
 
-// Réutilisation des styles de themes (grid des thèmes)
-.themes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: $space-lg;
-  
-  @include mobile {
-    grid-template-columns: 1fr;
-    gap: $space-md;
-  }
-}
+// ❌ SUPPRIMÉ : .themes-grid (maintenant dans _components.scss global)
+
+// ===========================
+// CARTE THÈME (spécifique profil si différente)
+// ===========================
 
 .theme-card {
   background-color: $mdd-white;
@@ -114,7 +107,7 @@
 }
 
 // ===========================
-// BOUTONS SPÉCIFIQUES PROFIL
+// BOUTON SE DÉSABONNER (spécifique profil)
 // ===========================
 
 .unsubscribe-button {
@@ -123,19 +116,13 @@
   font-weight: $weight-semi-bold;
   font-size: $font-button-text;
   cursor: pointer;
-  transition: $transition-base;
   min-width: 120px;
   text-align: center;
   
-  // Style "Se désabonner" - Rouge pour indiquer une action de suppression
+  // Style rouge pour "Se désabonner"
   background-color: var(--mdd-logout-red);
   color: var(--mdd-white);
   border: none;
-  
-  &:hover:not(:disabled) {
-    background-color: darken($mdd-logout-red, 10%);
-    transform: translateY(-1px);
-  }
   
   &:disabled {
     opacity: 0.6;
@@ -164,22 +151,3 @@
   }
 }
 
-// ===========================
-// RESPONSIVE
-// ===========================
-
-@include tablet {
-  .profile-form-section {
-    max-width: 600px;
-  }
-  
-  .themes-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@include desktop {
-  .themes-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}

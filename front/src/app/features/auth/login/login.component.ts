@@ -1,5 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -10,12 +15,13 @@ import { LoginRequest } from '../../../interfaces/user.interface';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   isLoading = false;
-  
+  errorMessage = ''; // ✅ AJOUTÉ - propriété manquante
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -29,14 +35,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.errorService.clearAll();
-    
-    this.authService.isLoggedIn$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe((isLoggedIn: boolean) => {
-      if (isLoggedIn) {
-        this.router.navigate(['/articles']);
-      }
-    });
+
+    this.authService.isLoggedIn$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoggedIn: boolean) => {
+        if (isLoggedIn) {
+          this.router.navigate(['/articles']);
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -46,57 +52,56 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private createLoginForm(): FormGroup {
     return this.formBuilder.group({
-      emailOrUsername: ['', [Validators.required, this.emailOrUsernameValidator]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      emailOrUsername: [
+        '',
+        [Validators.required, this.emailOrUsernameValidator],
+      ],
+      password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
   // Validateur personnalisé pour email ou nom d'utilisateur
-  private emailOrUsernameValidator(control: AbstractControl): { [key: string]: any } | null {
+  private emailOrUsernameValidator(
+    control: AbstractControl
+  ): { [key: string]: any } | null {
     if (!control.value) {
       return null; // Laisse la validation 'required' gérer les valeurs vides
     }
-    
+
     const value = control.value.trim();
     //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     //const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/; // 3-20 caractères, lettres, chiffres, _ et -
-    
+
     //if (emailRegex.test(value) || usernameRegex.test(value)) {
     //  return null; // Valide
     //}
-    
+
     //return { invalidEmailOrUsername: true };
     return null; // Pas de validation stricte pour l'instant
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid && !this.isLoading) {
+    if (this.loginForm.valid) {
       this.isLoading = true;
-      this.errorService.clearAll();
 
-      const loginData: LoginRequest = {
-        emailOrUsername: this.loginForm.value.emailOrUsername.trim(),
-        password: this.loginForm.value.password
-      };
+      console.log('🔍 Données envoyées:', this.loginForm.value);
 
-      console.log('🔍 Données envoyées:', loginData);
-
-      this.authService.login(loginData).pipe(
-        takeUntil(this.destroy$)
-      ).subscribe({
+      this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          console.log('✅ RÉPONSE COMPLÈTE DU BACKEND:', response); // ← Regardez ça dans la console
+          console.log('✅ RÉPONSE COMPLÈTE DU BACKEND:', response);
+
+          // Sauvegarder le token ET l'ID utilisateur
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('userId', response.id.toString()); // ✅ CORRIGÉ - utiliser response.id directement
+
           console.log('✅ Connexion réussie');
-          this.isLoading = false;
           this.router.navigate(['/articles']);
         },
-        error: (error: HttpErrorResponse) => {
-          console.error('❌ Erreur complète:', error);
-          console.error('❌ Status:', error.status);
-          console.error('❌ Body:', error.error);
+        error: (error) => {
+          console.error('❌ Erreur de connexion:', error);
+          this.errorMessage = 'Identifiants invalides';
           this.isLoading = false;
-          this.errorService.handleHttpError(error);
-        }
+        },
       });
     }
   }
@@ -111,10 +116,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     const field = this.loginForm.get(fieldName);
     if (field && field.errors && field.touched) {
       if (field.errors['required']) {
-        return fieldName === 'emailOrUsername' ? 'Email ou nom d\'utilisateur requis' : 'Mot de passe requis';
+        return fieldName === 'emailOrUsername'
+          ? "Email ou nom d'utilisateur requis"
+          : 'Mot de passe requis';
       }
       if (field.errors['invalidEmailOrUsername']) {
-        return 'Format invalide. Utilisez un email valide ou un nom d\'utilisateur (3-20 caractères)';
+        return "Format invalide. Utilisez un email valide ou un nom d'utilisateur (3-20 caractères)";
       }
       if (field.errors['minlength']) {
         return 'Le mot de passe doit contenir au moins 6 caractères';

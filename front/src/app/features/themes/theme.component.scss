@@ -1,7 +1,3 @@
-// ============================================================================
-// theme.component.scss -
-// ============================================================================
-
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 
@@ -10,7 +6,7 @@
 }
 
 // ===========================
-// CONTAINER THÈMES
+// CONTAINER THÈMES (garde le container, pas la grille)
 // ===========================
 
 .themes-grid-container {
@@ -24,21 +20,7 @@
 }
 
 // ===========================
-// GRILLE THÈMES
-// ===========================
-
-.themes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: $space-lg;
-
-  @include mobile {
-    grid-template-columns: 1fr;
-  }
-}
-
-// ===========================
-// CARTE THÈME
+// CARTE THÈME SPÉCIFIQUE
 // ===========================
 
 .theme-card {
@@ -75,7 +57,7 @@
 }
 
 // ===========================
-// BOUTONS ABONNEMENT
+// BOUTONS ABONNEMENT SPÉCIFIQUES
 // ===========================
 
 .subscribe-button {
@@ -101,7 +83,7 @@
 }
 
 // ===========================
-// ÉTATS
+// ÉTATS SPÉCIFIQUES THÈMES
 // ===========================
 
 .loading-message,

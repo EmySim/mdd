@@ -1,10 +1,5 @@
-// ============================================================================
-// _components.scss - 
-// ============================================================================
-
-
 // ===========================
-// BOUTONS GLOBAUX 
+// BOUTONS GLOBAUX
 // ===========================
 
 .btn {
@@ -48,7 +43,7 @@
 }
 
 // ===========================
-// FORMULAIRES GLOBAUX 
+// FORMULAIRES GLOBAUX
 // ===========================
 
 .form {
@@ -91,7 +86,7 @@
 }
 
 // ===========================
-// CARTES 
+// CARTES GLOBALES
 // ===========================
 
 .card {
@@ -110,7 +105,55 @@
 }
 
 // ===========================
-// LOGOS RESPONSIVE 
+// 🎯 GRILLE GLOBALE (utilisée partout)
+// ===========================
+
+.grid {
+  display: grid;
+  gap: $space-lg;
+  
+  // Grille articles (3 colonnes)
+  &--articles {
+    grid-template-columns: 1fr;
+    
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include desktop {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  // Grille thèmes (4 colonnes ou auto-fill)
+  &--themes {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  // Grille profil abonnements (même que thèmes)
+  &--profile-subscriptions {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    
+    @include mobile {
+      grid-template-columns: 1fr;
+    }
+    
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include desktop {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+// ===========================
+// LOGOS RESPONSIVE
 // ===========================
 
 .logo {
@@ -149,7 +192,7 @@
 }
 
 // ===========================
-// SPINNER 
+// SPINNER BASIQUE
 // ===========================
 
 .loading-spinner {
