@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe((isLoggedIn: boolean) => {
       if (isLoggedIn) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/articles']);
       }
     });
   }

@@ -1,8 +1,12 @@
 // ============================================================================
-// _components.scss - COMPOSANTS RÉUTILISABLES MDD
+// _components.scss - 
 // ============================================================================
 
-// === BOUTONS GLOBAUX ===
+
+// ===========================
+// BOUTONS GLOBAUX 
+// ===========================
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -10,56 +14,26 @@
   font-family: $mdd-font-family;
   font-size: $font-button-text;
   font-weight: $weight-bold;
-  line-height: 1;
   padding: $space-md $space-lg;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
-  white-space: nowrap;
 
   &:disabled {
-    cursor: not-allowed;
     opacity: 0.6;
+    cursor: not-allowed;
   }
 
-  // === VARIANTES DE STYLE ===
   &--primary {
     background-color: var(--mdd-primary-violet);
     color: var(--mdd-white);
-
-    &:hover:not(:disabled) {
-      background-color: var(--mdd-navbar-active);
-      transform: translateY(-1px);
-    }
   }
 
   &--secondary {
     background-color: transparent;
     color: var(--mdd-primary-violet);
     border: 2px solid var(--mdd-primary-violet);
-
-    &:hover:not(:disabled) {
-      background-color: var(--mdd-primary-violet);
-      color: var(--mdd-white);
-    }
-  }
-
-  &--sort {
-    background-color: transparent;
-    color: $mdd-black;
-    border: none;
-    font-family: $mdd-font-family;
-    font-size: $font-button-text;
-    font-weight: $weight-bold;
-    padding: 0;
-    height: auto;
-    min-width: auto;
-
-    &:hover:not(:disabled) {
-      background-color: transparent;
-      transform: none;
-    }
   }
 
   &--outline-primary {
@@ -68,120 +42,40 @@
     border: 2px solid var(--mdd-black);
   }
 
-  &--outline-neutral {
-    background-color: transparent;
-    color: var(--mdd-text-gray);
-    border: 2px solid var(--mdd-text-gray);
-  }
-
-  &--disabled {
-    background-color: var(--mdd-button-disabled);
-    color: var(--mdd-white);
-    cursor: not-allowed;
-  }
-
-  // === VARIANTES DE TAILLE ===
-  &--sm {
-    padding: $space-sm $space-md;
-    font-size: 14px;
-    height: 36px;
-  }
-
-  &--md {
-    height: 44px;
-
-    @include mobile {
-      height: 40px;
-    }
-  }
-
-  &--lg {
-    height: 52px;
-    font-size: 18px;
-    padding: $space-md $space-xl;
-
-    @include mobile {
-      height: 48px;
-    }
-  }
-
-  // === VARIANTES DE LARGEUR ===
   &--full {
     width: 100%;
   }
-
-  &--auto {
-    width: auto;
-    min-width: 120px;
-  }
-
-  // === CONTEXTES SPÉCIFIQUES ===
-  &--auth {
-    width: 100%;
-    height: 48px;
-
-    @include mobile {
-      height: 44px;
-    }
-  }
-
-  &--landing {
-    min-width: 140px;
-    height: 48px;
-
-    @include mobile {
-      width: 100%;
-      max-width: 280px;
-      height: 44px;
-    }
-
-    @include desktop {
-      min-width: 180px;
-      height: 52px;
-    }
-  }
 }
 
-// === FORMULAIRES GLOBAUX ===
+// ===========================
+// FORMULAIRES GLOBAUX 
+// ===========================
+
 .form {
   &__group {
     margin-bottom: $space-lg;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    &--compact {
-      margin-bottom: $space-md;
-    }
   }
 
   &__label {
     display: block;
     font-family: $mdd-font-family;
     font-size: $font-landing-field;
-    font-weight: $weight-regular;
     color: var(--mdd-black);
+    margin-bottom: $space-xs;
   }
 
   &__field {
     font-family: $mdd-font-family;
     font-size: $font-landing-field;
-    font-weight: $weight-regular;
     color: var(--mdd-black);
     padding: $space-md;
-    border: 1px $mdd-black solid;
+    border: 1px solid $mdd-black;
     border-radius: 8px;
     width: 100%;
-    transition: border-color 0.2s ease;
 
     &:focus {
       outline: none;
       border-color: var(--mdd-primary-violet);
-    }
-
-    &::placeholder {
-      color: #999;
     }
 
     &--error {
@@ -193,122 +87,39 @@
     color: var(--mdd-logout-red);
     font-size: 0.875rem;
     margin-top: $space-xs;
-    display: block;
   }
 }
 
-// === CARTES GLOBALES ===
+// ===========================
+// CARTES 
+// ===========================
+
 .card {
   background-color: $mdd-card-bg;
   border-radius: 8px;
   padding: $space-lg;
   margin-bottom: $space-md;
-  cursor: pointer;
 
   @include mobile {
     padding: $space-md;
-    margin-bottom: $space-sm;
   }
 
-  // === VARIANTES DE CONTENU ===
-  &--article {
-    .article-title {
-      font-family: $mdd-font-family;
-      font-size: $font-article-title; // 16px
-      font-weight: $weight-bold;
-      color: var(--mdd-black);
-      margin-bottom: $space-sm;
-      line-height: 1.2;
-    }
-
-    .article-meta {
-      display: flex;
-      gap: $space-lg;
-      margin-bottom: $space-sm;
-      flex-wrap: wrap;
-    }
-
-    // Style commun pour TOUT le texte (sauf titre)
-    .article-meta,
-    .article-content {
-      font-family: $mdd-font-family;
-      font-size: $font-body-content; // 14px
-      font-weight: $weight-regular; // 400
-      color: var(--mdd-black);
-      line-height: 1.4;
-    }
-  }
-
-  &--theme {
-    display: flex;
-    flex-direction: column;
-
-    .theme-title {
-      font-family: $mdd-font-family;
-      font-size: $font-article-title;
-      font-weight: $weight-bold;
-      color: var(--mdd-black);
-      margin-bottom: $space-sm;
-    }
-
-    .theme-description {
-      color: #666;
-      font-size: $font-body-content;
-      margin-bottom: $space-md;
-      flex-grow: 1;
-    }
-
-    .theme-actions {
-      margin-top: auto;
-    }
-  }
-
-  &--profile {
-    text-align: center;
-
-    .profile-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin: 0 auto $space-md;
-      background: var(--mdd-selection-bg);
-    }
+  &--clickable {
+    cursor: pointer;
   }
 }
 
-// === LIENS SPÉCIAUX ===
-.link {
-  &--primary {
-    color: var(--mdd-primary-violet);
-    text-decoration: none;
-    font-weight: $weight-semi-bold;
+// ===========================
+// LOGOS RESPONSIVE 
+// ===========================
 
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-// === SYSTÈME DE LOGOS RESPONSIVE ===
 .logo {
   display: block;
   width: auto;
-  transition: opacity 0.2s ease;
-  cursor: pointer;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  // === CONTEXTE LANDING ===
   &--landing {
     height: 238px;
     width: 412px;
-    cursor: default; // Pas de cursor pointer
-    
-    &:hover {
-      opacity: 1; // Pas d'effet d'éclaircissement
-    }
 
     @include mobile {
       height: 130px;
@@ -316,15 +127,16 @@
     }
   }
 
-  // === CONTEXTE AUTH ===
   &--auth {
+    height: 238px;
+    width: 412px;
+
     @include mobile {
       height: 130px;
       width: 225px;
     }
   }
 
-  // === CONTEXTE NAVBAR ===
   &--navbar {
     height: 81px;
     width: 140px;
@@ -336,17 +148,21 @@
   }
 }
 
-// === COMPOSANTS NAVBAR (styles spécifiques dans navbar.component.scss) ===
-.navbar {
-  &__user-icon {
-    height: 24px;
-    width: 24px;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
+// ===========================
+// SPINNER 
+// ===========================
 
-    &:hover {
-      opacity: 1;
-    }
-  }
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--mdd-primary-violet);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

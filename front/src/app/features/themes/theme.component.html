@@ -12,7 +12,7 @@
       <div *ngFor="let theme of themes; trackBy: trackByThemeId" class="theme-card">
         <h3 class="theme-title">{{ theme.name }}</h3>
         <p class="theme-description">
-          Description: lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard...
+          {{ theme.description || 'Aucune description disponible pour ce thème.' }}
         </p>
         <div class="theme-actions">
           <button

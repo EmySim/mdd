@@ -1,2 +1,95 @@
+// ============================================================================
+// article.component.scss - MVP 
+// ============================================================================
+
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
+// ===========================
+// GRILLE ARTICLES
+// ===========================
+
+.grid--articles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+  
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ===========================
+// CARTE ARTICLE
+// ===========================
+
+.card--article {
+  .article-title {
+    font-family: $mdd-font-family;
+    font-size: $font-article-title;
+    font-weight: $weight-bold;
+    color: var(--mdd-black);
+    margin-bottom: $space-sm;
+  }
+
+  .article-meta {
+    display: flex;
+    gap: $space-lg;
+    margin-bottom: $space-sm;
+    font-size: $font-body-content;
+    color: #666;
+
+    @include mobile {
+      flex-direction: column;
+      gap: $space-sm;
+    }
+  }
+
+  .article-content {
+    font-size: $font-body-content;
+    color: var(--mdd-black);
+    margin-bottom: $space-md;
+  }
+}
+
+// ===========================
+// BOUTON TRI
+// ===========================
+
+.btn--sort {
+  background: none;
+  border: none;
+  font-family: $mdd-font-family;
+  font-size: $font-button-text;
+  font-weight: $weight-bold;
+  color: $mdd-black;
+  cursor: pointer;
+  padding: 0;
+}
+
+// ===========================
+// ACTIONS HEADER
+// ===========================
+
+.header-actions {
+  display: flex;
+  gap: $space-md;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
