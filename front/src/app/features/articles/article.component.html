@@ -39,7 +39,7 @@
       <!-- Articles -->
       <div *ngIf="!isLoading">
         <!-- Grid des articles -->
-        <div class="grid grid--articles" *ngIf="articles.length > 0">
+        <div class="grid" *ngIf="articles.length > 0">
           <article
             class="card card--article card--clickable"
             *ngFor="let article of articles; trackBy: trackByArticleId"

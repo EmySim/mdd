@@ -1,16 +1,14 @@
 <div class="page-with-navbar">
-  
   <!-- Header avec titre -->
   <div class="page-with-navbar__header">
     <div class="container">
       <h1 class="page-title">Profil utilisateur</h1>
     </div>
   </div>
-  
+
   <!-- Contenu principal -->
   <div class="page-with-navbar__content">
     <div class="container">
-      
       <!-- Loading état -->
       <div class="text-center p-xl" *ngIf="isLoading">
         <div class="loading-spinner"></div>
@@ -19,16 +17,21 @@
 
       <!-- Formulaire profil utilisateur -->
       <div class="profile-form-section" *ngIf="!isLoading">
-        <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()" class="profile-form">
-          
+        <form
+          [formGroup]="profileForm"
+          (ngSubmit)="onSaveProfile()"
+          class="profile-form"
+        >
           <!-- Erreur globale -->
-          <div class="form__error mb-md" *ngIf="errorService.error$ | async as globalError">
+          <div
+            class="form__error mb-md"
+            *ngIf="errorService.error$ | async as globalError"
+          >
             {{ globalError }}
           </div>
 
           <!-- Champ Username -->
           <div class="form__group">
-            <label class="form__label">Nom d'utilisateur</label>
             <input
               class="form__field"
               [class.form__field--error]="hasFieldError('username')"
@@ -42,7 +45,6 @@
 
           <!-- Champ Email -->
           <div class="form__group">
-            <label class="form__label">Adresse e-mail</label>
             <input
               class="form__field"
               [class.form__field--error]="hasFieldError('email')"
@@ -56,7 +58,6 @@
 
           <!-- Champ Mot de passe (optionnel pour modification) -->
           <div class="form__group">
-            <label class="form__label">Mot de passe (laisser vide pour ne pas modifier)</label>
             <input
               class="form__field"
               [class.form__field--error]="hasFieldError('password')"
@@ -84,48 +85,54 @@
       </div>
 
       <!-- Séparateur -->
-      <hr class="section-separator" *ngIf="!isLoading">
+      <hr class="section-separator" *ngIf="!isLoading" />
 
       <!-- Section Abonnements -->
       <div class="subscriptions-section" *ngIf="!isLoading">
         <h2 class="section-title">Abonnements</h2>
-        
+
         <!-- Loading abonnements -->
         <div class="text-center p-md" *ngIf="isLoadingSubscriptions">
           <p class="text-secondary">Chargement de vos abonnements...</p>
         </div>
 
         <!-- ✅ CHANGEMENT ICI : Utilise la grille globale -->
-        <div class="grid grid--profile-subscriptions" *ngIf="!isLoadingSubscriptions">
-          
+        <div class="grid" *ngIf="!isLoadingSubscriptions">
           <!-- Message si aucun abonnement -->
-          <div *ngIf="subscribedThemes.length === 0" class="no-subscriptions-message">
-            <p class="text-secondary">Vous n'êtes abonné à aucun thème pour le moment.</p>
+          <div
+            *ngIf="subscribedThemes.length === 0"
+            class="no-subscriptions-message"
+          >
+            <p class="text-secondary">
+              Vous n'êtes abonné à aucun thème pour le moment.
+            </p>
             <button class="btn btn--primary btn--sm mt-md" routerLink="/themes">
               Découvrir les thèmes
             </button>
           </div>
 
           <!-- Cartes des thèmes abonnés -->
-          <div *ngFor="let theme of subscribedThemes; trackBy: trackByThemeId" class="theme-card">
-            <h3 class="theme-title">{{ theme.name }}</h3>
-            <p class="theme-description">
-              Description: lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard...
-            </p>
-            <div class="theme-actions">
+          <div
+            *ngFor="let theme of subscribedThemes; trackBy: trackByThemeId"
+            class="card"
+          >
+            <h3 class="title">{{ theme.name }}</h3>
+            <p class="description"></p>
+            <div class="actions">
               <button
-                class="unsubscribe-button"
+                [ngClass]="{
+                  'subscribe-button': !theme.isSubscribed,
+                  'unsubscribe-button': theme.isSubscribed
+                }"
                 (click)="unsubscribeFromTheme(theme)"
-                [disabled]="isLoadingSubscriptions"
+                [disabled]="isLoading"
               >
-                Se désabonner
+                {{ theme.isSubscribed ? "Déjà abonné" : "S'abonner" }}
               </button>
             </div>
           </div>
         </div>
       </div>
-      
     </div>
   </div>
-  
 </div>

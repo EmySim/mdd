@@ -105,51 +105,70 @@
 }
 
 // ===========================
-// 🎯 GRILLE GLOBALE (utilisée partout)
+// 🎯 GRILLE GLOBALE UNIFIÉE
 // ===========================
 
 .grid {
   display: grid;
   gap: $space-lg;
+  grid-template-columns: 1fr;
   
-  // Grille articles (3 colonnes)
-  &--articles {
-    grid-template-columns: 1fr;
-    
-    @include tablet {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @include desktop {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  // Grille thèmes (4 colonnes ou auto-fill)
-  &--themes {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    
-    @include mobile {
-      grid-template-columns: 1fr;
-    }
+  @include desktop {
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  // Grille profil abonnements (même que thèmes)
-  &--profile-subscriptions {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    
-    @include mobile {
-      grid-template-columns: 1fr;
-    }
-    
-    @include tablet {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @include desktop {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
+}
+
+// ===========================
+// CARDS POUR CONTENU
+// ===========================
+
+.title {
+  font-size: $font-article-title;
+  font-weight: $weight-bold;
+  color: $mdd-black;
+  margin-bottom: $space-sm;
+}
+
+.description {
+  font-size: $font-body-content;
+  color: #666;
+  margin-bottom: $space-md;
+  flex-grow: 1;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ===========================
+// BOUTONS ABONNEMENT SPÉCIFIQUES
+// ===========================
+
+.subscribe-button {
+  background-color: $mdd-primary-violet;
+  color: $mdd-white;
+  border: none;
+  padding: $space-sm $space-md;
+  border-radius: 4px;
+  font-weight: $weight-semi-bold;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.unsubscribe-button {
+  background-color: $mdd-selection-bg;
+  color: #666;
+  border: 1px solid #ccc;
+  padding: $space-sm $space-md;
+  border-radius: 4px;
+  font-weight: $weight-semi-bold;
+  cursor: pointer;
+  min-width: 120px;
 }
 
 // ===========================
