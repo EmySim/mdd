@@ -3,24 +3,6 @@
 
 :host {
   display: block;
-
-  // Force l'application du style unsubscribe
-  .unsubscribe-button {
-    background-color: $mdd-selection-bg !important;
-    color: #666 !important;
-    border: 1px solid #ccc !important;
-    padding: $space-sm $space-md;
-    border-radius: 4px;
-    font-weight: $weight-semi-bold;
-    cursor: pointer;
-    min-width: 120px;
-    
-    &:hover:not(:disabled) {
-      background-color: darken($mdd-selection-bg, 8%) !important;
-      border-color: darken(#ccc, 20%) !important;
-      color: darken(#666, 20%) !important;
-    }
-  }
 }
 
 // ===========================

@@ -30,14 +30,14 @@
     }
   }
 
+  // ✅ BOUTON SECONDAIRE MODIFIÉ - Texte blanc, background #939393
   &--secondary {
-    background-color: $mdd-selection-bg;
-    color: #666;
-    border: 1px solid #ccc;
+    background-color: #939393;
+    color: var(--mdd-white);
+    border: none;
     
     &:hover:not(:disabled) {
-      background-color: darken($mdd-selection-bg, 8%);
-      border-color: darken(#ccc, 20%);
+      background-color: darken(#939393, 15%);
     }
   }
 
@@ -223,37 +223,6 @@
   display: flex;
   justify-content: flex-end;
   margin-top: auto;
-}
-
-// ===========================
-// BOUTONS ABONNEMENT SPÉCIFIQUES
-// ===========================
-
-.subscribe-button {
-  background-color: $mdd-primary-violet;
-  color: $mdd-white;
-  border: none;
-  padding: $space-sm $space-md;
-  border-radius: 4px;
-  font-weight: $weight-semi-bold;
-  cursor: pointer;
-  min-width: 120px;
-}
-
-.unsubscribe-button {
-  background-color: $mdd-selection-bg !important;
-  //color: #666 !important;
-  border: 1px solid #ccc !important;
-  padding: $space-sm $space-md;
-  border-radius: 4px;
-  font-weight: $weight-semi-bold;
-  cursor: pointer;
-  min-width: 120px;
-  
-  &:hover:not(:disabled) {
-    background-color: darken($mdd-selection-bg, 8%) !important;
-    border-color: darken(#ccc, 20%) !important;
-  }
 }
 
 // ===========================
