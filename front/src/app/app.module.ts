@@ -23,6 +23,7 @@ import { LandingComponent } from './pages/landing/landing.component';
 import { ThemeComponent } from './features/themes/theme.component';
 import { ArticleComponent } from './features/articles/article.component';
 import { ProfileComponent } from './features/profile/profile.component';
+import { CommentComponent } from './features/comments/comment.component'; 
 
 // Composants réutilisables
 import { ErrorToastComponent } from './components/error-toast/error-toast.component';
@@ -46,6 +47,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     ThemeComponent,
     ArticleComponent,
     ProfileComponent,
+    CommentComponent, // Ajouté ici !
     ErrorToastComponent,
     NavbarComponent,
   ],

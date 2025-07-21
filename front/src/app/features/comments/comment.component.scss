@@ -1,2 +1,35 @@
+// front/src/app/features/comments/comment.component.scss - MINIMAL
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
+.comments-section {
+  margin-top: $space-xl;
+  padding-top: $space-lg;
+  border-top: 1px solid $mdd-border-gray;
+}
+
+.comments-count {
+  font-weight: $weight-regular;
+  color: $mdd-text-gray;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-xs;
+  }
+}
+
+.comment-content {
+  margin: 0;
+  line-height: 1.5;
+}

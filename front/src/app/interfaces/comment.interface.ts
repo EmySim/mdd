@@ -1,20 +1,22 @@
 export interface Comment {
   id: number;
   content: string;
-  author: string;
   createdAt: string;
-  updatedAt: string;
+  authorId: number; 
+  authorUsername: string; 
   articleId: number;
+  articleTitle: string; 
 }
 
+// CreateCommentRequest reste simple car articleId est dans l'URL
 export interface CreateCommentRequest {
   content: string;
-  articleId: number;
 }
 
 export interface UpdateCommentRequest {
   content: string;
 }
+
 
 export interface CommentsPage {
   content: Comment[];
@@ -34,7 +36,7 @@ export interface CommentsPage {
   totalPages: number;
   size: number;
   number: number;
-  sort: {
+  sort: { 
     empty: boolean;
     sorted: boolean;
     unsorted: boolean;

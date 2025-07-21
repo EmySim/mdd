@@ -1,3 +1,4 @@
+// front/src/app/features/articles/article.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -10,10 +11,13 @@ import { Article, ArticlesPage } from '../../interfaces/article.interface';
   styleUrls: ['./article.component.scss']
 })
 export class ArticleComponent implements OnInit, OnDestroy {
-  articles: Article[] = [];
-  sortDirection: 'asc' | 'desc' = 'desc'; // 🎯 Par défaut : plus récent d'abord
-  isLoading: boolean = false;
   
+  // Données
+  articles: Article[] = [];
+  sortDirection: 'asc' | 'desc' = 'desc';
+  isLoading = false;
+  
+  // Cleanup
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -30,10 +34,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // =============================================================================
-  // CHARGEMENT DES DONNÉES
-  // =============================================================================
-
+  // Chargement des articles
   private loadArticles(): void {
     this.isLoading = true;
     
@@ -43,49 +44,36 @@ export class ArticleComponent implements OnInit, OnDestroy {
       next: (response: ArticlesPage) => {
         this.articles = response.content || [];
         this.isLoading = false;
-        console.log(`📰 ${this.articles.length} articles chargés`);
       },
-      error: (error: Error) => {
-        console.error('Erreur chargement articles:', error);
+      error: () => {
         this.isLoading = false;
       }
     });
   }
 
-  // =============================================================================
-  // TRI UNIQUEMENT
-  // =============================================================================
-
+  // Toggle tri chronologique
   changeSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    this.loadArticles(); // Recharger avec nouveau tri
+    this.loadArticles();
   }
 
-  getSortText(): string {
-    return this.sortDirection === 'asc' ? 'Plus anciens' : 'Plus récents';
-  }
-
-  // =============================================================================
-  // NAVIGATION
-  // =============================================================================
-
+  // Navigation vers création
   createArticle(): void {
     this.router.navigate(['/articles/create']);
   }
 
+  // Navigation vers détail avec commentaires
   viewArticle(article: Article): void {
     this.router.navigate(['/articles', article.id]);
   }
 
-  // =============================================================================
-  // HELPERS
-  // =============================================================================
-
+  // Tronquer le contenu pour l'aperçu
   truncateContent(content: string, maxLength: number = 150): string {
     if (!content) return '';
     return content.length > maxLength ? content.substring(0, maxLength) + '...' : content;
   }
 
+  // TrackBy pour performance
   trackByArticleId(index: number, article: Article): number {
     return article.id;
   }
