@@ -3,13 +3,13 @@ export interface Article {
   title: string;
   content: string;
   author: string;
-  authorUsername: string;  // ✅ Ajouté
+  authorUsername: string;  
   createdAt: string;
   updatedAt: string;
   subjectId: number;
   subjectName: string;
-  themeId: number;        // ✅ Ajouté
-  themeName: string;      // ✅ Ajouté
+  themeId: number;        
+  themeName: string;      
   commentsCount?: number;
 }
 

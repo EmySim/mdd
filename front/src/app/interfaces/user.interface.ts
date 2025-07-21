@@ -4,20 +4,13 @@ export interface User {
   username: string;
   createdAt: string;
   updatedAt: string;
+  subscribedSubjects?: any[];
 }
 
 export interface UpdateUserRequest {
   email?: string;
   username?: string;
   password?: string;
-}
-
-export interface UserProfile {
-  id: number;
-  email: string;
-  username: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface LoginRequest {
@@ -51,4 +44,21 @@ export interface UserPublic {
   id: number;
   username: string;
   email: string;
+}
+
+// Ancienne interface UserProfile intégrée
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  subscribedSubjects?: any[];
+}
+
+// Ancienne interface UpdateProfileRequest intégrée
+export interface UpdateProfileRequest {
+  username?: string;
+  email?: string;
+  password?: string;
 }

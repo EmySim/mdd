@@ -3,17 +3,7 @@ export interface Theme {
   name: string;
   createdAt: string;
   isSubscribed: boolean;
-  description?: string;
-  subscribersCount?: number;
-  articlesCount?: number;
-}
-
-export interface Topic {
-  id: number;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
+  description: string;
 }
 
 export interface ThemesPage {

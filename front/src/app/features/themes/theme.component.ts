@@ -46,9 +46,30 @@ export class ThemeComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (themesPage: ThemesPage) => {
-        this.themes = themesPage.content; // ✅ CORRIGÉ - utiliser content au lieu de themes
+        this.themes = themesPage.content; 
         this.isLoading = false;
         console.log(`✅ Thèmes chargés: ${themesPage.content.length}`);
+        
+        // 🔍 LOGS POUR DIAGNOSTIQUER LA DESCRIPTION
+        console.log('📋 Réponse complète du backend:', themesPage);
+        console.log('🎯 Contenu des thèmes:', themesPage.content);
+        
+        // Vérifier chaque thème individuellement
+        themesPage.content.forEach((theme, index) => {
+          console.log(`📝 Thème ${index + 1}:`);
+          console.log(`  - ID: ${theme.id}`);
+          console.log(`  - Nom: ${theme.name}`);
+          console.log(`  - Description: "${theme.description}"`);
+          console.log(`  - Type description: ${typeof theme.description}`);
+          console.log(`  - Description vide/null: ${!theme.description}`);
+          console.log(`  - Abonné: ${theme.isSubscribed}`);
+          console.log(`  - Créé le: ${theme.createdAt}`);
+          console.log('  - Objet complet:', theme);
+        });
+
+        // Vérifier si au moins un thème a une description
+        const themesWithDescription = themesPage.content.filter(theme => theme.description && theme.description.trim());
+        console.log(`📊 Thèmes avec description non vide: ${themesWithDescription.length}/${themesPage.content.length}`);
       },
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;

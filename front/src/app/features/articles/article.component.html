@@ -41,12 +41,12 @@
         <!-- Grid des articles -->
         <div class="grid" *ngIf="articles.length > 0">
           <article
-            class="card card--article card--clickable"
+            class="card"
             *ngFor="let article of articles; trackBy: trackByArticleId"
             (click)="viewArticle(article)"
           >
             <!-- Titre -->
-            <h2 class="article-title mb-sm">{{ article.title }}</h2>
+            <h2 class="title">{{ article.title }}</h2>
 
             <!-- Métadonnées -->
             <div class="article-meta mb-sm">

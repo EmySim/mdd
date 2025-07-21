@@ -62,6 +62,8 @@ public class Subject {
     @Builder.Default
     private Set<User> subscribers = new HashSet<>();
 
+    private String description;
+
     /**
      * Constructeur métier pour création de sujet.
      */

@@ -65,69 +65,7 @@
   }
 }
 
-// ===========================
-// CARTE THÈME (spécifique profil si différente)
-// ===========================
 
-.theme-card {
-  background-color: $mdd-white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba($mdd-black, 0.1);
-  padding: $space-lg;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  
-  @include mobile {
-    padding: $space-md;
-  }
-}
-
-.theme-title {
-  font-size: $font-article-title;
-  font-weight: $weight-bold;
-  color: $mdd-black;
-  margin-top: 0;
-  margin-bottom: $space-sm;
-}
-
-.theme-description {
-  font-size: $font-body-content;
-  color: lighten($mdd-black, 30%);
-  line-height: 1.5;
-  margin-bottom: $space-md;
-  flex-grow: 1;
-}
-
-.theme-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-// ===========================
-// BOUTON SE DÉSABONNER (spécifique profil)
-// ===========================
-
-.unsubscribe-button {
-  padding: $space-sm $space-md;
-  border-radius: 4px;
-  font-weight: $weight-semi-bold;
-  font-size: $font-button-text;
-  cursor: pointer;
-  min-width: 120px;
-  text-align: center;
-  
-  // Style rouge pour "Se désabonner"
-  background-color: var(--mdd-logout-red);
-  color: var(--mdd-white);
-  border: none;
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background-color: var(--mdd-button-disabled);
-  }
-}
 
 // ===========================
 // ÉTATS VIDES

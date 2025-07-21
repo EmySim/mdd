@@ -5,38 +5,7 @@
   display: block;
 }
 
-// ===========================
-// CARTE ARTICLE SPÉCIFIQUE
-// ===========================
 
-.card--article {
-  .article-title {
-    font-family: $mdd-font-family;
-    font-size: $font-article-title;
-    font-weight: $weight-bold;
-    color: var(--mdd-black);
-    margin-bottom: $space-sm;
-  }
-
-  .article-meta {
-    display: flex;
-    gap: $space-lg;
-    margin-bottom: $space-sm;
-    font-size: $font-body-content;
-    color: #666;
-
-    @include mobile {
-      flex-direction: column;
-      gap: $space-sm;
-    }
-  }
-
-  .article-content {
-    font-size: $font-body-content;
-    color: var(--mdd-black);
-    margin-bottom: $space-md;
-  }
-}
 
 // ===========================
 // BOUTON TRI SPÉCIFIQUE ARTICLES
