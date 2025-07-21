@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { LayoutModule } from '@angular/cdk/layout';
 
-// Modules de l'application
+// Modules
 import { AppRoutingModule } from './app-routing.module';
 
 // Composants
@@ -22,10 +22,11 @@ import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { ThemeComponent } from './features/themes/theme.component';
 import { ArticleComponent } from './features/articles/article.component';
+import { CreateArticleComponent } from './features/articles/create-article.component'; // ✅ AJOUTÉ
 import { ProfileComponent } from './features/profile/profile.component';
 import { CommentComponent } from './features/comments/comment.component'; 
 
-// Composants réutilisables
+// Shared
 import { ErrorToastComponent } from './components/error-toast/error-toast.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
@@ -46,8 +47,9 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     LandingComponent,
     ThemeComponent,
     ArticleComponent,
+    CreateArticleComponent, // ✅ AJOUTÉ - Simple !
     ProfileComponent,
-    CommentComponent, // Ajouté ici !
+    CommentComponent,
     ErrorToastComponent,
     NavbarComponent,
   ],
