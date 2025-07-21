@@ -1,16 +1,19 @@
+// src/app/interfaces/article.interface.ts
+// Importez l'interface Comment du fichier centralisé
+import { Comment } from './comment.interface';
+
 export interface Article {
   id: number;
   title: string;
   content: string;
-  author: string;
-  authorUsername: string;  
+  authorUsername: string; 
   createdAt: string;
   updatedAt: string;
   subjectId: number;
-  subjectName: string;
-  themeId: number;        
-  themeName: string;      
-  commentsCount?: number;
+  subjectName: string; 
+  themeId: number; 
+  themeName: string; 
+  commentsCount?: number; 
 }
 
 export interface ArticlesPage {
@@ -45,24 +48,16 @@ export interface ArticlesPage {
 export interface CreateArticleRequest {
   title: string;
   content: string;
-  subjectId: number;
+  subjectId: number; // Ou themeId
 }
 
 export interface UpdateArticleRequest {
   title?: string;
   content?: string;
-  subjectId?: number;
+  subjectId?: number; // Ou themeId
 }
 
+// ArticleDetail inclut désormais les commentaires directement
 export interface ArticleDetail extends Article {
-  comments: Comment[];
-}
-
-export interface Comment {
-  id: number;
-  content: string;
-  author: string;
-  createdAt: string;
-  updatedAt: string;
-  articleId: number;
+  comments: Comment[]; 
 }

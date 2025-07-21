@@ -1,34 +1,11 @@
-// src/app/features/comments/comment.service.ts - 
+// src/app/features/comments/comment.service.ts - MODIFIÉ pour importer les interfaces
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorService } from '../../services/error.service';
-
-// Interfaces alignées avec le backend
-export interface Comment {
-  id: number;
-  content: string;
-  createdAt: string;
-  authorId: number;
-  authorUsername: string;
-  articleId: number;
-  articleTitle: string;
-}
-
-export interface CreateCommentRequest {
-  content: string;
-  // articleId sera dans l'URL, pas dans le body
-}
-
-export interface CommentsPage {
-  content: Comment[];
-  pageable: any;
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-}
+import { Comment, CreateCommentRequest, CommentsPage } from '../../interfaces/comment.interface';
 
 @Injectable({
   providedIn: 'root'
