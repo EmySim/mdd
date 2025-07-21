@@ -30,7 +30,7 @@
     }
   }
 
-  // ✅ BOUTON SECONDAIRE MODIFIÉ - Texte blanc, background #939393
+
   &--secondary {
     background-color: #939393;
     color: var(--mdd-white);
@@ -70,7 +70,7 @@
     min-width: 200px;
     
     @include mobile {
-      width: 100%;
+      //width: 100%;
     }
   }
 
@@ -275,6 +275,7 @@
   &--navbar {
     height: 81px;
     width: 140px;
+    cursor: pointer;
 
     @include mobile {
       height: 53px;

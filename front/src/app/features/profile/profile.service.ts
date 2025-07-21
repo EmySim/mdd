@@ -1,10 +1,5 @@
-// ============================================================================
-// PROFILE SERVICE - VERSION MVP SIMPLIFIÉE
-// src/app/features/profile/profile.service.ts
-// ============================================================================
-
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ErrorService } from '../../services/error.service';
@@ -38,7 +33,7 @@ export class ProfileService {
   getUserProfile(userId: number): Observable<User> {
     return this.http.get<User>(`${this.API_URL}/${userId}`)
       .pipe(
-        tap(user => console.log('✅ Profil récupéré:', user.username)),
+        tap((user: User) => console.log('✅ Profil récupéré:', user.username)),
         catchError(this.handleError)
       );
   }
@@ -49,7 +44,7 @@ export class ProfileService {
   updateUserProfile(userId: number, userData: UpdateUserRequest): Observable<User> {
     return this.http.put<User>(`${this.API_URL}/${userId}`, userData)
       .pipe(
-        tap((updatedUser) => {
+        tap((updatedUser: User) => {
           console.log('✅ Profil mis à jour:', updatedUser.username);
           
           // Mettre à jour les données dans AuthService
@@ -63,7 +58,12 @@ export class ProfileService {
   // GESTION D'ERREURS
   // ===========================
 
-  private handleError = (error: any): Observable<never> => {
+  /**
+   * Gestionnaire d'erreur HTTP typé
+   * @param error - Erreur HTTP reçue
+   * @returns Observable qui émet une erreur
+   */
+  private handleError = (error: HttpErrorResponse): Observable<never> => {
     console.error('❌ Erreur ProfileService:', error);
     this.errorService.handleHttpError(error);
     return throwError(() => error);

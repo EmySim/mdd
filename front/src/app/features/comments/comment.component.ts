@@ -22,6 +22,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
   isLoading = false;
   isSubmitting = false;
 
+  // Subject RxJS pour gérer la destruction des observables (pattern unsubscription)
   private destroy$ = new Subject<void>();
 
   constructor(
