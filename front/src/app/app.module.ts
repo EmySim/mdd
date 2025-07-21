@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router'; 
 
 // Angular Material
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select'; 
+import { MatOptionModule } from '@angular/material/core'; 
 import { LayoutModule } from '@angular/cdk/layout';
 
 // Modules
@@ -22,7 +25,7 @@ import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { ThemeComponent } from './features/themes/theme.component';
 import { ArticleComponent } from './features/articles/article.component';
-import { CreateArticleComponent } from './features/articles/create-article.component'; // ✅ AJOUTÉ
+import { CreateArticleComponent } from './features/articles/create-article.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { CommentComponent } from './features/comments/comment.component'; 
 
@@ -47,26 +50,31 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     LandingComponent,
     ThemeComponent,
     ArticleComponent,
-    CreateArticleComponent, // ✅ AJOUTÉ - Simple !
+    CreateArticleComponent,
     ProfileComponent,
-    CommentComponent,
+    CommentComponent, 
     ErrorToastComponent,
     NavbarComponent,
   ],
   imports: [
     BrowserModule,
+    CommonModule, 
+    RouterModule, 
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule, 
     FormsModule, 
-    CommonModule, 
+    
+    // Angular Material
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
     MatCardModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSelectModule, 
+    MatOptionModule, 
     LayoutModule,
   ],
   providers: [

@@ -13,11 +13,6 @@ export interface CreateCommentRequest {
   content: string;
 }
 
-export interface UpdateCommentRequest {
-  content: string;
-}
-
-
 export interface CommentsPage {
   content: Comment[];
   pageable: {
