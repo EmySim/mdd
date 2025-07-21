@@ -1,9 +1,9 @@
 // ============================================================================
-// login.component.scss - 
+// login.component.scss -
 // ============================================================================
 
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 :host {
   display: block;
@@ -15,7 +15,11 @@
 
 .auth-container {
   min-height: calc(100vh - 64px);
-  background: linear-gradient(135deg, var(--mdd-primary-violet) 0%, #9085D4 100%);
+  background: linear-gradient(
+    135deg,
+    var(--mdd-primary-violet) 0%,
+    #9085d4 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;

@@ -18,13 +18,6 @@
     gap: $space-xxl;
   }
 
-  .back-arrow {
-    // Le sélecteur de la flèche
-    position: absolute; // Positionne la flèche de manière absolue
-    cursor: pointer; // AJOUTÉ : Indique que l'élément est cliquable
-    background-color: blue; // Décommentez ceci TEMPORAIREMENT pour voir si la "boîte" de la flèche apparaît
-  }
-
   &__logo {
     display: flex;
     justify-content: center;

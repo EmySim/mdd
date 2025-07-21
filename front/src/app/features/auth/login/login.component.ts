@@ -18,7 +18,7 @@ import { ErrorService } from '../../../services/error.service';
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   isLoading = false;
-  errorMessage = ''; 
+  errorMessage = '';
 
   private destroy$ = new Subject<void>();
 
@@ -91,7 +91,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           // Sauvegarder le token ET l'ID utilisateur
           localStorage.setItem('token', response.token);
-          localStorage.setItem('userId', response.id.toString()); 
+          localStorage.setItem('userId', response.id.toString());
 
           console.log('✅ Connexion réussie');
           this.router.navigate(['/articles']);
@@ -127,5 +127,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     }
     return '';
+  }
+
+  /**
+   * Retour à la page précédente
+   */
+  goBack(): void {
+    console.log('🔙 Retour à la page précédente');
+    window.history.back();
   }
 }
