@@ -96,7 +96,7 @@
           <p class="text-secondary">Chargement de vos abonnements...</p>
         </div>
 
-        <!-- ✅ CHANGEMENT ICI : Utilise la grille globale -->
+        <!-- Grille des thèmes abonnés -->
         <div class="grid" *ngIf="!isLoadingSubscriptions">
           <!-- Message si aucun abonnement -->
           <div
@@ -114,20 +114,19 @@
           <!-- Cartes des thèmes abonnés -->
           <div
             *ngFor="let theme of subscribedThemes; trackBy: trackByThemeId"
-            class="card"
+            class="card card--flex"
           >
-            <h3 class="title">{{ theme.name }}</h3>
-            <p class="description"></p>
-            <div class="actions">
+            <h3 class="card-title">{{ theme.name }}</h3>
+            <p class="card-description">
+              {{ theme.description || 'Aucune description disponible pour ce thème.' }}
+            </p>
+            <div class="card-actions">
               <button
-                [ngClass]="{
-                  'subscribe-button': !theme.isSubscribed,
-                  'unsubscribe-button': theme.isSubscribed
-                }"
+                class="unsubscribe-button"
                 (click)="unsubscribeFromTheme(theme)"
                 [disabled]="isLoading"
               >
-                {{ theme.isSubscribed ? "Déjà abonné" : "S'abonner" }}
+                Se désabonner
               </button>
             </div>
           </div>

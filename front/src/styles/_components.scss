@@ -14,6 +14,7 @@
   border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
+  transition: all 0.2s ease;
 
   &:disabled {
     opacity: 0.6;
@@ -23,12 +24,21 @@
   &--primary {
     background-color: var(--mdd-primary-violet);
     color: var(--mdd-white);
+    
+    &:hover:not(:disabled) {
+      background-color: darken($mdd-primary-violet, 10%);
+    }
   }
 
   &--secondary {
-    background-color: transparent;
-    color: var(--mdd-primary-violet);
-    border: 2px solid var(--mdd-primary-violet);
+    background-color: $mdd-selection-bg;
+    color: #666;
+    border: 1px solid #ccc;
+    
+    &:hover:not(:disabled) {
+      background-color: darken($mdd-selection-bg, 8%);
+      border-color: darken(#ccc, 20%);
+    }
   }
 
   &--outline-primary {
@@ -40,6 +50,50 @@
   &--full {
     width: 100%;
   }
+
+  &--auth {
+    width: 100%;
+    height: 48px;
+    background-color: var(--mdd-primary-violet);
+    color: var(--mdd-white);
+
+    @include mobile {
+      height: 44px;
+    }
+
+    &.loading {
+      opacity: 0.6;
+    }
+  }
+
+  &--landing {
+    min-width: 200px;
+    
+    @include mobile {
+      width: 100%;
+    }
+  }
+
+  &--sm {
+    padding: $space-sm $space-md;
+    font-size: 14px;
+    min-width: 100px;
+  }
+}
+
+// ===========================
+// BOUTON TRI SPÉCIFIQUE ARTICLES
+// ===========================
+
+.btn--sort {
+  background: none;
+  border: none;
+  font-family: $mdd-font-family;
+  font-size: $font-button-text;
+  font-weight: $weight-bold;
+  color: $mdd-black;
+  cursor: pointer;
+  padding: 0;
 }
 
 // ===========================
@@ -102,6 +156,13 @@
   &--clickable {
     cursor: pointer;
   }
+
+  &--flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+  }
 }
 
 // ===========================
@@ -133,6 +194,13 @@
   margin-bottom: $space-sm;
 }
 
+.card-title {
+  font-size: $font-article-title;
+  font-weight: $weight-bold;
+  color: $mdd-black;
+  margin-bottom: $space-sm;
+}
+
 .description {
   font-size: $font-body-content;
   color: #666;
@@ -140,9 +208,21 @@
   flex-grow: 1;
 }
 
+.card-description {
+  font-size: $font-body-content;
+  margin-bottom: $space-md;
+  flex-grow: 1;
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
 }
 
 // ===========================
@@ -161,14 +241,38 @@
 }
 
 .unsubscribe-button {
-  background-color: $mdd-selection-bg;
-  color: #666;
-  border: 1px solid #ccc;
+  background-color: $mdd-selection-bg !important;
+  //color: #666 !important;
+  border: 1px solid #ccc !important;
   padding: $space-sm $space-md;
   border-radius: 4px;
   font-weight: $weight-semi-bold;
   cursor: pointer;
   min-width: 120px;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($mdd-selection-bg, 8%) !important;
+    border-color: darken(#ccc, 20%) !important;
+  }
+}
+
+// ===========================
+// ACTIONS HEADER ARTICLES
+// ===========================
+
+.header-actions {
+  display: flex;
+  gap: $space-md;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
 }
 
 // ===========================

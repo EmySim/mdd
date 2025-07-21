@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ThemeService } from './theme.service';
-import { Theme, ThemesPage } from '../../interfaces/theme.interface'; // ✅ AJOUTÉ ThemesPage
+import { Theme, ThemesPage } from '../../interfaces/theme.interface';
 import { ErrorService } from '../../services/error.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -106,6 +106,37 @@ export class ThemeComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  // ===========================
+  // ✅ NOUVELLES MÉTHODES - SYSTÈME DE BOUTONS UNIFIÉ
+  // ===========================
+
+  /**
+   * Retourne la classe CSS appropriée selon l'état d'abonnement
+   */
+  getThemeButtonClass(isSubscribed: boolean): string {
+    return isSubscribed ? 'btn btn--subscribed' : 'btn btn--primary';
+  }
+
+  /**
+   * Retourne le texte approprié selon l'état d'abonnement
+   */
+  getThemeButtonText(isSubscribed: boolean): string {
+    return isSubscribed ? 'Abonné' : 'S\'abonner';
+  }
+
+  /**
+   * Retourne le titre (tooltip) approprié selon l'état d'abonnement
+   */
+  getThemeButtonTitle(isSubscribed: boolean): string {
+    return isSubscribed 
+      ? 'Cliquez pour vous désabonner de ce thème' 
+      : 'Cliquez pour vous abonner à ce thème';
+  }
+
+  // ===========================
+  // MÉTHODES UTILITAIRES
+  // ===========================
 
   /**
    * TrackBy pour optimiser le rendu de la liste

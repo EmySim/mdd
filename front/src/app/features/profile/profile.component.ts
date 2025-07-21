@@ -6,7 +6,6 @@ import { AuthService } from '../auth/auth.service';
 import { ProfileService } from './profile.service';
 import { ThemeService } from '../themes/theme.service';
 import { ErrorService } from '../../services/error.service';
-// ✅ CORRIGÉ - Import des interfaces centralisées
 import { User, UpdateUserRequest } from '../../interfaces/user.interface';
 import { Theme, ThemesPage } from '../../interfaces/theme.interface';
 
@@ -110,14 +109,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.themeService.getAllThemes(0, 1000).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response: ThemesPage) => {  // ✅ CORRIGÉ - Type correct
+      next: (response: ThemesPage) => {
         this.subscribedThemes = response.content?.filter((theme: Theme) => theme.isSubscribed) || [];
         this.isLoadingSubscriptions = false;
-        console.log(`✅ ${this.subscribedThemes.length} abonnements chargés`);
       },
       error: (error: HttpErrorResponse) => {
-        console.error('❌ Erreur chargement abonnements:', error);
+        this.subscribedThemes = [];
         this.isLoadingSubscriptions = false;
+        this.errorService.handleHttpError(error);
       }
     });
   }
@@ -150,7 +149,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       ).subscribe({
         next: (updatedUser: User) => {
-          console.log('✅ Profil mis à jour avec succès');
           this.isSaving = false;
           this.currentUser = updatedUser;
           this.populateForm(updatedUser);
@@ -159,7 +157,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.authService.updateCurrentUser(updatedUser);
         },
         error: (error: HttpErrorResponse) => {
-          console.error('❌ Erreur mise à jour profil:', error);
           this.isSaving = false;
           this.errorService.handleHttpError(error);
         }
@@ -181,12 +178,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: () => {
-        console.log(`✅ Désabonné du thème: ${theme.name}`);
         // Retirer le thème de la liste locale (optimistic update)
         this.subscribedThemes = this.subscribedThemes.filter(t => t.id !== theme.id);
       },
       error: (error: HttpErrorResponse) => {
-        console.error('❌ Erreur désabonnement:', error);
         this.errorService.handleHttpError(error);
       }
     });
