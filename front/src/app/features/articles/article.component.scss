@@ -1,2 +1,42 @@
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
+
+
+// ===========================
+// BOUTON TRI SPÉCIFIQUE ARTICLES
+// ===========================
+
+.btn--sort {
+  background: none;
+  border: none;
+  font-family: $mdd-font-family;
+  font-size: $font-button-text;
+  font-weight: $weight-bold;
+  color: $mdd-black;
+  cursor: pointer;
+  padding: 0;
+}
+
+// ===========================
+// ACTIONS HEADER ARTICLES
+// ===========================
+
+.header-actions {
+  display: flex;
+  gap: $space-md;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}

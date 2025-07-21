@@ -5,7 +5,7 @@ import { ErrorService } from '../../services/error.service';
 @Component({
   selector: 'app-error-toast',
   template: `
-    <div class="error-toast" *ngIf="errorMessage" [@fadeInOut]>
+    <div class="error-toast" *ngIf="errorMessage">
       <div class="error-content">
         <span class="error-icon">⚠️</span>
         <span class="error-text">{{ errorMessage }}</span>
@@ -14,6 +14,7 @@ import { ErrorService } from '../../services/error.service';
     </div>
   `,
   styleUrls: ['./error-toast.component.scss']
+  // 🎯 PAS D'ANIMATION = Plus simple pour MVP
 })
 export class ErrorToastComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;

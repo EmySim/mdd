@@ -2,40 +2,6 @@
 // _layout.scss - STRUCTURE ET LAYOUTS MDD
 // ============================================================================
 
-// === GRILLES GLOBALES ===
-.grid {
-  display: grid;
-  gap: $space-md;
-  
-  &--articles {
-    grid-template-columns: 1fr;
-    
-    @include tablet {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @include desktop {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  
-  &--themes {
-    grid-template-columns: 1fr;
-    
-    @media (min-width: #{$breakpoint-mobile-min}) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @include tablet {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    
-    @include desktop {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-}
-
 // === CONTAINER GLOBAL ===
 .container {
   width: 100%;

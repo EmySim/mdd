@@ -6,10 +6,8 @@ import { AuthService } from '../auth/auth.service';
 import { ProfileService } from './profile.service';
 import { ThemeService } from '../themes/theme.service';
 import { ErrorService } from '../../services/error.service';
-// ✅ Import des interfaces typées
-import { User } from '../auth/interfaces/auth.interface';
-import { Theme } from '../../interfaces/theme.interface';
-import { UpdateUserRequest } from '../../interfaces/user.interface';
+import { User, UpdateUserRequest } from '../../interfaces/user.interface';
+import { Theme, ThemesPage } from '../../interfaces/theme.interface';
 
 @Component({
   selector: 'app-profile',
@@ -23,8 +21,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   // ===========================
   
   profileForm: FormGroup;
-  currentUser: User | null = null;  // ✅ Typé au lieu de any
-  subscribedThemes: Theme[] = [];   // ✅ Typé au lieu de any[]
+  currentUser: User | null = null;
+  subscribedThemes: Theme[] = [];
   
   // États de chargement
   isLoading = false;
@@ -69,7 +67,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: [''] // Optionnel pour modification
+      password: ['', [Validators.minLength(6)]] // Optionnel pour modification
     });
   }
 
@@ -83,7 +81,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private loadCurrentUser(): void {
     this.authService.currentUser$.pipe(
       takeUntil(this.destroy$)
-    ).subscribe(user => {
+    ).subscribe((user: User | null) => {
       this.currentUser = user;
       if (user) {
         this.populateForm(user);
@@ -111,16 +109,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.themeService.getAllThemes(0, 1000).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      // ✅ CORRIGÉ - Paramètre typé explicitement
-      next: (response: any) => {
+      next: (response: ThemesPage) => {
         this.subscribedThemes = response.content?.filter((theme: Theme) => theme.isSubscribed) || [];
         this.isLoadingSubscriptions = false;
-        console.log(`✅ ${this.subscribedThemes.length} abonnements chargés`);
       },
-      // ✅ CORRIGÉ - Paramètre typé explicitement  
       error: (error: HttpErrorResponse) => {
-        console.error('❌ Erreur chargement abonnements:', error);
+        this.subscribedThemes = [];
         this.isLoadingSubscriptions = false;
+        this.errorService.handleHttpError(error);
       }
     });
   }
@@ -148,13 +144,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
         updateData.password = password.trim();
       }
       
-      // ✅ CORRIGÉ - Utilisation de la bonne méthode de service
+      // Appel au service de profil
       this.profileService.updateUserProfile(this.currentUser.id, updateData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
-        // ✅ CORRIGÉ - Paramètre typé explicitement
         next: (updatedUser: User) => {
-          console.log('✅ Profil mis à jour avec succès');
           this.isSaving = false;
           this.currentUser = updatedUser;
           this.populateForm(updatedUser);
@@ -162,9 +156,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           // Mettre à jour les données dans AuthService
           this.authService.updateCurrentUser(updatedUser);
         },
-        // ✅ CORRIGÉ - Paramètre typé explicitement
         error: (error: HttpErrorResponse) => {
-          console.error('❌ Erreur mise à jour profil:', error);
           this.isSaving = false;
           this.errorService.handleHttpError(error);
         }
@@ -186,13 +178,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: () => {
-        console.log(`✅ Désabonné du thème: ${theme.name}`);
         // Retirer le thème de la liste locale (optimistic update)
         this.subscribedThemes = this.subscribedThemes.filter(t => t.id !== theme.id);
       },
-      // ✅ CORRIGÉ - Paramètre typé explicitement
       error: (error: HttpErrorResponse) => {
-        console.error('❌ Erreur désabonnement:', error);
         this.errorService.handleHttpError(error);
       }
     });
@@ -230,7 +219,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
       }
       
       if (field.errors['minlength']) {
-        return `Le nom d'utilisateur doit contenir au moins 3 caractères`;
+        const minLengths: {[key: string]: number} = {
+          'username': 3,
+          'password': 6
+        };
+        const minLength = minLengths[fieldName] || 0;
+        return `${fieldName === 'username' ? 'Le nom d\'utilisateur' : 'Le mot de passe'} doit contenir au moins ${minLength} caractères`;
       }
     }
     return '';
@@ -250,8 +244,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   // ===========================
   
   /**
-   * ✅ AJOUTÉ - TrackBy pour optimiser le rendu de la liste des thèmes
-   * Méthode manquante qui était utilisée dans le template
+   * TrackBy pour optimiser le rendu de la liste des thèmes
    */
   trackByThemeId(index: number, theme: Theme): number {
     return theme.id;
@@ -262,5 +255,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
    */
   refreshSubscriptions(): void {
     this.loadSubscriptions();
+  }
+
+  /**
+   * Détermine si le formulaire est valide
+   */
+  get isFormValid(): boolean {
+    return this.profileForm.valid;
+  }
+
+  /**
+   * Retourne le nombre total d'abonnements
+   */
+  get subscriptionsCount(): number {
+    return this.subscribedThemes.length;
+  }
+
+  /**
+   * Détermine si on doit afficher le message d'absence d'abonnements
+   */
+  get hasNoSubscriptions(): boolean {
+    return !this.isLoadingSubscriptions && this.subscribedThemes.length === 0;
   }
 }

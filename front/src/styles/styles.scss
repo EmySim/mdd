@@ -1,95 +1,98 @@
-// ============================================================================
-// STYLES PRINCIPAUX MDD - VERSION OPTIMISÉE
-// ============================================================================
+// =============================================================================
+// MDD - Styles Principaux
+// =============================================================================
 
-// === IMPORTS DANS L'ORDRE CORRECT ===
+// Angular Material (si utilisé)
+@import '~@angular/material/theming';
 
-// 1. Configuration de base
-@import 'variables';        // Couleurs, typographie, breakpoints
-@import 'mixins';          // Mixins responsive
+// Variables et configuration
+@import 'variables';
+@import 'mixins';
 
-// 2. Styles de base
-@import 'base';            // Reset CSS + styles globaux
+// Base styles
+@import 'base';
 
-// 3. Layout et utilitaires  
-@import 'layout';          // Grilles, containers, layouts de pages
-@import 'utilities';       // Classes utilitaires (nouveau)
+// Layout system
+@import 'layout';
 
-// 4. Composants réutilisables
-@import 'components';      // Boutons, formulaires, cartes, etc.
+// Composants réutilisables
+@import 'components';
 
-// ============================================================================
-// CUSTOM PROPERTIES CSS (pour cohérence avec Angular Material)
-// ============================================================================
+// Utilitaires essentiels
+@import 'utilities';
+
+// =============================================================================
+// CUSTOM PROPERTIES pour Angular Material
+// =============================================================================
 
 :root {
-  // Couleurs principales
   --mdd-primary-violet: #{$mdd-primary-violet};
   --mdd-navbar-active: #{$mdd-navbar-active};
   --mdd-black: #{$mdd-black};
   --mdd-white: #{$mdd-white};
   --mdd-logout-red: #{$mdd-logout-red};
-  --mdd-button-disabled: #{$mdd-button-disabled};
   --mdd-card-bg: #{$mdd-card-bg};
-  --mdd-selection-bg: #{$mdd-selection-bg};
-  
-  // Couleurs dérivées (pour états, hover, etc.)
-  --mdd-text-gray: #666666;
-  --mdd-border-light: #e0e0e0;
-  --mdd-shadow-light: rgba(0, 0, 0, 0.1);
-  
-  // Espacements (pour calculs dynamiques)
-  --space-xs: #{$space-xs};
-  --space-sm: #{$space-sm};
-  --space-md: #{$space-md};
-  --space-lg: #{$space-lg};
-  --space-xl: #{$space-xl};
-  --space-xxl: #{$space-xxl};
+  --mdd-border-gray: #{$mdd-border-gray};
+  --mdd-text-gray: #{$mdd-text-gray};
 }
 
-// ============================================================================
+// =============================================================================
 // OVERRIDES ANGULAR MATERIAL (si nécessaire)
-// ============================================================================
+// =============================================================================
 
-// Harmoniser les boutons Material avec votre design
-.mat-raised-button.mat-primary {
-  background-color: var(--mdd-primary-violet) !important;
+.mat-toolbar {
+  background-color: var(--mdd-white) !important;
+  color: var(--mdd-black) !important;
+}
+
+.mat-button-base {
+  font-family: $mdd-font-family !important;
+}
+
+.mat-form-field {
+  font-family: $mdd-font-family !important;
+}
+
+// Override pour la typographie globale Material
+body.mat-typography {
+  font-family: $mdd-font-family !important;
+  font-size: $font-body-content !important;
+  line-height: 1.5 !important;
+  color: $mdd-black !important;
+}
+
+.mat-typography {
+  font-family: $mdd-font-family !important;
   
-  &:hover:not(:disabled) {
-    background-color: var(--mdd-navbar-active) !important;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: $mdd-font-family !important;
+  }
+  
+  p {
+    font-family: $mdd-font-family !important;
+    font-size: $font-body-content !important;
+  }
+  
+  button {
+    font-family: $mdd-font-family !important;
   }
 }
 
-// Harmoniser les champs Material
-.mat-form-field.mat-form-field {
-  font-family: $mdd-font-family;
-  
-  .mat-form-field-label {
-    color: var(--mdd-text-gray);
+// =============================================================================
+// PRINT STYLES
+// =============================================================================
+
+@media print {
+  .no-print {
+    display: none !important;
   }
   
-  &.mat-focused .mat-form-field-label {
-    color: var(--mdd-primary-violet);
+  .page {
+    background: white !important;
+    color: black !important;
   }
   
-  .mat-form-field-underline {
-    background-color: var(--mdd-border-light);
-  }
-  
-  &.mat-focused .mat-form-field-ripple {
-    background-color: var(--mdd-primary-violet);
+  .btn {
+    display: none !important;
   }
 }
-
-// ============================================================================
-// STYLES DE DEBUG (à supprimer en production)
-// ============================================================================
-
-// Uncomment pour visualiser la grille en développement
-// .grid > * {
-//   border: 1px dashed rgba(255, 0, 0, 0.3);
-// }
-
-// .container {
-//   border: 1px dashed rgba(0, 255, 0, 0.3);
-// }

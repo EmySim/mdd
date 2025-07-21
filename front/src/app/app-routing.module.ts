@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 // Pages principales
-import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
 
 // Features - tous dans AppModule maintenant
@@ -55,11 +54,6 @@ const routes: Routes = [
   // PAGES PROTÉGÉES
   // ===========================
   
-  { 
-    path: 'home', 
-    component: HomeComponent,
-    canActivate: [AuthGuard]
-  },
 
   { 
     path: 'articles', 

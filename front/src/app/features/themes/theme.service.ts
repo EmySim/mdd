@@ -3,8 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ErrorService } from '../../services/error.service';
-import { Theme, ThemesPage } from '../../interfaces/theme.interface';
+import { ErrorService } from '../../services/error.service';import { 
+  Theme, 
+  ThemesPage, 
+  CreateThemeRequest, 
+  UpdateThemeRequest 
+} from '../../interfaces/theme.interface';  
+
 
 @Injectable({
   providedIn: 'root'

@@ -2,9 +2,6 @@
 
 /**
  * Point d'entrée centralisé pour toutes les interfaces
- * 
- * Permet d'importer facilement :
- * import { User, Theme, Article } from '../../interfaces';
  */
 
 // Interfaces utilisateur
@@ -17,7 +14,8 @@ export * from './theme.interface';
 export * from './article.interface';
 
 // Interfaces commentaires
-export * from './comment.interface';
-
-// Interfaces profil (si vous en avez d'autres à part user)
-export * from './profile.interface';
+export {
+  Comment as CommentInterface,
+  CreateCommentRequest,
+  UpdateCommentRequest,
+} from './comment.interface';

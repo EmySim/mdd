@@ -42,6 +42,8 @@ public class SubjectDTO {
     @Size(max = 100, message = "Le nom du sujet ne peut pas dépasser 100 caractères")
     private String name;
 
+    private String description;
+
     /**
      * Date de création.
      */

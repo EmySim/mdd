@@ -19,7 +19,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 // Composants
 import { AppComponent } from './app.component';
-import { HomeComponent } from './pages/home/home.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { ThemeComponent } from './features/themes/theme.component';
 import { ArticleComponent } from './features/articles/article.component';
@@ -43,7 +42,6 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     LandingComponent,
     ThemeComponent,
     ArticleComponent,

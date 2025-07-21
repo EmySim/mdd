@@ -1,23 +1,23 @@
-// src/app/features/themes/theme.component.ts - REFACTORISÉ
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { Theme, ThemesPage } from '../../interfaces/theme.interface';
 import { ErrorService } from '../../services/error.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-theme',
   templateUrl: './theme.component.html',
-  styleUrls: ['./theme.component.scss']
+  styleUrls: ['./theme.component.scss'],
 })
 export class ThemeComponent implements OnInit, OnDestroy {
   // ===========================
   // PROPRIÉTÉS DU COMPOSANT
   // ===========================
   themes: Theme[] = [];
-  isLoading: boolean = false; // Indique si le chargement initial est en cours
+  isLoading: boolean = false;
 
-  private destroy$ = new Subject<void>(); // Pour gérer la désinscription aux Observables
+  private destroy$ = new Subject<void>();
 
   constructor(
     private themeService: ThemeService,
@@ -26,7 +26,7 @@ export class ThemeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadThemes();
-    console.log('🎨 Page thèmes chargée');
+    console.log('📂 Page thèmes chargée');
   }
 
   ngOnDestroy(): void {
@@ -36,38 +36,57 @@ export class ThemeComponent implements OnInit, OnDestroy {
 
   /**
    * Charge la liste des thèmes avec statut d'abonnement
-   * Conforme au wireframe : Pas de pagination visible, chargement initial complet.
    */
   loadThemes(): void {
-    console.log('🎨 Chargement initial des thèmes');
+    console.log(`📂 Chargement initial des thèmes`);
     this.isLoading = true;
-    this.errorService.clearAll(); // S'assure que les messages d'erreur précédents sont effacés
+    this.errorService.clearAll();
 
-    this.themeService.getAllThemes(0, 1000).pipe( // Appelle avec une grande taille pour simuler "tout charger"
+    this.themeService.getAllThemes().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response: ThemesPage) => {
-        this.themes = response.content;
+      next: (themesPage: ThemesPage) => {
+        this.themes = themesPage.content; 
         this.isLoading = false;
-        console.log(`✅ Thèmes chargés: ${response.content.length}`);
+        console.log(`✅ Thèmes chargés: ${themesPage.content.length}`);
+        
+        // 🔍 LOGS POUR DIAGNOSTIQUER LA DESCRIPTION
+        console.log('📋 Réponse complète du backend:', themesPage);
+        console.log('🎯 Contenu des thèmes:', themesPage.content);
+        
+        // Vérifier chaque thème individuellement
+        themesPage.content.forEach((theme, index) => {
+          console.log(`📝 Thème ${index + 1}:`);
+          console.log(`  - ID: ${theme.id}`);
+          console.log(`  - Nom: ${theme.name}`);
+          console.log(`  - Description: "${theme.description}"`);
+          console.log(`  - Type description: ${typeof theme.description}`);
+          console.log(`  - Description vide/null: ${!theme.description}`);
+          console.log(`  - Abonné: ${theme.isSubscribed}`);
+          console.log(`  - Créé le: ${theme.createdAt}`);
+          console.log('  - Objet complet:', theme);
+        });
+
+        // Vérifier si au moins un thème a une description
+        const themesWithDescription = themesPage.content.filter(theme => theme.description && theme.description.trim());
+        console.log(`📊 Thèmes avec description non vide: ${themesWithDescription.length}/${themesPage.content.length}`);
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         this.isLoading = false;
         console.error('❌ Erreur chargement thèmes:', error);
-        // ErrorService gère déjà l'affichage via ThemeService
-      }
+        this.errorService.handleHttpError(error);
+      },
     });
   }
 
   /**
    * Toggle abonnement à un thème
-   * (Logique de mise à jour optimiste conservée car elle améliore l'UX sans ajouter d'élément UI visible)
    */
   toggleSubscription(theme: Theme): void {
     console.log(`🔄 Toggle abonnement thème: ${theme.name} (${theme.isSubscribed ? 'se désabonner' : 's\'abonner'})`);
 
     const originalState = theme.isSubscribed;
-    theme.isSubscribed = !theme.isSubscribed; // Mise à jour optimiste de l'état
+    theme.isSubscribed = !theme.isSubscribed; // Mise à jour optimiste
 
     const apiCall = originalState
       ? this.themeService.unsubscribeFromTheme(theme.id)
@@ -80,13 +99,44 @@ export class ThemeComponent implements OnInit, OnDestroy {
         const action = originalState ? 'désabonné de' : 'abonné à';
         console.log(`✅ ${action} ${theme.name}`);
       },
-      error: (error) => {
-        theme.isSubscribed = originalState; // Annuler la mise à jour optimiste en cas d'erreur
+      error: (error: HttpErrorResponse) => {
+        theme.isSubscribed = originalState; // Annuler la mise à jour optimiste
         console.error('❌ Erreur toggle abonnement:', error);
-        // ErrorService gère déjà l'affichage
-      }
+        this.errorService.handleHttpError(error);
+      },
     });
   }
+
+  // ===========================
+  // ✅ NOUVELLES MÉTHODES - SYSTÈME DE BOUTONS UNIFIÉ
+  // ===========================
+
+  /**
+   * Retourne la classe CSS appropriée selon l'état d'abonnement
+   */
+  getThemeButtonClass(isSubscribed: boolean): string {
+    return isSubscribed ? 'btn btn--subscribed' : 'btn btn--primary';
+  }
+
+  /**
+   * Retourne le texte approprié selon l'état d'abonnement
+   */
+  getThemeButtonText(isSubscribed: boolean): string {
+    return isSubscribed ? 'Abonné' : 'S\'abonner';
+  }
+
+  /**
+   * Retourne le titre (tooltip) approprié selon l'état d'abonnement
+   */
+  getThemeButtonTitle(isSubscribed: boolean): string {
+    return isSubscribed 
+      ? 'Cliquez pour vous désabonner de ce thème' 
+      : 'Cliquez pour vous abonner à ce thème';
+  }
+
+  // ===========================
+  // MÉTHODES UTILITAIRES
+  // ===========================
 
   /**
    * TrackBy pour optimiser le rendu de la liste
