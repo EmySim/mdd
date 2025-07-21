@@ -1,5 +1,5 @@
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 :host {
   display: block;
@@ -10,31 +10,38 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   &__content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: $space-xxl;
   }
-  
+
+  .back-arrow {
+    // Le sélecteur de la flèche
+    position: absolute; // Positionne la flèche de manière absolue
+    cursor: pointer; // AJOUTÉ : Indique que l'élément est cliquable
+    background-color: blue; // Décommentez ceci TEMPORAIREMENT pour voir si la "boîte" de la flèche apparaît
+  }
+
   &__logo {
     display: flex;
     justify-content: center;
-    
+
     img {
       height: 150px;
-      
+
       @include mobile {
         height: 100px;
       }
     }
   }
-  
+
   &__actions {
     display: flex;
     gap: $space-lg;
-    
+
     @include mobile {
       flex-direction: column;
       width: 100%;

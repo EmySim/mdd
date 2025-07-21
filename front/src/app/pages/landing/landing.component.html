@@ -1,25 +1,36 @@
 <div class="page-fullscreen">
   <div class="content-centered fade-in">
-    
+    <img
+      src="/assets/back_arrow.svg"
+      alt="Retour"
+      class="back-arrow"
+      (click)="goBack()"
+    />
+
     <!-- Logo landing avec tailles spécifiques -->
     <div class="logo-section logo-section--landing">
-      <img src="/assets/logo_landing_dsk.png" 
-           alt="MDD" 
-           class="logo logo--landing">
+      <img
+        src="/assets/logo_landing_dsk.png"
+        alt="MDD"
+        class="logo logo--landing"
+      />
     </div>
-    
+
     <!-- Actions section réutilisable -->
     <div class="actions-section">
-      <button class="btn btn--outline-primary btn--landing"
-              (click)="navigateToLogin()">
+      <button
+        class="btn btn--outline-primary btn--landing"
+        (click)="navigateToLogin()"
+      >
         Se connecter
       </button>
-      
-      <button class="btn btn--outline-primary btn--landing"
-              (click)="navigateToRegister()">
+
+      <button
+        class="btn btn--outline-primary btn--landing"
+        (click)="navigateToRegister()"
+      >
         S'inscrire
       </button>
     </div>
-    
   </div>
 </div>

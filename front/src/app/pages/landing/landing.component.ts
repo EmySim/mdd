@@ -34,7 +34,7 @@ export class LandingComponent implements OnInit {
   }
 
   // ===========================
-  // MÉTHODES DE NAVIGATION ✅ AJOUTÉES
+  // MÉTHODES DE NAVIGATION 
   // ===========================
   
   /**
@@ -51,6 +51,14 @@ export class LandingComponent implements OnInit {
   navigateToRegister(): void {  // ✅ AJOUTÉ - Méthode manquante
     console.log('📝 Navigation vers l\'inscription');
     this.router.navigate(['/auth/register']);
+  }
+
+  /**
+   * Retour à la page précédente
+   */
+  goBack(): void {
+    console.log('🔙 Retour à la page précédente');
+    window.history.back();
   }
 
 }
