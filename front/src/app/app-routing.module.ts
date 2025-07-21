@@ -1,4 +1,4 @@
-// src/app/app-routing.module.ts - ROUTING NETTOYÉ
+// front/src/app/app-routing.module.ts - AJOUT ROUTE DÉTAIL UNIQUEMENT
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -13,13 +13,6 @@ import { ThemeComponent } from './features/themes/theme.component';
 // Guards
 import { AuthGuard } from './features/auth/auth.guard';
 
-/**
- * Configuration routing MDD - Architecture simplifiée
- * 
- * ✅ Toutes les routes principales ici
- * ✅ Seulement AuthModule en lazy loading
- * ✅ Routes cohérentes et simples
- */
 const routes: Routes = [
   
   // ===========================
@@ -62,6 +55,12 @@ const routes: Routes = [
   },
 
   { 
+    path: 'articles/:id', 
+    component: ArticleComponent, 
+    canActivate: [AuthGuard]
+  },
+
+  { 
     path: 'themes', 
     component: ThemeComponent,
     canActivate: [AuthGuard]
@@ -72,24 +71,6 @@ const routes: Routes = [
     component: ProfileComponent,
     canActivate: [AuthGuard]
   },
-
-  // ===========================
-  // ROUTES FUTURES (à implémenter)
-  // ===========================
-  
-  // Articles détaillés
-  // { 
-  //   path: 'articles/:id', 
-  //   component: ArticleDetailComponent,
-  //   canActivate: [AuthGuard]
-  // },
-
-  // Création d'article
-  // { 
-  //   path: 'articles/create', 
-  //   component: CreateArticleComponent,
-  //   canActivate: [AuthGuard]
-  // },
 
   // ===========================
   // FALLBACK
@@ -107,6 +88,6 @@ const routes: Routes = [
 })
 export class AppRoutingModule { 
   constructor() {
-    console.log('🗺️ Routing configuré - Architecture simple');
+    console.log('🗺️ Routing configuré - Route détail article ajoutée');
   }
 }

@@ -1,67 +1,144 @@
+<!-- front/src/app/features/articles/article.component.html - AJOUT COMMENTAIRES -->
+
 <div class="page-with-navbar">
-  <!-- En-tête avec bouton et tri -->
-  <div class="page-with-navbar__header">
-    <div class="container">
-      <!-- Ligne unique : Bouton créer (gauche) + Tri (droite) -->
-      <div class="flex-between mb-lg">
-        <!-- Bouton créer article (gauche) -->
-        <div class="header-actions">
-          <button class="btn btn--primary" (click)="createArticle()">
-            Créer un article
-          </button>
-        </div>
+  
+  <!-- ======================================== -->
+  <!-- VUE LISTE (EXISTANTE) - INCHANGÉE -->
+  <!-- ======================================== -->
+  <div *ngIf="!showDetailView">
+    
+    <!-- En-tête avec bouton et tri -->
+    <div class="page-with-navbar__header">
+      <div class="container">
+        <!-- Ligne unique : Bouton créer (gauche) + Tri (droite) -->
+        <div class="flex-between mb-lg">
+          <!-- Bouton créer article (gauche) -->
+          <div class="header-actions">
+            <button class="btn btn--primary" (click)="createArticle()">
+              Créer un article
+            </button>
+          </div>
 
-        <!-- Tri seulement (droite) -->
-        <div class="filter-group">
-          <button
-            class="btn btn--sort"
-            (click)="changeSortDirection()"
-            [disabled]="isLoading"
-          >
-            Trier par {{ sortDirection === 'desc' ? '↓' : '↑' }}
-          </button>
+          <!-- Tri seulement (droite) -->
+          <div class="filter-group">
+            <button
+              class="btn btn--sort"
+              (click)="changeSortDirection()"
+              [disabled]="isLoading"
+            >
+              Trier par {{ sortDirection === 'desc' ? '↓' : '↑' }}
+            </button>
+          </div>
         </div>
       </div>
- 
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="page-with-navbar__content">
+      <div class="container">
+        <!-- Loading -->
+        <div class="text-center p-xl" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="text-secondary">Chargement des articles...</p>
+        </div>
+
+        <!-- Articles -->
+        <div *ngIf="!isLoading">
+          <!-- Grid des articles -->
+          <div class="grid" *ngIf="articles.length > 0">
+            <article
+              class="card card--clickable"
+              *ngFor="let article of articles; trackBy: trackByArticleId"
+              (click)="viewArticle(article)"
+            >
+              <!-- Titre -->
+              <h2 class="title">{{ article.title }}</h2>
+
+              <!-- Métadonnées -->
+              <div class="article-meta mb-sm">
+                <span class="article-date">{{
+                  article.createdAt | date : "dd/MM/yyyy"
+                }}</span>
+                <span class="article-author">{{ article.authorUsername }}</span>
+              </div>
+
+              <!-- Contenu -->
+              <p class="article-content mb-md">
+                {{ truncateContent(article.content) }}
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Contenu principal -->
-  <div class="page-with-navbar__content">
-    <div class="container">
-      <!-- Loading -->
-      <div class="text-center p-xl" *ngIf="isLoading">
-        <div class="loading-spinner"></div>
-        <p class="text-secondary">Chargement des articles...</p>
+  <!-- ======================================== -->
+  <!-- ✅ NOUVELLE VUE DÉTAIL AVEC COMMENTAIRES -->
+  <!-- ======================================== -->
+  <div *ngIf="showDetailView">
+    
+    <!-- Header avec navigation -->
+    <div class="page-with-navbar__header">
+      <div class="container">
+        <div class="flex-between mb-lg">
+          <!-- Bouton retour -->
+          <button class="btn btn--secondary" (click)="goBackToList()">
+            ← Retour
+          </button>
+        </div>
       </div>
+    </div>
 
-      <!-- Articles -->
-      <div *ngIf="!isLoading">
-        <!-- Grid des articles -->
-        <div class="grid" *ngIf="articles.length > 0">
-          <article
-            class="card"
-            *ngFor="let article of articles; trackBy: trackByArticleId"
-            (click)="viewArticle(article)"
-          >
+    <!-- Contenu détail -->
+    <div class="page-with-navbar__content">
+      <div class="container">
+        
+        <!-- Loading état -->
+        <div class="text-center p-xl" *ngIf="isLoading">
+          <div class="loading-spinner"></div>
+          <p class="text-secondary mt-md">Chargement de l'article...</p>
+        </div>
+
+        <!-- Article détaillé -->
+        <div *ngIf="!isLoading && selectedArticle" class="article-detail">
+          
+          <!-- Article principal -->
+          <article class="card mb-xl">
+            
             <!-- Titre -->
-            <h2 class="title">{{ article.title }}</h2>
-
+            <h1 class="article-detail-title">{{ selectedArticle.title }}</h1>
+            
             <!-- Métadonnées -->
-            <div class="article-meta mb-sm">
-              <span class="article-date">{{
-                article.createdAt | date : "dd/MM/yyyy"
-              }}</span>
-              <span class="article-author">{{ article.authorUsername }}</span>
+            <div class="article-detail-meta">
+              <div class="meta-item">
+                <strong>Auteur :</strong> {{ selectedArticle.authorUsername }}
+              </div>
+              <div class="meta-item">
+                <strong>Thème :</strong> {{ selectedArticle.subjectName }}
+              </div>
+              <div class="meta-item">
+                <strong>Publié le :</strong> {{ formatDate(selectedArticle.createdAt) }}
+              </div>
             </div>
-
-            <!-- Contenu -->
-            <p class="article-content mb-md">
-              {{ truncateContent(article.content) }}
-            </p>
+            
+            <!-- Contenu de l'article -->
+            <div class="article-detail-content">
+              <p>{{ selectedArticle.content }}</p>
+            </div>
+            
           </article>
+
+          <!-- ✅ SECTION COMMENTAIRES - Utilise le composant existant -->
+          <app-comment 
+            [articleId]="selectedArticle.id"
+            [initialComments]="comments">
+          </app-comment>
+          
         </div>
+        
       </div>
     </div>
   </div>
+  
 </div>

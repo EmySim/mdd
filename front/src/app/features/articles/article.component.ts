@@ -1,9 +1,10 @@
-// front/src/app/features/articles/article.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ArticleService } from './article.service';
+import { CommentService } from '../comments/comment.service';
 import { Article, ArticlesPage } from '../../interfaces/article.interface';
+import { Comment, CommentsPage } from '../../interfaces/comment.interface';
 
 @Component({
   selector: 'app-article',
@@ -12,21 +13,40 @@ import { Article, ArticlesPage } from '../../interfaces/article.interface';
 })
 export class ArticleComponent implements OnInit, OnDestroy {
   
-  // Données
+  // ===========================
+  // PROPRIÉTÉS EXISTANTES (liste)
+  // ===========================
   articles: Article[] = [];
   sortDirection: 'asc' | 'desc' = 'desc';
   isLoading = false;
   
-  // Cleanup
+
+  selectedArticle: Article | null = null;
+  comments: Comment[] = [];
+  showDetailView = false;
+  
+  // Cleanup existant
   private destroy$ = new Subject<void>();
 
   constructor(
     private articleService: ArticleService,
-    private router: Router
+    private commentService: CommentService, // ✅ AJOUTÉ
+    private router: Router,
+    private route: ActivatedRoute // ✅ AJOUTÉ
   ) {}
 
   ngOnInit(): void {
-    this.loadArticles();
+    // ✅ DÉTECTION ROUTE pour détail article
+    this.route.params.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
+      const articleId = params['id'];
+      if (articleId) {
+        this.loadArticleDetail(+articleId);
+      } else {
+        this.loadArticles(); // Comportement existant
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -34,8 +54,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Chargement des articles
+  // ===========================
+  // MÉTHODES (liste)
+  // ===========================
+
   private loadArticles(): void {
+    this.showDetailView = false; // ✅ Mode liste
     this.isLoading = true;
     
     this.articleService.getAllArticles(0, 20, this.sortDirection).pipe(
@@ -51,30 +75,90 @@ export class ArticleComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Toggle tri chronologique
   changeSortDirection(): void {
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.loadArticles();
   }
 
-  // Navigation vers création
   createArticle(): void {
     this.router.navigate(['/articles/create']);
   }
 
-  // Navigation vers détail avec commentaires
   viewArticle(article: Article): void {
     this.router.navigate(['/articles', article.id]);
   }
 
-  // Tronquer le contenu pour l'aperçu
   truncateContent(content: string, maxLength: number = 150): string {
     if (!content) return '';
     return content.length > maxLength ? content.substring(0, maxLength) + '...' : content;
   }
 
-  // TrackBy pour performance
   trackByArticleId(index: number, article: Article): number {
     return article.id;
+  }
+
+  // ===========================
+  // MÉTHODES (détail avec commentaires)
+  // ===========================
+
+  /**
+   * Charge un article en détail avec ses commentaires
+   */
+  private loadArticleDetail(articleId: number): void {
+    this.showDetailView = true; // ✅ Mode détail
+    this.isLoading = true;
+    
+    // Charger l'article
+    this.articleService.getArticleById(articleId).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (article) => {
+        this.selectedArticle = article;
+        this.loadComments(articleId); // ✅ Charger les commentaires
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement article:', error);
+        this.router.navigate(['/articles']);
+      }
+    });
+  }
+
+  /**
+   * Charge les commentaires d'un article
+   */
+  private loadComments(articleId: number): void {
+    this.commentService.getCommentsByArticle(articleId, 0, 100).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (commentsPage: CommentsPage) => {
+        this.comments = commentsPage.content || [];
+        this.isLoading = false;
+        console.log('✅ Article et commentaires chargés');
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement commentaires:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  /**
+   * Retour vers la liste d'articles
+   */
+  goBackToList(): void {
+    this.router.navigate(['/articles']);
+  }
+
+  /**
+   * Formate une date pour l'affichage
+   */
+  formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 }
