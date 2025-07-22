@@ -1,15 +1,23 @@
-// src/app/features/themes/theme.service.ts - REFACTORISÉ
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ErrorService } from '../../services/error.service';import { 
+import { ErrorService } from '../../services/error.service';
+import { 
   Theme, 
   ThemesPage, 
   CreateThemeRequest, 
   UpdateThemeRequest 
-} from '../../interfaces/theme.interface';  
+} from '../../interfaces/theme.interface';
 
+/**
+ * Interface pour les réponses de subscription/unsubscription
+ */
+export interface SubscriptionResponse {
+  success: boolean;
+  message: string;
+  themeId: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -44,24 +52,30 @@ export class ThemeService {
 
   /**
    * S'abonner à un thème
+   * @param id - ID du thème
+   * @returns Réponse de subscription typée
    */
-  subscribeToTheme(id: number): Observable<any> {
-    return this.http.post(`${this.API_URL}/${id}/subscribe`, {})
+  subscribeToTheme(id: number): Observable<SubscriptionResponse> {
+    return this.http.post<SubscriptionResponse>(`${this.API_URL}/${id}/subscribe`, {})
       .pipe(catchError(this.handleError));
   }
 
   /**
    * Se désabonner d'un thème
+   * @param id - ID du thème
+   * @returns Réponse de désinscription typée
    */
-  unsubscribeFromTheme(id: number): Observable<any> {
-    return this.http.delete(`${this.API_URL}/${id}/subscribe`)
+  unsubscribeFromTheme(id: number): Observable<SubscriptionResponse> {
+    return this.http.delete<SubscriptionResponse>(`${this.API_URL}/${id}/subscribe`)
       .pipe(catchError(this.handleError));
   }
 
   /**
    * Gestion d'erreurs centralisée
+   * @param error - Erreur HTTP reçue
+   * @returns Observable qui émet une erreur
    */
-  private handleError = (error: any): Observable<never> => {
+  private handleError = (error: HttpErrorResponse): Observable<never> => {
     console.error('ThemeService Error:', error);
     this.errorService.handleHttpError(error);
     return throwError(() => error);

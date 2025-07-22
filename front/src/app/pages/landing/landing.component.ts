@@ -5,7 +5,7 @@ import { AuthService } from '../../features/auth/auth.service';
 
 /**
  * Composant Landing - Page d'accueil publique
- * 
+ *
  * Fonctionnalités :
  * ✅ Présentation de l'application
  * ✅ Navigation vers connexion/inscription
@@ -14,14 +14,10 @@ import { AuthService } from '../../features/auth/auth.service';
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.scss']
+  styleUrls: ['./landing.component.scss'],
 })
 export class LandingComponent implements OnInit {
-
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     // ✅ Vérification simple au chargement
@@ -34,23 +30,22 @@ export class LandingComponent implements OnInit {
   }
 
   // ===========================
-  // MÉTHODES DE NAVIGATION ✅ AJOUTÉES
+  // MÉTHODES DE NAVIGATION
   // ===========================
-  
+
   /**
    * Navigation vers la page de connexion
    */
-  navigateToLogin(): void {  // ✅ AJOUTÉ - Méthode manquante
+  navigateToLogin(): void {
     console.log('🔑 Navigation vers la connexion');
     this.router.navigate(['/auth/login']);
   }
 
   /**
-   * Navigation vers la page d'inscription  
+   * Navigation vers la page d'inscription
    */
-  navigateToRegister(): void {  // ✅ AJOUTÉ - Méthode manquante
-    console.log('📝 Navigation vers l\'inscription');
+  navigateToRegister(): void {
+    console.log("📝 Navigation vers l'inscription");
     this.router.navigate(['/auth/register']);
   }
-
 }

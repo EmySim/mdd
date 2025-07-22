@@ -44,6 +44,7 @@ import java.time.LocalDateTime;
  * @author Équipe MDD
  * @version 1.0
  */
+@SuppressWarnings("JavadocBlankLines")
 @Entity
 @Table(name = "articles")
 @Getter
@@ -114,19 +115,4 @@ public class Article {
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    /**
-     * Constructeur pour création d'article.
-     * Les dates sont auto-générées par Hibernate.
-     *
-     * @param title   titre de l'article
-     * @param content contenu de l'article
-     * @param author  auteur de l'article
-     * @param subject sujet de l'article
-     */
-    public Article(String title, String content, User author, Subject subject) {
-        this.title = title;
-        this.content = content;
-        this.author = author;
-        this.subject = subject;
-    }
 }

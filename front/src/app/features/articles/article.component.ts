@@ -30,13 +30,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   constructor(
     private articleService: ArticleService,
-    private commentService: CommentService, // ✅ AJOUTÉ
+    private commentService: CommentService, 
     private router: Router,
-    private route: ActivatedRoute // ✅ AJOUTÉ
+    private route: ActivatedRoute 
   ) {}
 
   ngOnInit(): void {
-    // ✅ DÉTECTION ROUTE pour détail article
     this.route.params.pipe(
       takeUntil(this.destroy$)
     ).subscribe(params => {
@@ -44,7 +43,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       if (articleId) {
         this.loadArticleDetail(+articleId);
       } else {
-        this.loadArticles(); // Comportement existant
+        this.loadArticles(); 
       }
     });
   }
@@ -59,7 +58,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   // ===========================
 
   private loadArticles(): void {
-    this.showDetailView = false; // ✅ Mode liste
+    this.showDetailView = false; 
     this.isLoading = true;
     
     this.articleService.getAllArticles(0, 20, this.sortDirection).pipe(
@@ -105,7 +104,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
    * Charge un article en détail avec ses commentaires
    */
   private loadArticleDetail(articleId: number): void {
-    this.showDetailView = true; // ✅ Mode détail
+    this.showDetailView = true;
     this.isLoading = true;
     
     // Charger l'article
@@ -114,7 +113,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (article) => {
         this.selectedArticle = article;
-        this.loadComments(articleId); // ✅ Charger les commentaires
+        this.loadComments(articleId); 
       },
       error: (error) => {
         console.error('❌ Erreur chargement article:', error);

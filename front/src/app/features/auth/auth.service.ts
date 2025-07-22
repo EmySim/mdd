@@ -92,7 +92,7 @@ export class AuthService {
       return throwError(() => new Error('No user ID found'));
     }
 
-    return this.http.get<any>(`/api/user/${userId}`).pipe(
+    return this.http.get<User>(`/api/user/${userId}`).pipe(
       tap(userProfile => {
         console.log('✅ Profil utilisateur récupéré:', userProfile);
         const user: User = {
@@ -128,7 +128,7 @@ export class AuthService {
     
     localStorage.setItem(this.TOKEN_KEY, response.token);
     localStorage.setItem('token', response.token);
-    localStorage.setItem('userId', response.id.toString()); // ✅ CORRIGÉ - utiliser response.id directement
+    localStorage.setItem('userId', response.id.toString()); 
     
     // Créer l'objet User à partir de la réponse
     const user: User = {
@@ -152,7 +152,7 @@ export class AuthService {
     }
   }
 
-  private handleError = (error: any): Observable<never> => {
+  private handleError = (error: unknown): Observable<never> => {
     console.error('❌ AuthService Error:', error);
     return throwError(() => error);
   };

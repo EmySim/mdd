@@ -7,10 +7,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { ErrorService } from '../../../services/error.service';
-import { LoginRequest } from '../../../interfaces/user.interface';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +18,7 @@ import { LoginRequest } from '../../../interfaces/user.interface';
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   isLoading = false;
-  errorMessage = ''; // ✅ AJOUTÉ - propriété manquante
+  errorMessage = '';
 
   private destroy$ = new Subject<void>();
 
@@ -83,6 +81,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading = true;
+      this.errorService.clearAll();
 
       console.log('🔍 Données envoyées:', this.loginForm.value);
 
@@ -92,14 +91,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           // Sauvegarder le token ET l'ID utilisateur
           localStorage.setItem('token', response.token);
-          localStorage.setItem('userId', response.id.toString()); // ✅ CORRIGÉ - utiliser response.id directement
+          localStorage.setItem('userId', response.id.toString());
 
           console.log('✅ Connexion réussie');
           this.router.navigate(['/articles']);
         },
         error: (error) => {
           console.error('❌ Erreur de connexion:', error);
-          this.errorMessage = 'Identifiants invalides';
+          this.errorService.handleHttpError(error);
           this.isLoading = false;
         },
       });
@@ -128,5 +127,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     }
     return '';
+  }
+
+  /**
+   * Retour à la page précédente
+   */
+  goBack(): void {
+    console.log('🔙 Retour à la page précédente');
+    window.history.back();
   }
 }

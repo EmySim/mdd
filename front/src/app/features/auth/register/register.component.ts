@@ -111,4 +111,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
     return '';
   }
+
+  /**
+   * Retour à la page précédente
+   */
+  goBack(): void {
+    console.log('🔙 Retour à la page précédente');
+    window.history.back();
+  }
+
 }

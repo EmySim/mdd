@@ -78,26 +78,6 @@ public class UserService {
     }
 
     /**
-     * ✅ Récupère le profil utilisateur de base (sans abonnements détaillés).
-     * 
-     * Utilisé pour :
-     * - Consultation rapide du profil
-     * - Validation d'existence utilisateur
-     * 
-     * @param email email de l'utilisateur
-     * @return UserDTO basique
-     * @throws EntityNotFoundException si utilisateur inexistant
-     */
-    @Transactional(readOnly = true)
-    public UserDTO getUserProfile(String email) {
-        log.debug("📖 Consultation profil utilisateur: {}", email);
-
-        User user = findUserByEmail(email);
-
-        return userMapper.toDto(user);
-    }
-
-    /**
      * ✅ Récupère le profil complet de l'utilisateur avec ses abonnements détaillés.
      * 
      * FONCTIONNALITÉ AVANCÉE :

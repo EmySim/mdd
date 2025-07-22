@@ -30,7 +30,7 @@
     }
   }
 
-  // ✅ BOUTON SECONDAIRE MODIFIÉ - Texte blanc, background #939393
+
   &--secondary {
     background-color: #939393;
     color: var(--mdd-white);
@@ -70,7 +70,7 @@
     min-width: 200px;
     
     @include mobile {
-      width: 100%;
+      //width: 100%;
     }
   }
 
@@ -96,6 +96,12 @@
   padding: 0;
 }
 
+.back-arrow {
+    // Le sélecteur de la flèche
+    position: absolute; // Positionne la flèche de manière absolue
+    cursor: pointer; // AJOUTÉ : Indique que l'élément est cliquable
+  }
+  
 // ===========================
 // FORMULAIRES GLOBAUX
 // ===========================
@@ -221,7 +227,7 @@
 
 .card-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: auto;
 }
 
@@ -275,6 +281,7 @@
   &--navbar {
     height: 81px;
     width: 140px;
+    cursor: pointer;
 
     @include mobile {
       height: 53px;
