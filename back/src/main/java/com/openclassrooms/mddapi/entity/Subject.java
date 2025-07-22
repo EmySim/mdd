@@ -62,6 +62,7 @@ public class Subject {
     @Builder.Default
     private Set<User> subscribers = new HashSet<>();
 
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     /**

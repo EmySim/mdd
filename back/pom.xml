@@ -20,6 +20,11 @@
         <lombok.version>1.18.30</lombok.version>
         <jjwt.version>0.11.5</jjwt.version>
         <mysql.connector.version>8.0.33</mysql.connector.version>
+
+        <!-- SonarQube properties -->
+        <sonar.organization>emysim</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.projectKey>EmySim_mdd</sonar.projectKey>
     </properties>
 
     <dependencies>
@@ -152,6 +157,13 @@
                         <compilerArg>-Amapstruct.verbose=true</compilerArg>
                     </compilerArgs>
                 </configuration>
+            </plugin>
+
+            <!-- SonarQube Maven Plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.10.0.2594</version>
             </plugin>
         </plugins>
     </build>
