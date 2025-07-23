@@ -1,55 +1,78 @@
 name: Build and SonarCloud Analysis
+
 on:
   push:
     branches:
       - develop
-      - refacto 
+      - refacto
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
   build:
     name: Build and analyze
-    runs-on: windows-latest
+    runs-on: windows-latest # Conserver windows-latest si c'est votre environnement
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Nécessaire pour l'analyse SonarCloud des pull requests
 
-      - name: Set up JDK 11
+      - name: Set up JDK 11 for Application Build
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
+          # Cache Maven dependencies for Java 11 build
+          cache: 'maven'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
+      - name: Restore Maven packages cache
+        uses: actions/cache/restore@v4 # Utiliser 'restore' pour restaurer avant le build
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/back/pom.xml') }} # Spécifier le pom.xml du sous-dossier
           restore-keys: ${{ runner.os }}-m2
 
-      # Cache SonarCloud pour améliorer les performances
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
+      - name: Build Project with Maven (Java 11)
+        working-directory: back
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: mvn clean verify # 'verify' exécute 'test' et 'install', si nécessaire
+
+      # --- SonarCloud Analysis Section ---
+      # Cette section utilise une version de Java plus récente spécifiquement pour SonarCloud
+
+      - name: Set up JDK 17 for SonarCloud Scan
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # Utiliser Java 17 pour le scanner SonarQube
+          distribution: 'temurin'
+          # Cache Maven dependencies for Java 17 (peut être omis si déjà fait pour 11 et suffisant)
+          # cache: 'maven'
+
+      - name: Restore SonarCloud cache
+        uses: actions/cache/restore@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Build project
+      - name: Perform SonarCloud Analysis (using Java 17)
         working-directory: back
         env:
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: mvn clean verify
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Nécessaire pour l'intégration GitHub PR
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Votre token SonarCloud
+        run: mvn sonar:sonar -Dsonar.projectKey=EmySim_mdd -Dsonar.organization=emysim -Dsonar.host.url=https://sonarcloud.io
 
-      - name: SonarCloud analysis
-        working-directory: back
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar "-Dsonar.projectKey=EmySim_mdd" "-Dsonar.organization=emysim" "-Dsonar.host.url=https://sonarcloud.io"
+      - name: Save Maven packages cache
+        uses: actions/cache/save@v4 # Sauvegarder après le build/analyse
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/back/pom.xml') }}
 
-     
+      - name: Save SonarCloud cache
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar

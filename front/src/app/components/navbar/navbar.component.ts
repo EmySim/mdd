@@ -14,11 +14,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   
   currentUser: User | null = null;
   showMobileMenu = false;
-  private destroy$ = new Subject<void>();
+  isProfilePage = false;
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
-    private authService: AuthService,
-    private router: Router
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
