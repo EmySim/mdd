@@ -81,11 +81,11 @@
     width: 48px;
     cursor: pointer;
     opacity: 0.7;
-    transition: all 0.3s ease; // ✅ Transition plus douce
+    transition: all 0.3s ease; 
     
     &:hover {
       opacity: 1;
-      transform: scale(1.05); // ✅ Légère animation au survol
+      transform: scale(1.05); 
     }
 
     // ✅ Style pour l'état actif (page profile)

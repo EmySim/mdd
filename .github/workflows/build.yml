@@ -63,8 +63,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Nécessaire pour l'intégration GitHub PR
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Votre token SonarCloud
-        run: mvn sonar:sonar -Dsonar.projectKey=EmySim_mdd -Dsonar.organization=emysim -Dsonar.host.url=https://sonarcloud.io
-
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=EmySim_mdd \
+            -Dsonar.organization=emysim \
+            -Dsonar.host.url=https://sonarcloud.io
+            
       - name: Save Maven packages cache
         uses: actions/cache/save@v4 # Sauvegarder après le build/analyse
         with:

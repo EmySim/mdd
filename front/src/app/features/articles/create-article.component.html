@@ -1,5 +1,4 @@
 <div class="page-with-navbar">
-  
   <div class="page-with-navbar__header">
     <div class="container">
       <h1 class="page-title">Créer un nouvel article</h1>
@@ -8,10 +7,22 @@
 
   <div class="page-with-navbar__content">
     <div class="container">
-      
       <div class="create-form">
         <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
-          
+          <!-- Thème -->
+          <div class="form__group">
+            <select
+              class="form__field"
+              [class.form__field--error]="hasError('themeId')"
+              formControlName="themeId"
+            >
+              <option value="">Sélectionnez un thème</option>
+              <option *ngFor="let theme of themes" [value]="theme.id">
+                {{ theme.name }}
+              </option>
+            </select>
+          </div>
+
           <!-- Titre de l'article -->
           <div class="form__group">
             <input
@@ -23,19 +34,6 @@
             />
           </div>
 
-          <!-- Sujet -->
-          <div class="form__group">
-            <select
-              class="form__field"
-              [class.form__field--error]="hasError('subjectId')"
-              formControlName="subjectId">
-              <option value="">Sélectionnez un sujet</option>
-              <option *ngFor="let theme of themes" [value]="theme.id">
-                {{ theme.name }}
-              </option>
-            </select>
-          </div>
-
           <!-- Contenu de l'article -->
           <div class="form__group">
             <textarea
@@ -43,7 +41,8 @@
               [class.form__field--error]="hasError('content')"
               formControlName="content"
               placeholder="Contenu de l'article"
-              rows="8">
+              rows="8"
+            >
             </textarea>
           </div>
 
@@ -52,15 +51,13 @@
             <button
               class="btn btn--primary"
               type="submit"
-              [disabled]="!articleForm.valid || isSubmitting">
-              {{ isSubmitting ? 'Création...' : 'Créer' }}
+              [disabled]="!articleForm.valid || isSubmitting"
+            >
+              {{ isSubmitting ? "Création..." : "Créer" }}
             </button>
           </div>
-
         </form>
       </div>
-      
     </div>
   </div>
-  
 </div>
