@@ -15,7 +15,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   
   currentUser: User | null = null;
   showMobileMenu = false;
-  isProfilePage = false; // ✅ Nouvelle propriété pour détecter la page profile
+  isProfilePage = false; 
   
   private destroy$ = new Subject<void>();
 

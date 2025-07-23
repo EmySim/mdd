@@ -1,12 +1,10 @@
 <!-- front/src/app/features/articles/article.component.html - AJOUT COMMENTAIRES -->
 
 <div class="page-with-navbar">
-  
   <!-- ======================================== -->
-  <!-- VUE LISTE (EXISTANTE) - INCHANGÉE -->
+  <!-- VUE LISTE -->
   <!-- ======================================== -->
   <div *ngIf="!showDetailView">
-    
     <!-- En-tête avec bouton et tri -->
     <div class="page-with-navbar__header">
       <div class="container">
@@ -26,7 +24,7 @@
               (click)="changeSortDirection()"
               [disabled]="isLoading"
             >
-              Trier par {{ sortDirection === 'desc' ? '↓' : '↑' }}
+              Trier par {{ sortDirection === "desc" ? "↓" : "↑" }}
             </button>
           </div>
         </div>
@@ -77,23 +75,23 @@
   <!-- ✅ NOUVELLE VUE DÉTAIL AVEC COMMENTAIRES -->
   <!-- ======================================== -->
   <div *ngIf="showDetailView">
-    
     <!-- Header avec navigation -->
     <div class="page-with-navbar__header">
       <div class="container">
-        <div class="flex-between mb-lg">
-          <!-- Bouton retour -->
-          <button class="btn btn--secondary" (click)="goBackToList()">
-            ← Retour
-          </button>
-        </div>
+        <img
+          src="/assets/back_arrow.svg"
+          alt="Retour"
+          class="back-arrow"
+          (click)="goBack()"
+        />
+        <!-- Titre -->
+        <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
       </div>
     </div>
 
     <!-- Contenu détail -->
     <div class="page-with-navbar__content">
       <div class="container">
-        
         <!-- Loading état -->
         <div class="text-center p-xl" *ngIf="isLoading">
           <div class="loading-spinner"></div>
@@ -102,13 +100,8 @@
 
         <!-- Article détaillé -->
         <div *ngIf="!isLoading && selectedArticle" class="article-detail">
-          
           <!-- Article principal -->
           <article class="card mb-xl">
-            
-            <!-- Titre -->
-            <h1 class="article-detail-title">{{ selectedArticle.title }}</h1>
-            
             <!-- Métadonnées -->
             <div class="article-detail-meta">
               <div class="meta-item">
@@ -118,27 +111,25 @@
                 <strong>Thème :</strong> {{ selectedArticle.subjectName }}
               </div>
               <div class="meta-item">
-                <strong>Publié le :</strong> {{ formatDate(selectedArticle.createdAt) }}
+                <strong>Publié le :</strong>
+                {{ formatDate(selectedArticle.createdAt) }}
               </div>
             </div>
-            
+
             <!-- Contenu de l'article -->
             <div class="article-detail-content">
               <p>{{ selectedArticle.content }}</p>
             </div>
-            
           </article>
 
           <!-- ✅ SECTION COMMENTAIRES - Utilise le composant existant -->
-          <app-comment 
+          <app-comment
             [articleId]="selectedArticle.id"
-            [initialComments]="comments">
+            [initialComments]="comments"
+          >
           </app-comment>
-          
         </div>
-        
       </div>
     </div>
   </div>
-  
 </div>

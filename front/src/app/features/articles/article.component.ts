@@ -144,7 +144,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   /**
    * Retour vers la liste d'articles
    */
-  goBackToList(): void {
+  goBack(): void {
     this.router.navigate(['/articles']);
   }
 

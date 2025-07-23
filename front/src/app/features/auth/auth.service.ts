@@ -54,7 +54,7 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     this.currentUserSubject.next(null);
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/landing']);
     console.log('✅ Déconnexion - Token et userId supprimés');
   }
 

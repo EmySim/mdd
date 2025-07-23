@@ -72,4 +72,12 @@ export class CreateArticleComponent implements OnInit {
     const control = this.articleForm.get(field);
     return !!(control && control.invalid && control.touched);
   }
+
+  /**
+   * Retour à la page précédente
+   */
+  goBack(): void {
+    console.log('🔙 Retour à la page précédente');
+    window.history.back();
+  }
 }

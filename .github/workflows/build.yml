@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build and analyze
-    runs-on: windows-latest 
+    runs-on: windows-latest # Conserver windows-latest si c'est votre environnement
 
     steps:
       - name: Checkout code
@@ -48,7 +48,9 @@ jobs:
         with:
           java-version: '17' # Utiliser Java 17 pour le scanner SonarQube
           distribution: 'temurin'
-         
+          # Le cache Maven pour Java 17 n'est généralement pas nécessaire si le build est déjà fait avec Java 11
+          # et que le scanner n'a pas besoin de re-télécharger des dépendances significatives.
+          # cache: 'maven'
 
       - name: Restore SonarCloud cache
         uses: actions/cache/restore@v4
@@ -60,16 +62,13 @@ jobs:
       - name: Perform SonarCloud Analysis (using Java 17)
         working-directory: back
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-        run: |
-          mvn sonar:sonar \
-            -Dsonar.projectKey=EmySim_mdd \
-            -Dsonar.organization=emysim \
-            -Dsonar.host.url=https://sonarcloud.io
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Nécessaire pour l'intégration GitHub PR
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Votre token SonarCloud
+        # Correction ici : toute la commande sur une seule ligne pour PowerShell
+        run: mvn sonar:sonar -Dsonar.projectKey=EmySim_mdd -Dsonar.organization=emysim -Dsonar.host.url=https://sonarcloud.io
 
       - name: Save Maven packages cache
-        uses: actions/cache/save@v4 
+        uses: actions/cache/save@v4 # Sauvegarder après le build/analyse
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/back/pom.xml') }}
