@@ -41,6 +41,7 @@
   height: 1px;
   background-color: #000000;
   margin: $space-lg 0;
+  width: 80%; 
   
   @include mobile {
     margin: $space-xl 0;
@@ -52,6 +53,9 @@
 // ===========================
 
 .subscriptions-section {
+  display: flex;
+  flex-direction: column;
+
   .section-title {
     font-family: $mdd-font-family;
     font-size: $font-page-title;

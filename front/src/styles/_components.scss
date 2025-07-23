@@ -24,18 +24,17 @@
   &--primary {
     background-color: var(--mdd-primary-violet);
     color: var(--mdd-white);
-    
+
     &:hover:not(:disabled) {
       background-color: darken($mdd-primary-violet, 10%);
     }
   }
 
-
   &--secondary {
     background-color: #939393;
     color: var(--mdd-white);
     border: none;
-    
+
     &:hover:not(:disabled) {
       background-color: darken(#939393, 15%);
     }
@@ -45,10 +44,6 @@
     background-color: transparent;
     color: var(--mdd-black);
     border: 2px solid var(--mdd-black);
-  }
-
-  &--full {
-    //width: 100%;
   }
 
   &--auth {
@@ -68,10 +63,6 @@
 
   &--landing {
     min-width: 200px;
-    
-    @include mobile {
-      //width: 100%;
-    }
   }
 
   &--sm {
@@ -97,11 +88,11 @@
 }
 
 .back-arrow {
-    // Le sélecteur de la flèche
-    position: absolute; // Positionne la flèche de manière absolue
-    cursor: pointer; // AJOUTÉ : Indique que l'élément est cliquable
-  }
-  
+  // Le sélecteur de la flèche
+  position: absolute; // Positionne la flèche de manière absolue
+  cursor: pointer; // AJOUTÉ : Indique que l'élément est cliquable
+}
+
 // ===========================
 // FORMULAIRES GLOBAUX
 // ===========================
@@ -179,11 +170,11 @@
   display: grid;
   gap: $space-lg;
   grid-template-columns: 1fr;
-  
+
   @include tablet {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   @include desktop {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -305,6 +296,10 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
