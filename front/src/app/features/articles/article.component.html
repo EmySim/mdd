@@ -72,7 +72,7 @@
   </div>
 
   <!-- ======================================== -->
-  <!-- ✅ NOUVELLE VUE DÉTAIL AVEC COMMENTAIRES -->
+  <!-- ✅ VUE DÉTAIL AVEC COMMENTAIRES -->
   <!-- ======================================== -->
   <div *ngIf="showDetailView">
     <!-- Header avec navigation -->
@@ -84,8 +84,6 @@
           class="back-arrow"
           (click)="goBack()"
         />
-        <!-- Titre -->
-        <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
       </div>
     </div>
 
@@ -101,19 +99,16 @@
         <!-- Article détaillé -->
         <div *ngIf="!isLoading && selectedArticle" class="article-detail">
           <!-- Article principal -->
-          <article class="card mb-xl">
+          <article class="article">
+            <!-- Titre -->
+            <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
             <!-- Métadonnées -->
             <div class="article-detail-meta">
-              <div class="meta-item">
-                <strong>Auteur :</strong> {{ selectedArticle.authorUsername }}
-              </div>
-              <div class="meta-item">
-                <strong>Thème :</strong> {{ selectedArticle.subjectName }}
-              </div>
-              <div class="meta-item">
-                <strong>Publié le :</strong>
+              <p class="meta-item">
                 {{ formatDate(selectedArticle.createdAt) }}
-              </div>
+              </p>
+              <p class="meta-item">{{ selectedArticle.authorUsername }}</p>
+              <p class="meta-item">{{ selectedArticle.subjectName }}</p>
             </div>
 
             <!-- Contenu de l'article -->
@@ -122,12 +117,14 @@
             </div>
           </article>
 
-          <!-- ✅ SECTION COMMENTAIRES - Utilise le composant existant -->
-          <app-comment
-            [articleId]="selectedArticle.id"
-            [initialComments]="comments"
-          >
-          </app-comment>
+          <!-- ✅ SECTION COMMENTAIRES -->
+          <div class="comment-content">
+            <app-comment
+              [articleId]="selectedArticle.id"
+              [initialComments]="comments"
+            >
+            </app-comment>
+          </div>
         </div>
       </div>
     </div>
