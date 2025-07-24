@@ -17,39 +17,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Nécessaire pour l'analyse SonarCloud des pull requests
+          fetch-depth: 0 # Nécessaire pour l'analyse SonarCloud des pull requests (récupère l'historique complet)
 
       - name: Set up JDK 11 for Application Build
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
-          # Cache Maven dependencies for Java 11 build
+          # Cache les dépendances Maven pour le build Java 11
           cache: 'maven'
 
       - name: Restore Maven packages cache
-        uses: actions/cache/restore@v4 # Utiliser 'restore' pour restaurer avant le build
+        uses: actions/cache/restore@v4 # Utiliser 'restore' pour restaurer le cache avant le build
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/back/pom.xml') }} # Spécifier le pom.xml du sous-dossier
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/back/pom.xml') }} # Spécifier le pom.xml du sous-dossier pour la clé de cache
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build Project with Maven (Java 11)
-        working-directory: back
+        working-directory: back # Exécute les commandes Maven dans le sous-dossier 'back'
         env:
+          # Assurez-vous que JWT_SECRET est configuré comme un secret dans votre dépôt GitHub
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: mvn clean verify # 'verify' exécute 'test' et 'install', si nécessaire
+        run: mvn clean verify # 'verify' exécute 'test' et 'install', si nécessaire, prépare l'application
 
-      # --- SonarCloud Analysis Section ---
-      # Cette section utilise une version de Java plus récente spécifiquement pour SonarCloud
+      # --- Section d'analyse SonarCloud ---
+      # Cette section configure un environnement Java différent (Java 17) spécifiquement pour le scanner SonarCloud.
 
       - name: Set up JDK 17 for SonarCloud Scan
         uses: actions/setup-java@v4
         with:
           java-version: '17' # Utiliser Java 17 pour le scanner SonarQube
           distribution: 'temurin'
-          # Le cache Maven pour Java 17 n'est généralement pas nécessaire si le build est déjà fait avec Java 11
-          # et que le scanner n'a pas besoin de re-télécharger des dépendances significatives.
+          # Le cache Maven pour Java 17 n'est généralement pas nécessaire ici
+          # car le build principal a déjà téléchargé les dépendances avec Java 11.
           # cache: 'maven'
 
       - name: Restore SonarCloud cache
@@ -60,15 +61,18 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       - name: Perform SonarCloud Analysis (using Java 17)
-        working-directory: back
+        working-directory: back # Exécute l'analyse Sonar dans le même sous-dossier
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Nécessaire pour l'intégration GitHub PR
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Votre token SonarCloud
-        # Correction ici : toute la commande sur une seule ligne pour PowerShell
-        run: mvn sonar:sonar -Dsonar.projectKey=EmySim_mdd -Dsonar.organization=emysim -Dsonar.host.url=https://sonarcloud.io
+          # GITHUB_TOKEN est automatiquement fourni par GitHub Actions et est nécessaire pour l'intégration des PR avec SonarCloud
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # SONAR_TOKEN doit être configuré manuellement comme un secret dans les paramètres de votre dépôt GitHub
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        # Commande Maven sur une seule ligne avec les valeurs des propriétés entre guillemets doubles
+        # pour une compatibilité maximale avec PowerShell sur Windows.
+        run: mvn sonar:sonar -Dsonar.projectKey="EmySim_mdd" -Dsonar.organization="emysim" -Dsonar.host.url="https://sonarcloud.io"
 
       - name: Save Maven packages cache
-        uses: actions/cache/save@v4 # Sauvegarder après le build/analyse
+        uses: actions/cache/save@v4 # Sauvegarde le cache Maven après le build/analyse
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/back/pom.xml') }}
