@@ -69,7 +69,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         # Commande Maven sur une seule ligne avec les valeurs des propriétés entre guillemets doubles
         # pour une compatibilité maximale avec PowerShell sur Windows.
-        run: mvn sonar:sonar -Dsonar.projectKey="EmySim_mdd" -Dsonar.organization="emysim" -Dsonar.host.url="https://sonarcloud.io"
+        run: mvn sonar:sonar -Dsonar.projectKey=EmySim_mdd -Dsonar.organization=emysim -Dsonar.host.url=https://sonarcloud.io
 
       - name: Save Maven packages cache
         uses: actions/cache/save@v4 # Sauvegarde le cache Maven après le build/analyse
