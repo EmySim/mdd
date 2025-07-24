@@ -49,9 +49,6 @@ jobs:
         with:
           java-version: '17' # Utiliser Java 17 pour le scanner SonarQube
           distribution: 'temurin'
-          # Le cache Maven pour Java 17 n'est généralement pas nécessaire ici
-          # car le build principal a déjà téléchargé les dépendances avec Java 11.
-          # cache: 'maven'
 
       - name: Restore SonarCloud cache
         uses: actions/cache/restore@v4
@@ -63,13 +60,12 @@ jobs:
       - name: Perform SonarCloud Analysis (using Java 17)
         working-directory: back # Exécute l'analyse Sonar dans le même sous-dossier
         env:
-          # GITHUB_TOKEN est automatiquement fourni par GitHub Actions et est nécessaire pour l'intégration des PR avec SonarCloud
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # SONAR_TOKEN doit être configuré manuellement comme un secret dans les paramètres de votre dépôt GitHub
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # Commande Maven sur une seule ligne avec les valeurs des propriétés entre guillemets doubles
-        # pour une compatibilité maximale avec PowerShell sur Windows.
-        run: mvn sonar:sonar -Dsonar.projectKey=EmySim_mdd -Dsonar.organization=emysim -Dsonar.host.url=https://sonarcloud.io
+          SONAR_PROJECT_KEY: EmySim_mdd # <--- CES LIGNES SONT NOUVELLES ICI ET CRUCIALES
+          SONAR_ORGANIZATION: emysim    # <---
+          SONAR_HOST_URL: https://sonarcloud.io # <---
+        run: mvn sonar:sonar # <--- LA COMMANDE EST BEAUCOUP PLUS SIMPLE
 
       - name: Save Maven packages cache
         uses: actions/cache/save@v4 # Sauvegarde le cache Maven après le build/analyse
