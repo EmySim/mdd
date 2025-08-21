@@ -1,135 +1,127 @@
-// src/app/components/navbar/navbar.component.ts - COMPLET
-import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+// navbar.component.ts - Modification pour icône dynamique
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subject, takeUntil, filter } from 'rxjs';
 import { AuthService } from '../../features/auth/auth.service';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
-
-  /**
-   * Reçoit l'état depuis AppComponent
-   * true = navbar simple (logo seulement - pages auth)
-   * false = navbar complète (navigation + déconnexion - pages connectées)
-   */
+export class NavbarComponent implements OnInit, OnDestroy {
   @Input() isSimple: boolean = false;
-
-  // ✅ PROPRIÉTÉ pour menu mobile
-  isMobileMenuOpen: boolean = false;
+  
+  currentUser: User | null = null;
+  showMobileMenu = false;
+  isProfilePage = false; 
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
-// ===========================
-  // NAVIGATION LOGO ✅ NOUVEAU
-  // ===========================
 
-  /**
-   * Redirection intelligente du logo selon l'état de connexion
-   * 
-   * LOGIQUE :
-   * - Si utilisateur connecté → /home (fil d'actualité)
-   * - Si utilisateur non connecté → /landing (page publique)
-   */
+  ngOnInit(): void {
+    // Écouter les changements d'utilisateur
+    this.authService.currentUser$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(user => {
+      this.currentUser = user;
+    });
+
+    // ✅ Écouter les changements de route pour détecter la page profile
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event) => {
+      this.updateProfilePageStatus(event.url);
+    });
+
+    // ✅ Vérifier l'URL initiale
+    this.updateProfilePageStatus(this.router.url);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ✅ Nouvelle méthode pour déterminer si on est sur la page profile
+  private updateProfilePageStatus(url: string): void {
+    this.isProfilePage = url === '/profile' || url.startsWith('/profile/');
+    console.log(`🔍 URL: ${url} - isProfilePage: ${this.isProfilePage}`);
+  }
+
+  // ✅ Nouvelle méthode pour obtenir le bon chemin d'icône
+  getUserIconPath(): string {
+    return this.isProfilePage 
+      ? 'assets/icone_profile.svg' 
+      : 'assets/icon_user.svg';
+  }
+
+  // =============================================================================
+  // NAVIGATION (méthodes existantes inchangées)
+  // =============================================================================
+
   goToHomePage(): void {
+    if (this.isSimple) {
+      this.router.navigate(['/landing']);
+      return;
+    }
+    
     if (this.authService.isLoggedIn()) {
-      console.log('🏠 Logo cliqué - Utilisateur connecté → /home');
-      this.router.navigate(['/home']);
+      this.router.navigate(['/articles']);
     } else {
-      console.log('🚪 Logo cliqué - Utilisateur non connecté → /landing');
       this.router.navigate(['/landing']);
     }
-    this.closeMobileMenu();
   }
 
-
-  // ===========================
-  // MÉTHODES DE NAVIGATION ✅
-  // ===========================
-
-  /**
-   * Navigation vers Articles
-   */
   goToArticles(): void {
-    console.log('🔄 Navigation vers /articles');
     this.router.navigate(['/articles']);
-    this.closeMobileMenu();
   }
 
-  /**
-   * Navigation vers Thèmes
-   */
   goToThemes(): void {
-    console.log('🔄 Navigation vers /themes');
     this.router.navigate(['/themes']);
-    this.closeMobileMenu();
   }
 
-  /**
-   * Navigation vers Profil
-   */
   goToProfile(): void {
-    console.log('🔄 Navigation vers /profile');
     this.router.navigate(['/profile']);
-    this.closeMobileMenu();
   }
 
-  /**
-   * Navigation vers Home (fil d'actualité)
-   */
-  goToHome(): void {
-    console.log('🔄 Navigation vers /home');
-    this.router.navigate(['/home']);
-    this.closeMobileMenu();
-  }
+  // =============================================================================
+  // AUTHENTIFICATION (méthodes existantes inchangées)
+  // =============================================================================
 
-  /**
-   * Déconnexion
-   */
   logout(): void {
-    console.log('🚪 Déconnexion en cours');
-    this.authService.logout();
-    this.router.navigate(['/landing']);
-    this.closeMobileMenu();
+    if (this.authService.isLoggedIn()) {
+      this.authService.logout();
+    }
   }
 
-  // ===========================
-  // GESTION MENU MOBILE ✅
-  // ===========================
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
-  /**
-   * Toggle du menu mobile
-   */
+  // =============================================================================
+  // MOBILE MENU (méthodes existantes inchangées)
+  // =============================================================================
+
   toggleMobileMenu(): void {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    console.log('📱 Menu mobile:', this.isMobileMenuOpen ? 'ouvert' : 'fermé');
+    this.showMobileMenu = !this.showMobileMenu;
   }
 
-  /**
-   * Fermer le menu mobile
-   */
   closeMobileMenu(): void {
-    this.isMobileMenuOpen = false;
+    this.showMobileMenu = false;
   }
 
-  // ===========================
-  // ÉTAT DES ROUTES ✅
-  // ===========================
+  // =============================================================================
+  // HELPERS (méthodes existantes inchangées)
+  // =============================================================================
 
-  /**
-   * Vérifier si une route est active
-   */
   isRouteActive(route: string): boolean {
-    const currentUrl = this.router.url;
-    const isActive = currentUrl === route || currentUrl.startsWith(route + '/');
-    
-    // Debug pour voir l'état
-    console.log(`🔍 Route ${route} active:`, isActive, `(URL actuelle: ${currentUrl})`);
-    
-    return isActive;
+    return this.router.url.startsWith(route);
   }
 }

@@ -1,0 +1,16 @@
+// front/src/app/features/articles/create-article.component.scss
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
+:host {
+  display: block;
+}
+
+.create-form {
+  max-width: 600px;
+  margin: 0 auto;
+  
+  @include mobile {
+    max-width: 100%;
+  }
+}

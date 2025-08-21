@@ -34,19 +34,33 @@ public class AuthController {
     private final UserService userService;
 
     /**
-     * Inscription d'un nouvel utilisateur.
+     * Inscription d'un nouvel utilisateur avec auto-connexion.
      */
     @PostMapping("/register")
-    public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         log.info("🔐 Inscription: {}", registerRequest.getEmail());
 
-        // Délégation au UserService
+        // 1. Création de l'utilisateur
         UserDTO userDTO = userService.createUser(registerRequest);
 
-        log.info("✅ Inscription réussie: {} (ID: {})", userDTO.getEmail(), "new_user");
+        // 2. Récupération de l'entité User pour le JWT
+        User user = userRepository.findByEmail(userDTO.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur créé introuvable"));
 
-        return ResponseEntity.status(201)
-                .body(MessageResponse.success("Inscription reussie"));
+        // 3. Génération du token JWT (auto-connexion)
+        String jwt = jwtUtils.generateTokenFromUsername(user.getEmail());
+
+        log.info("✅ Inscription réussie avec auto-connexion: {} (ID: {})", user.getEmail(), user.getId());
+
+        // 4. Même structure de réponse que /login
+        return ResponseEntity.status(201).body(JwtResponse.builder()
+                .token(jwt)
+                .type("Bearer")
+                .id(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .expiresIn(jwtUtils.getJwtExpirationSeconds())
+                .build());
     }
 
     /**
@@ -54,22 +68,23 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("🔑 Connexion: {}", loginRequest.getEmail());
+        log.info("🔑 Connexion: {}", loginRequest.getEmailOrUsername());
+
+        // Recherche utilisateur par email ou username
+        User user = userRepository.findByEmail(loginRequest.getEmailOrUsername())
+                .or(() -> userRepository.findByUsername(loginRequest.getEmailOrUsername()))
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
         // Authentification
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
+                        user.getEmail(), // Toujours utiliser l'email pour le token
                         loginRequest.getPassword()
                 )
         );
 
         // Génération du token JWT
-        String jwt = jwtUtils.generateTokenFromUsername(loginRequest.getEmail());
-
-        // Récupération utilisateur
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
+        String jwt = jwtUtils.generateTokenFromUsername(user.getEmail());
 
         log.info("✅ Connexion reussie: {} (ID: {})", user.getEmail(), user.getId());
 

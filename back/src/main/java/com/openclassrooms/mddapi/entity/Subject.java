@@ -2,7 +2,8 @@ package com.openclassrooms.mddapi.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,72 +15,112 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entité Subject (Sujet/Thème) - MVP STRICT.
+ * Entité Subject (Sujet/Thème) - Clean Architecture.
  *
- * **FONCTIONNALITÉS MVP UNIQUEMENT :**
- * - Affichage des sujets pour utilisateurs connectés
- * - Abonnement/désabonnement d'un utilisateur à un sujet
- * - Nom unique obligatoire
- * - Peut ne pas avoir d'articles
- * - Peut ne pas avoir d'abonnés
- *
- * Table: subjects
- * - id: bigint AUTO_INCREMENT PRIMARY KEY
- * - name: varchar(100) NOT NULL UNIQUE
- * - created_at: timestamp DEFAULT CURRENT_TIMESTAMP
- * - updated_at: timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
- *
- * INDEX DB :
- * - PRIMARY sur id
- * - UNIQUE sur name
+ * ✅ BONNE PRATIQUE : Entité pure sans pollution sérialisation
+ * - Aucune annotation Jackson
+ * - Domaine métier isolé
+ * - Responsabilité unique : persistance
+ * - Sérialisation gérée par les DTOs
  *
  * @author Équipe MDD
- * @version 1.0
+ * @version 2.0 - Clean Architecture
  */
 @Entity
 @Table(name = "subjects")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Subject {
 
-    /**
-     * ID auto-généré.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    /**
-     * Nom du sujet - IDENTIFIANT MÉTIER UNIQUE.
-     * Exemples : "Java", "Angular", "DevOps"
-     */
     @NotBlank(message = "Subject name is mandatory")
     @Size(max = 100, message = "Subject name must not exceed 100 characters")
     @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;
 
-    /**
-     * Date de création.
-     */
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     /**
      * Utilisateurs abonnés à ce sujet.
-     * RÈGLE MVP : Un utilisateur connecté peut s'abonner/se désabonner.
+     *
+     * ARCHITECTURE PROPRE :
+     * - Relation JPA bidirectionnelle pure
+     * - Pas d'annotations Jackson polluantes
+     * - Lazy loading pour performance
+     * - Sérialisation contrôlée par SubjectMapper
      */
     @ManyToMany(mappedBy = "subscribedSubjects", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<User> subscribers = new HashSet<>();
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
     /**
-     * Constructeur pour création de sujet.
+     * Constructeur métier pour création de sujet.
      */
     public Subject(String name) {
         this.name = name;
+    }
+
+    // ============================================================================
+    // MÉTHODES MÉTIER (Business Logic)
+    // ============================================================================
+
+    /**
+     * Retourne le nombre d'abonnés au sujet.
+     *
+     * @return nombre d'utilisateurs abonnés
+     */
+    public int getSubscriberCount() {
+        return subscribers.size();
+    }
+
+    /**
+     * Vérifie si un utilisateur est abonné au sujet.
+     *
+     * @param user l'utilisateur à vérifier
+     * @return true si l'utilisateur est abonné
+     */
+    public boolean hasSubscriber(User user) {
+        return subscribers.contains(user);
+    }
+
+    /**
+     * Ajoute un abonné au sujet.
+     *
+     * @param user l'utilisateur à abonner
+     * @return true si ajouté (false si déjà abonné)
+     */
+    public boolean addSubscriber(User user) {
+        return subscribers.add(user);
+    }
+
+    /**
+     * Supprime un abonné du sujet.
+     *
+     * @param user l'utilisateur à désabonner
+     * @return true si supprimé (false si pas abonné)
+     */
+    public boolean removeSubscriber(User user) {
+        return subscribers.remove(user);
+    }
+
+    /**
+     * Vérifie si le sujet a des abonnés.
+     *
+     * @return true si au moins un abonné
+     */
+    public boolean hasSubscribers() {
+        return !subscribers.isEmpty();
     }
 }

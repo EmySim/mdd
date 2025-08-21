@@ -1,6 +1,12 @@
 <!-- login.component.html -->
 <div class="page-fullscreen">
   <div class="content-auth slide-up">
+    <img
+      src="/assets/back_arrow.svg"
+      alt="Retour"
+      class="back-arrow"
+      (click)="goBack()"
+    />
     <!-- Logo auth (même comportement que landing) -->
     <div class="logo-section--auth">
       <img
@@ -12,7 +18,7 @@
 
     <!-- Formulaire avec classes harmonisées -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full">
-      <h2 class="text-center mb-lg">Se connecter</h2>
+      <h1 class="text-center mb-lg">Se connecter</h1>
 
       <!-- Erreur globale -->
       <div
@@ -22,17 +28,17 @@
         {{ globalError }}
       </div>
 
-      <!-- Champ Email -->
+      <!-- Champ Email ou Username -->
       <div class="form__group">
-        <label class="form__label">Email</label>
+        <label class="form__label">Email ou nom d'utilisateur</label>
         <input
           class="form__field"
-          [class.form__field--error]="hasFieldError('email')"
-          formControlName="email"
-          type="email"
+          [class.form__field--error]="hasFieldError('emailOrUsername')"
+          formControlName="emailOrUsername"
+          type="text"
         />
-        <span class="form__error" *ngIf="hasFieldError('email')">
-          {{ getFieldError("email") }}
+        <span class="form__error" *ngIf="hasFieldError('emailOrUsername')">
+          {{ getFieldError("emailOrUsername") }}
         </span>
       </div>
 
@@ -54,13 +60,15 @@
       <div class="form__group">
         <button
           class="btn btn--primary btn--auth"
-          [class.loading]="loading"
+          [class.loading]="isLoading"
           type="submit"
-          [disabled]="loading"
+          [disabled]="isLoading"
         >
-          {{ loading ? "Connexion..." : "Se connecter" }}
+          {{ isLoading ? "Connexion..." : "Se connecter" }}
         </button>
       </div>
     </form>
+
+
   </div>
 </div>

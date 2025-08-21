@@ -1,37 +1,48 @@
-// === COULEURS ===
+// =============================================================================
+// MDD - Variables SCSS - VERSION MVP
+// =============================================================================
+
+// Couleurs principales
 $mdd-primary-violet: #7763C5;
 $mdd-navbar-active: #6C5CCF;
 $mdd-black: #000000;
 $mdd-white: #FFFFFF;
 $mdd-logout-red: #A40F0F;
-$mdd-button-disabled: #939393;
-$mdd-card-bg: #F5F5F5;
-$mdd-selection-bg: #EEEEEE;
+$mdd-card-bg: #F5F5F5; 
+$mdd-border-gray: #E0E0E0;
+$mdd-text-gray: #666666;
 
-// === TYPOGRAPHIE ===
+
+// Couleurs additionnelles pour les états
+$mdd-selection-bg: #939393;
+$mdd-button-disabled: #CCCCCC;
+
+// Typographie
 $mdd-font-family: 'Inter', sans-serif;
 $font-landing-title: 24px;
 $font-page-title: 24px;
-$font-article-selected: 24px;
 $font-navbar-link: 20px;
-$font-landing-field: 16px;
 $font-button-text: 16px;
-$font-article-title: 16px;
-$font-filter-title: 16px;
-$font-body-content: 14px;
+$font-article-title: 16px; 
+$font-body-content: 14px;   
+$font-landing-field: 16px;
 $font-logout-link: 14px;
 
-$weight-regular: 400;
+// Poids de police
+$weight-regular: 400;       
+$weight-medium: 500;
+$weight-bold: 700;          
 $weight-semi-bold: 600;
-$weight-bold: 700;
+$weight-normal: 400;
+$weight-light: 300;
 
-// === BREAKPOINTS ===
-$breakpoint-mobile-min: 294px;
+// Breakpoints
 $breakpoint-mobile: 576px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
+$breakpoint-mobile-min: 480px;
 
-// === ESPACEMENTS ===
+// Espacements (système 8px)
 $space-xs: 4px;
 $space-sm: 8px;
 $space-md: 16px;
@@ -39,5 +50,12 @@ $space-lg: 24px;
 $space-xl: 32px;
 $space-xxl: 48px;
 
-// === AUTRES ===
-$transition-base: all 0.2s ease;
+// Border radius
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+
+// Z-index
+$z-navbar: 1000;
+$z-modal: 1100;
+$z-tooltip: 1200;

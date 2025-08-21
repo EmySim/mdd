@@ -1,61 +1,80 @@
-// src/app/app.component.ts 
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+// app.component.ts - VERSION MVP SIMPLE
+import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd, Event } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AuthService } from './features/auth/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'front MDD';
+export class AppComponent implements OnInit {
+  title = 'MDD - Monde de Dév';
+  showNavbar = true;
+  isSimplePage = false;
+
+  // Pages SANS navbar du tout
+  private noNavbarPages = ['/landing'];
+
+  // Pages avec navbar SIMPLE (desktop) / MASQUÉE (mobile)
+  private simpleNavbarPages = ['/auth/login', '/auth/register'];
 
   constructor(
-    private router: Router,
-    private authService: AuthService,
-    private breakpointObserver: BreakpointObserver
+    private authService: AuthService, 
+    private router: Router
   ) {}
 
-  /**
-   * Détermine si la navbar doit être affichée
-   * 
-   * LOGIQUE FINALE :
-   * - Landing : ❌ AUCUNE navbar
-   * - Auth desktop : ✅ navbar simple
-   * - Auth mobile : ❌ AUCUNE navbar (logo remplace)
-   * - App : ✅ navbar complète
-   */
-  showNavbar(): boolean {
-    const url = this.router.url;
-    
-    // Pas de navbar sur landing
-    if (url === '/landing' || url === '/') {
-      return false;
-    }
-    
-    // Sur mobile, pas de navbar sur les pages auth
-    const isAuthPage = url.startsWith('/auth');
-    if (isAuthPage) {
-      const isMobile = this.breakpointObserver.isMatched(Breakpoints.Handset);
-      if (isMobile) {
-        return false; // Pas de navbar sur mobile pour auth
-      }
-    }
-    
-    // Dans tous les autres cas, afficher la navbar
-    return true;
+  ngOnInit(): void {
+    this.router.events
+      .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.updateNavbarStatus(event.url);
+      });
+
+    this.updateNavbarStatus(this.router.url);
   }
 
   /**
-   * Détermine le type de navbar
-   * 
-   * RÈGLE INCHANGÉE :
-   * - Si utilisateur connecté → navbar COMPLÈTE  
-   * - Si utilisateur non connecté → navbar SIMPLE
+   * 🎯 LOGIQUE SIMPLE - Laisse le CSS gérer le responsive
    */
-  isSimpleNavbar(): boolean {
-    return !this.authService.isLoggedIn();
+  private updateNavbarStatus(url: string): void {
+    console.log('🔍 URL courante:', url);
+    
+    // Cas spécial pour la racine
+    if (url === '/' || url === '') {
+      this.showNavbar = false;
+      this.isSimplePage = false;
+      return;
+    }
+
+    // Pages SANS navbar (landing)
+    if (this.noNavbarPages.some(page => url === page || url.startsWith(page))) {
+      console.log('❌ Navbar masquée (landing)');
+      this.showNavbar = false;
+      this.isSimplePage = false;
+      return;
+    }
+
+    // Pages AUTH - Navbar simple (CSS gère le responsive)
+    if (this.simpleNavbarPages.some(page => url === page || url.startsWith(page))) {
+      console.log('✅ Navbar simple (CSS responsive)');
+      this.showNavbar = true;
+      this.isSimplePage = true;
+      return;
+    }
+
+    // Pages APP - Navbar complète (CSS gère le responsive)
+    console.log('✅ Navbar complète (CSS responsive)');
+    this.showNavbar = true;
+    this.isSimplePage = false;
+  }
+
+  getShowNavbar(): boolean {
+    return this.showNavbar;
+  }
+
+  getIsSimpleNavbar(): boolean {
+    return this.isSimplePage;
   }
 }

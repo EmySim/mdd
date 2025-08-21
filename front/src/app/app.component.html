@@ -1,7 +1,7 @@
 <app-error-toast></app-error-toast>
 <app-navbar 
-  *ngIf="showNavbar()" 
-  [isSimple]="isSimpleNavbar()">
+  *ngIf="getShowNavbar()" 
+  [isSimple]="getIsSimpleNavbar()">
 </app-navbar>
 <main>
   <router-outlet></router-outlet>

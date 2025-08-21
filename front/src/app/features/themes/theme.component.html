@@ -1,18 +1,44 @@
-<div class="grid grid--themes">
-  <div class="card card--theme" *ngFor="let theme of themes">
-    <h3 class="theme-title">{{ theme.name }}</h3>
-    <p class="theme-description">{{ theme.description }}</p>
-    <div class="theme-actions">
-      <button 
-        class="btn"
-        [ngClass]="{
-          'btn--primary': !theme.isSubscribed,
-          'btn--disabled': theme.isSubscribed
-        }"
-        (click)="toggleSubscription(theme)"
-        [disabled]="theme.isSubscribed">
-        {{ theme.isSubscribed ? 'Déjà abonné' : 'S\'abonner' }}
-      </button>
+<div class="page-with-navbar">
+  
+  <!-- Contenu principal -->
+  <div class="page-with-navbar__content">
+    <div class="container">
+      
+      <!-- Loading état -->
+      <div class="text-center p-xl" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <p class="text-secondary mt-md">Chargement des thèmes...</p>
+      </div>
+
+      <!-- Contenu thèmes -->
+      <div *ngIf="!isLoading">
+        
+        <!-- Message si aucun thème -->
+        <div *ngIf="themes.length === 0" class="text-center p-xl">
+          <p class="text-secondary">Aucun thème disponible pour le moment.</p>
+        </div>
+
+        <!-- GRID -->
+        <div class="grid" *ngIf="themes.length > 0">
+          <div *ngFor="let theme of themes; trackBy: trackByThemeId" class="card card--flex">
+            <h3 class="card-title">{{ theme.name }}</h3>
+            <p class="card-description">
+              {{ theme.description || 'Aucune description disponible pour ce thème.' }}
+            </p>
+            <div class="card-actions">
+              <button
+                [ngClass]="theme.isSubscribed ? 'btn btn--secondary' : 'btn btn--primary'"
+                (click)="toggleSubscription(theme)"
+                [disabled]="isLoading"
+              >
+                {{ theme.isSubscribed ? 'Déjà abonné' : 'S\'abonner' }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
     </div>
   </div>
+  
 </div>

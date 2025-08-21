@@ -1,1 +1,137 @@
-<p>profile works! coming soon</p>
+<div class="page-with-navbar">
+  <!-- Header avec titre -->
+  <div class="page-with-navbar__header">
+    <div class="container">
+      <h1 class="page-title">Profil utilisateur</h1>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="page-with-navbar__content">
+    <div class="container">
+      <!-- Loading état -->
+      <div class="text-center p-xl" *ngIf="isLoading">
+        <div class="loading-spinner"></div>
+        <p class="text-secondary mt-md">Chargement du profil...</p>
+      </div>
+
+      <!-- Formulaire profil utilisateur -->
+      <div class="profile-form-section" *ngIf="!isLoading">
+        <form
+          [formGroup]="profileForm"
+          (ngSubmit)="onSaveProfile()"
+          class="profile-form"
+        >
+          <!-- Erreur globale -->
+          <div
+            class="form__error mb-md"
+            *ngIf="errorService.error$ | async as globalError"
+          >
+            {{ globalError }}
+          </div>
+
+          <!-- Champ Username -->
+          <div class="form__group">
+            <input
+              class="form__field"
+              [class.form__field--error]="hasFieldError('username')"
+              formControlName="username"
+              type="text"
+            />
+            <span class="form__error" *ngIf="hasFieldError('username')">
+              {{ getFieldError("username") }}
+            </span>
+          </div>
+
+          <!-- Champ Email -->
+          <div class="form__group">
+            <input
+              class="form__field"
+              [class.form__field--error]="hasFieldError('email')"
+              formControlName="email"
+              type="email"
+            />
+            <span class="form__error" *ngIf="hasFieldError('email')">
+              {{ getFieldError("email") }}
+            </span>
+          </div>
+
+          <!-- Champ Mot de passe (optionnel pour modification) -->
+          <div class="form__group">
+            <input
+              class="form__field"
+              [class.form__field--error]="hasFieldError('password')"
+              formControlName="password"
+              type="password"
+              placeholder="Mot de passe"
+            />
+            <span class="form__error" *ngIf="hasFieldError('password')">
+              {{ getFieldError("password") }}
+            </span>
+          </div>
+
+          <!-- Bouton Sauvegarder -->
+          <div class="form__group">
+            <button
+              class="btn btn--primary btn--full"
+              [class.loading]="isSaving"
+              type="submit"
+              [disabled]="!profileForm.valid || isSaving"
+            >
+              {{ isSaving ? "Sauvegarde..." : "Sauvegarder" }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Séparateur -->
+      <hr class="section-separator" *ngIf="!isLoading" />
+
+      <!-- Section Abonnements -->
+      <div class="subscriptions-section" *ngIf="!isLoading">
+        <h2 class="section-title">Abonnements</h2>
+
+        <!-- Loading abonnements -->
+        <div class="text-center p-md" *ngIf="isLoadingSubscriptions">
+          <p class="text-secondary">Chargement de vos abonnements...</p>
+        </div>
+
+        <!-- Grille des thèmes abonnés -->
+        <div class="grid" *ngIf="!isLoadingSubscriptions">
+          <!-- Message si aucun abonnement -->
+          <div
+            *ngIf="subscribedThemes.length === 0"
+            class="no-subscriptions-message"
+          >
+            <p class="text-secondary">
+              Vous n'êtes abonné à aucun thème pour le moment.
+            </p>
+            <button class="btn btn--primary btn--sm mt-md" routerLink="/themes">
+              Découvrir les thèmes
+            </button>
+          </div>
+
+          <!-- Cartes des thèmes abonnés -->
+          <div
+            *ngFor="let theme of subscribedThemes; trackBy: trackByThemeId"
+            class="card card--flex"
+          >
+            <h3 class="card-title">{{ theme.name }}</h3>
+            <p class="card-description">
+              {{ theme.description || 'Aucune description disponible pour ce thème.' }}
+            </p>
+            <div class="card-actions">
+              <button
+                class="btn btn--primary"
+                (click)="unsubscribeFromTheme(theme)"
+                [disabled]="isLoading"
+              >
+                Se désabonner
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -26,8 +26,10 @@ public interface SubjectMapper {
     /**
      * Convertit Subject Entity → SubjectDTO.
      * isSubscribed sera défini par le service.
+     * subscribers est ignoré pour éviter la récursion.
      */
     @Mapping(target = "isSubscribed", ignore = true)
+    @Mapping(target = "subscribers", ignore = true)
     SubjectDTO toDTO(Subject subject);
 
     /**

@@ -1,7 +1,6 @@
-// src/app/features/auth/auth.module.ts - ROUTING INTÉGRÉ
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';  // ← Ajouté
+import { RouterModule, Routes } from '@angular/router';  
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -20,7 +19,6 @@ import { RegisterComponent } from './register/register.component';
 
 /**
  * Routing interne du module Auth
- * Simplifié : pas besoin de fichier séparé pour 2 routes
  */
 const authRoutes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -30,22 +28,19 @@ const authRoutes: Routes = [
 
 /**
  * Module d'authentification pour l'application MDD.
- * 
- * Version simplifiée avec routing intégré directement dans le module.
- * Plus besoin de auth-routing.module.ts séparé !
  */
 @NgModule({
   declarations: [
-    LoginComponent,       // Composant de connexion (/auth/login)
-    RegisterComponent     // Composant d'inscription (/auth/register)
+    LoginComponent,       
+    RegisterComponent    
   ],
   imports: [
     // Angular Core
     CommonModule,
     HttpClientModule,
     
-    // Routing intégré ✅
-    RouterModule.forChild(authRoutes),  // ← Plus besoin de AuthRoutingModule !
+    // Routing intégré 
+    RouterModule.forChild(authRoutes),  
     
     // Formulaires réactifs
     ReactiveFormsModule,

@@ -1,44 +1,46 @@
-// src/app/interfaces/topic.interface.ts
-
-/**
- * Interface représentant un sujet/thème du réseau social MDD
- * Correspond à l'entité Subject côté backend
- */
-export interface Topic {
-  /** Identifiant unique du sujet */
-  id: string;
-  
-  /** Nom du sujet (ex: "Angular", "Spring Boot") */
+export interface Theme {
+  id: number;
   name: string;
-  
-  /** Description détaillée du sujet */
-  description: string;
-  
-  /** Date de création du sujet */
-  createdAt?: Date;
-  
-  /** Nombre d'abonnés à ce sujet (optionnel pour l'affichage) */
-  subscribersCount?: number;
-  
-  /** Nombre d'articles publiés sur ce sujet (optionnel) */
-  articlesCount?: number;
-  
-  /** Indique si l'utilisateur actuel est abonné à ce sujet */
-  isSubscribed?: boolean;
-}
-
-/**
- * DTO pour créer un nouveau sujet (usage administratif futur)
- */
-export interface CreateTopicRequest {
-  name: string;
+  createdAt: string;
+  isSubscribed: boolean;
   description: string;
 }
 
-/**
- * DTO pour mettre à jour un sujet
- */
-export interface UpdateTopicRequest {
+export interface ThemesPage {
+  content: Theme[];
+  pageable: {
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    pageSize: number;
+    pageNumber: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface CreateThemeRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateThemeRequest {
   name?: string;
   description?: string;
 }
