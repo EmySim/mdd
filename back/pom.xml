@@ -79,9 +79,9 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
-            <scope>provided</scope>
-        </dependency>
+            <version>${lombok.version}</version>
+        <scope>provided</scope>
+    </dependency>
 
         <!-- Database -->
         <dependency>
@@ -168,7 +168,7 @@
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.11.0.3922</version>
+                <version>3.6.0.1398</version>
             </plugin>
         </plugins>
     </build>

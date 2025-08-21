@@ -18,22 +18,9 @@ import java.util.Set;
 
 /**
  * Entité représentant un utilisateur du réseau social MDD.
- *
- * ✅ BONNE PRATIQUE : Entité pure sans pollution sérialisation
- * - Aucune annotation Jackson
- * - Domaine métier isolé
- * - Responsabilité unique : persistance
- * - Sérialisation gérée par les DTOs
- *
- * @author Équipe MDD
- * @version 2.0 - Clean Architecture
  */
 @Entity
-@Table(name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "email"),
-                @UniqueConstraint(columnNames = "username")
-        })
+@Table(name = "users") // Correction : suppression de uniqueConstraints
 @Getter
 @Setter
 @NoArgsConstructor

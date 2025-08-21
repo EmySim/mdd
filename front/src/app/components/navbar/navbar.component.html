@@ -1,3 +1,4 @@
+<!-- navbar.component.html - Modification pour icône dynamique -->
 <nav class="navbar" [class.navbar--simple]="isSimple">
   <div class="navbar__container">
     <!-- Logo -->
@@ -26,10 +27,14 @@
       >
         Thèmes
       </a>
+      
+      <!-- ✅ Icône utilisateur dynamique -->
       <img
-        src="assets/icon_user.svg"
+        [src]="getUserIconPath()"
         class="navbar__user-icon"
+        [class.navbar__user-icon--active]="isProfilePage"
         (click)="goToProfile()"
+        [alt]="isProfilePage ? 'Profil actif' : 'Profil'"
       />
     </div>
 
@@ -68,10 +73,13 @@
       </a>
 
       <div class="mobile-menu__user-icon-section">
+        <!-- ✅ Icône utilisateur dynamique pour mobile aussi -->
         <img
-          src="assets/icon_user.svg"
+          [src]="getUserIconPath()"
           class="mobile-menu__user-icon-bottom"
+          [class.mobile-menu__user-icon-bottom--active]="isProfilePage"
           (click)="goToProfile(); closeMobileMenu()"
+          [alt]="isProfilePage ? 'Profil actif' : 'Profil'"
         />
       </div>
     </div>

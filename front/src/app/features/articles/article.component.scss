@@ -69,10 +69,8 @@
 
 .article-detail-meta {
   display: flex;
-  flex-direction: column;
   gap: $space-xs;
   padding: $space-md 0;
-  border-bottom: 1px solid $mdd-border-gray;
   margin-bottom: $space-lg;
   
   @include desktop {
@@ -83,8 +81,8 @@
   
   .meta-item {
     font-family: $mdd-font-family;
-    font-size: $font-body-content;
-    color: $mdd-text-gray;
+    font-size: 20px;
+    color: $mdd-black;
     
     strong {
       color: var(--mdd-black);

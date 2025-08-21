@@ -1,6 +1,7 @@
+// navbar.component.ts - Modification pour icône dynamique
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subject, takeUntil, filter } from 'rxjs';
 import { AuthService } from '../../features/auth/auth.service';
 import { User } from '../../interfaces/user.interface';
 
@@ -14,6 +15,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   
   currentUser: User | null = null;
   showMobileMenu = false;
+  isProfilePage = false; 
+  
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -22,11 +25,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Écouter les changements d'utilisateur
     this.authService.currentUser$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(user => {
       this.currentUser = user;
     });
+
+    // ✅ Écouter les changements de route pour détecter la page profile
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event) => {
+      this.updateProfilePageStatus(event.url);
+    });
+
+    // ✅ Vérifier l'URL initiale
+    this.updateProfilePageStatus(this.router.url);
   }
 
   ngOnDestroy(): void {
@@ -34,20 +49,31 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // ✅ Nouvelle méthode pour déterminer si on est sur la page profile
+  private updateProfilePageStatus(url: string): void {
+    this.isProfilePage = url === '/profile' || url.startsWith('/profile/');
+    console.log(`🔍 URL: ${url} - isProfilePage: ${this.isProfilePage}`);
+  }
+
+  // ✅ Nouvelle méthode pour obtenir le bon chemin d'icône
+  getUserIconPath(): string {
+    return this.isProfilePage 
+      ? 'assets/icone_profile.svg' 
+      : 'assets/icon_user.svg';
+  }
+
   // =============================================================================
-  // NAVIGATION
+  // NAVIGATION (méthodes existantes inchangées)
   // =============================================================================
 
   goToHomePage(): void {
-    // Si on est en mode simple (pages auth), rediriger vers landing
     if (this.isSimple) {
       this.router.navigate(['/landing']);
       return;
     }
     
-    // Sinon, logique normale pour les utilisateurs connectés
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/articles']); // ou '/home' selon votre logique
+      this.router.navigate(['/articles']);
     } else {
       this.router.navigate(['/landing']);
     }
@@ -66,7 +92,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // AUTHENTIFICATION
+  // AUTHENTIFICATION (méthodes existantes inchangées)
   // =============================================================================
 
   logout(): void {
@@ -80,7 +106,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // MOBILE MENU
+  // MOBILE MENU (méthodes existantes inchangées)
   // =============================================================================
 
   toggleMobileMenu(): void {
@@ -92,7 +118,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // HELPERS
+  // HELPERS (méthodes existantes inchangées)
   // =============================================================================
 
   isRouteActive(route: string): boolean {

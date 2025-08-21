@@ -8,15 +8,15 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 $space-md;
-  
+
   @media (max-width: 374px) {
     padding: 0 $space-sm;
   }
-  
+
   @include tablet {
     padding: 0 $space-lg;
   }
-  
+
   @include desktop {
     padding: 0 $space-xl;
   }
@@ -31,11 +31,11 @@
   align-items: center;
   justify-content: center;
   padding: $space-lg $space-md;
-  
+
   @media (max-width: 374px) {
     padding: $space-md $space-sm;
   }
-  
+
   @include desktop {
     padding: $space-xxl $space-lg;
   }
@@ -49,15 +49,15 @@
   justify-content: center;
   padding: $space-lg $space-md;
   background-color: var(--mdd-white);
-  
+
   @media (max-width: 374px) {
     padding: $space-md $space-sm;
   }
-  
+
   @include desktop {
     padding: $space-xxl $space-lg;
   }
-  
+
   // 🎯 Mobile : plein écran (pas de navbar)
   @include mobile {
     min-height: 100vh;
@@ -68,11 +68,11 @@
 .page-with-navbar {
   min-height: calc(100vh - 64px);
   background-color: var(--mdd-white);
-  
+
   &__header {
     background-color: var(--mdd-white);
     padding: $space-lg 0;
-    
+
     .page-title {
       font-family: $mdd-font-family;
       font-size: $font-page-title;
@@ -80,26 +80,26 @@
       color: var(--mdd-black);
       margin-bottom: $space-sm;
       text-align: center;
-      
+
       @include desktop {
         text-align: center;
       }
     }
-    
+
     .page-subtitle {
       font-family: $mdd-font-family;
       font-size: $font-body-content;
       color: #666;
       text-align: center;
-      
+
       @include desktop {
         text-align: left;
       }
     }
   }
-  
+
   &__content {
-    padding: $space-lg 0;
+    //padding: $space-lg 0;
   }
 }
 
@@ -113,7 +113,7 @@
   gap: $space-xxl;
   max-width: 600px;
   width: 100%;
-  
+
   @include mobile {
     gap: $space-lg;
     max-width: 400px;
@@ -126,8 +126,7 @@
   background: var(--mdd-white);
   border-radius: 8px;
   padding: $space-xxl;
-  //box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  
+
   @include mobile {
     padding: $space-lg;
     margin: $space-md;
@@ -142,19 +141,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   &--landing {
     margin-bottom: $space-xxl;
-    
+
     @include mobile {
       margin-bottom: $space-lg;
     }
   }
-  
+
   // 🎯 Section logo auth - visible seulement mobile
   &--auth {
     display: none; // Cachée desktop (navbar présente)
-    
+
     @include mobile {
       display: flex; // Visible mobile (remplace navbar)
       margin-bottom: $space-lg;
@@ -169,17 +168,17 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  
+
   @include mobile {
     flex-direction: column;
     gap: $space-md;
   }
-  
+
   &--vertical {
     flex-direction: column;
     gap: $space-md;
   }
-  
+
   &--form {
     flex-direction: column;
     gap: $space-lg;

@@ -23,8 +23,8 @@ export class LandingComponent implements OnInit {
     // ✅ Vérification simple au chargement
     this.authService.isLoggedIn$.subscribe((loggedIn: boolean) => {
       if (loggedIn) {
-        console.log('🏠 Utilisateur déjà connecté → redirection vers /home');
-        this.router.navigate(['/home']);
+        console.log('🏠 Utilisateur déjà connecté → redirection vers /articles');
+        this.router.navigate(['/articles']);
       }
     });
   }

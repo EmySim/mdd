@@ -20,10 +20,11 @@
 }
 
 .profile-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: var(--mdd-white);
   border-radius: 8px;
-  padding: $space-xl;
-  box-shadow: 0 2px 8px rgba($mdd-black, 0.1);
   
   @include mobile {
     padding: $space-lg;
@@ -38,8 +39,9 @@
 .section-separator {
   border: none;
   height: 1px;
-  background-color: #e0e0e0;
-  margin: $space-xxl 0;
+  background-color: #000000;
+  margin: $space-lg 0;
+  width: 80%; 
   
   @include mobile {
     margin: $space-xl 0;
@@ -51,6 +53,9 @@
 // ===========================
 
 .subscriptions-section {
+  display: flex;
+  flex-direction: column;
+
   .section-title {
     font-family: $mdd-font-family;
     font-size: $font-page-title;
