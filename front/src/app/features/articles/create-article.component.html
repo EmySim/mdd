@@ -16,12 +16,12 @@
     <div class="container">
       <div class="create-form">
         <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
-          <!-- Thème -->
+          <!-- Thème - CORRECTION: themeId → subjectId -->
           <div class="form__group">
             <select
               class="form__field"
-              [class.form__field--error]="hasError('themeId')"
-              formControlName="themeId"
+              [class.form__field--error]="hasError('subjectId')"
+              formControlName="subjectId"
             >
               <option value="">Sélectionnez un thème</option>
               <option *ngFor="let theme of themes" [value]="theme.id">
