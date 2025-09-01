@@ -22,9 +22,6 @@ import java.util.Set;
  * - Domaine métier isolé
  * - Responsabilité unique : persistance
  * - Sérialisation gérée par les DTOs
- *
- * @author Équipe MDD
- * @version 2.0 - Clean Architecture
  */
 @Entity
 @Table(name = "subjects")

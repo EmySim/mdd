@@ -13,9 +13,6 @@ import lombok.Setter;
  * - Messages de succès (inscription réussie, etc.)
  * - Messages d'erreur (validation, authentification, etc.)
  * - Messages d'information généraux
- *
- * @author Équipe MDD
- * @version 1.0
  */
 @Getter
 @Setter

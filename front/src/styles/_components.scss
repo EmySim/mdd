@@ -89,10 +89,19 @@
   padding: 0;
 }
 
+// Définir la position et la taille de base pour la flèche sur desktop
 .back-arrow {
-  // Le sélecteur de la flèche
-  position: absolute; // Positionne la flèche de manière absolue
-  cursor: pointer; // AJOUTÉ : Indique que l'élément est cliquable
+  top: 30px; // Espace depuis le haut, ajustable selon le design
+  left: 30px; // Espace depuis la gauche
+  cursor: pointer;
+  height: auto; // Garder les proportions
+
+  // Ajustement pour les écrans mobiles avec votre mixin @include mobile
+  @include mobile {
+    //top: 16px; // Ajustement de la position pour mobile
+    //left: 16px; // Ajustement de la position pour mobile
+    //width: 1.5rem; // Réduction de la taille pour mobile
+  }
 }
 
 // ===========================

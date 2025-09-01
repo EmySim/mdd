@@ -122,12 +122,15 @@
 
 // Container auth spécialisé
 .content-auth {
+  display: flex;
+  align-items: flex-start;
   max-width: 400px;
   background: var(--mdd-white);
   border-radius: 8px;
   padding: $space-xxl;
 
   @include mobile {
+    flex-direction: column;
     padding: $space-lg;
     margin: $space-md;
     box-shadow: none;

@@ -8,13 +8,20 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 /**
- * Mapper MapStruct pour les conversions User/UserDTO.
+ * Mapper MapStruct pour conversions User/UserDTO.
+ * 
+ * Gère les conversions avec exclusion des données sensibles et support
+ * des abonnements aux sujets.
  */
 @Mapper(componentModel = "spring", uses = SubjectMapper.class)
 public interface UserMapper extends EntityMapper<UserDTO, User> {
 
     /**
-     * Convertit RegisterRequest vers User.
+     * Convertit RegisterRequest vers User Entity pour création.
+     * Le mot de passe et les relations sont gérés par le service.
+     * 
+     * @param registerRequest données d'inscription
+     * @return entité User (sans password ni relations)
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -24,8 +31,11 @@ public interface UserMapper extends EntityMapper<UserDTO, User> {
     User toUser(RegisterRequest registerRequest);
 
     /**
-     * Override pour ignorer le password dans la conversion vers DTO.
-     * Méthode par défaut utilisée par EntityMapper.
+     * Convertit User Entity vers UserDTO sans données sensibles.
+     * Méthode par défaut de l'interface EntityMapper.
+     * 
+     * @param user entité à convertir
+     * @return DTO sans password ni abonnements
      */
     @Override
     @Mapping(target = "password", ignore = true)
@@ -33,8 +43,11 @@ public interface UserMapper extends EntityMapper<UserDTO, User> {
     UserDTO toDto(User user);
 
     /**
-     * ✅ CORRECTION - Méthode nommée pour éviter l'ambiguïté
-     * Conversion avec gestion automatique des abonnements
+     * Convertit User Entity vers UserDTO avec abonnements inclus.
+     * Méthode nommée pour éviter l'ambiguïté avec toDto().
+     * 
+     * @param user entité à convertir
+     * @return DTO avec abonnements inclus
      */
     @Named("withSubscriptions")
     @Mapping(target = "password", ignore = true)

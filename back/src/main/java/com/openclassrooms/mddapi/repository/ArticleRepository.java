@@ -24,9 +24,6 @@ import org.springframework.stereotype.Repository;
  * - Utilise les méthodes Spring Data automatiques
  * - Exploite les index DB existants
  * - Pagination systématique
- *
- * @author Équipe MDD
- * @version 1.0
  */
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
