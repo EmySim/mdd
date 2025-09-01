@@ -2,12 +2,14 @@ package com.openclassrooms.mddapi.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
@@ -19,8 +21,6 @@ import java.util.Date;
  * - Extraction des informations utilisateur
  * - Gestion de l'expiration et de la sécurité
  *
- * @author Équipe MDD
- * @version 1.0
  */
 @Component
 @Slf4j
@@ -40,137 +40,107 @@ public class JwtUtils {
     @Value("${app.jwt.expiration}")
     private long jwtExpirationMs;
 
+    // --- Opérations de base sur les tokens ---
+
     /**
      * Génère un token JWT pour un utilisateur authentifié.
+     * @param authentication L'objet d'authentification contenant les informations de l'utilisateur.
+     * @return Le token JWT généré.
      */
     public String generateJwtToken(Authentication authentication) {
+        // On s'assure que l'objet d'authentification n'est pas nul.
         if (authentication == null) {
-            log.error("❌ Tentative de génération de token avec authentication null");
-            throw new IllegalArgumentException("Authentication cannot be null");
+            throw new IllegalArgumentException("L'objet d'authentification ne peut pas être nul.");
         }
-
-        String username = authentication.getName();
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-
-        String token = Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-
-        log.info("🔐 Token JWT généré pour: {} | Expire le: {}", username, expiryDate);
-        return token;
+        return generateTokenFromUsername(authentication.getName());
     }
 
     /**
      * Génère un token JWT à partir d'un nom d'utilisateur.
+     * @param username Le nom d'utilisateur à inclure dans le token.
+     * @return Le token JWT généré.
      */
     public String generateTokenFromUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
-            log.error("❌ Username invalide: {}", username);
-            throw new IllegalArgumentException("Username cannot be null or empty");
+            throw new IllegalArgumentException("Le nom d'utilisateur ne peut pas être nul ou vide.");
         }
 
-        String cleanUsername = username.trim();
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
-        String token = Jwts.builder()
-                .setSubject(cleanUsername)
+        return Jwts.builder()
+                .setSubject(username.trim())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
-
-        log.debug("🎯 Token généré pour: {}", cleanUsername);
-        return token;
     }
+
+    // --- Analyse et validation des tokens ---
 
     /**
      * Extrait le nom d'utilisateur d'un token JWT.
+     * @param token Le token JWT complet, incluant potentiellement le préfixe "Bearer ".
+     * @return Le nom d'utilisateur ou null si le token est invalide.
      */
     public String getUserNameFromJwtToken(String token) {
         try {
-            String cleanToken = cleanToken(token);
-
-            Claims claims = Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(cleanToken)
-                    .getBody();
-
-            String username = claims.getSubject();
-            log.debug("📤 Username extrait: {}", username);
-            return username;
-
+                    .parseClaimsJws(cleanToken(token))
+                    .getBody()
+                    .getSubject();
         } catch (JwtException e) {
-            log.error("❌ Erreur extraction username: {}", e.getMessage());
-            throw e;
+            // Journalise l'exception pour comprendre pourquoi l'analyse a échoué
+            log.error("Token JWT invalide : {}", e.getMessage());
+            return null; // Retourne null au lieu de relancer une exception générique
         }
     }
 
     /**
-     * Valide un token JWT.
+     * Valide un token JWT en vérifiant sa signature et son expiration.
+     * @param authToken Le token à valider.
+     * @return true si le token est valide, false sinon.
      */
     public boolean validateJwtToken(String authToken) {
         try {
-            String cleanToken = cleanToken(authToken);
-
-            Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(cleanToken);
-
-            log.debug("✅ Token JWT valide");
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(cleanToken(authToken));
             return true;
-
         } catch (MalformedJwtException e) {
-            log.error("❌ Token JWT malformé: {}", e.getMessage());
+            log.error("Token JWT malformé : {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.warn("⏰ Token JWT expiré: {}", e.getMessage());
+            log.error("Token JWT expiré : {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.error("❌ Token JWT non supporté: {}", e.getMessage());
+            log.error("Token JWT non supporté : {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.error("❌ Claims JWT vides: {}", e.getMessage());
+            log.error("Chaîne de claims JWT vide : {}", e.getMessage());
+        } catch (SignatureException e) {
+            log.error("Signature JWT invalide : {}", e.getMessage());
         } catch (Exception e) {
-            log.error("❌ Erreur validation JWT: {}", e.getMessage());
+            log.error("Une erreur inattendue s'est produite lors de la validation du token : {}", e.getMessage());
         }
-
         return false;
     }
 
+    // --- Méthodes utilitaires ---
+
     /**
-     * Vérifie si un token JWT est expiré.
+     * Génère la clé de signature sécurisée à partir de la chaîne de caractères.
+     * @return La clé secrète.
      */
-    public boolean isTokenExpired(String token) {
-        try {
-            String cleanToken = cleanToken(token);
-
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(cleanToken)
-                    .getBody();
-
-            Date expiration = claims.getExpiration();
-            boolean isExpired = expiration.before(new Date());
-
-            log.debug("🕐 Token expiré: {}", isExpired);
-            return isExpired;
-
-        } catch (ExpiredJwtException e) {
-            log.debug("⏰ Token déjà expiré: {}", e.getMessage());
-            return true;
-        } catch (JwtException e) {
-            log.error("❌ Erreur vérification expiration: {}", e.getMessage());
-            return true;
+    private SecretKey getSigningKey() {
+        if (jwtSecret == null || jwtSecret.trim().isEmpty()) {
+            throw new IllegalArgumentException("Le secret JWT ne peut pas être nul ou vide.");
         }
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
      * Nettoie le token en supprimant le préfixe "Bearer " si présent.
+     * @param token Le token avec ou sans préfixe.
+     * @return Le token nettoyé.
      */
     private String cleanToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
@@ -179,20 +149,11 @@ public class JwtUtils {
         return token;
     }
 
-    /**
-     * Génère la clé de signature sécurisée.
-     */
-    private SecretKey getSigningKey() {
-        String keyString = jwtSecret;
-        if (keyString.length() < 32) {
-            log.warn("⚠️ Clé JWT trop courte, extension automatique");
-            keyString = keyString + "0".repeat(32 - keyString.length());
-        }
-        return Keys.hmacShaKeyFor(keyString.getBytes());
-    }
+    // --- Getters pour les propriétés de configuration ---
 
     /**
      * Retourne la durée de validité en millisecondes.
+     * @return La durée en ms.
      */
     public long getJwtExpirationMs() {
         return jwtExpirationMs;
@@ -200,6 +161,7 @@ public class JwtUtils {
 
     /**
      * Retourne la durée de validité en secondes.
+     * @return La durée en secondes.
      */
     public long getJwtExpirationSeconds() {
         return jwtExpirationMs / 1000;

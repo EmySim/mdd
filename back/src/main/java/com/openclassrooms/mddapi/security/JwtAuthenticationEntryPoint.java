@@ -2,7 +2,6 @@ package com.openclassrooms.mddapi.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassrooms.mddapi.dto.response.MessageResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -15,28 +14,27 @@ import java.io.IOException;
 
 /**
  * Point d'entrée pour la gestion des erreurs d'authentification JWT.
- * Harmonisé avec GlobalExceptionHandler pour des réponses cohérentes.
  * 
- * @author Équipe MDD
- * @version 2.0
+ * Gère les cas de token absent, invalide ou expiré en retournant
+ * une réponse JSON cohérente avec le GlobalExceptionHandler.
  */
 @Component
-@Slf4j
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Gère les erreurs d'authentification JWT (token absent/invalide/expiré).
-     * Retourne une réponse JSON cohérente avec GlobalExceptionHandler.
+     * Gère les erreurs d'authentification JWT.
+     * Retourne une réponse JSON 401 avec message d'erreur standardisé.
+     * 
+     * @param request requête HTTP
+     * @param response réponse HTTP
+     * @param authException exception d'authentification
      */
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-
-        String requestURI = request.getRequestURI();
-        log.warn("🚫 [401] Accès non autorisé: {} - {}", requestURI, authException.getMessage());
 
         // Configuration réponse HTTP
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -50,4 +48,4 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         String jsonResponse = objectMapper.writeValueAsString(errorResponse);
         response.getWriter().write(jsonResponse);
     }
-} 
+}

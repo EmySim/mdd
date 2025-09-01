@@ -14,9 +14,6 @@ import lombok.Setter;
  * - Le type de token (Bearer)
  * - Les informations de base de l'utilisateur
  * - La durée de validité du token
- *
- * @author Équipe MDD
- * @version 1.0
  */
 @Getter
 @Setter

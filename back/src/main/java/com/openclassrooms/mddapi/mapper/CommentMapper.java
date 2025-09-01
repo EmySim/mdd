@@ -10,23 +10,9 @@ import java.util.List;
 
 /**
  * Mapper MapStruct pour conversion Comment Entity ↔ CommentDTO.
- *
- * **RESPONSABILITÉ** : Automatise les conversions entre entités JPA
- * et DTOs selon les besoins des spécifications MVP MDD.
- *
- * FONCTIONNALITÉS :
- * - Conversion Entity → DTO avec mapping des relations
- * - Conversion DTO → Entity pour création
- * - Mapping automatique des champs simples
- * - Mapping manuel des relations (User, Article)
- * - Gestion des collections (List<Comment> → List<CommentDTO>)
- *
- * CONFIGURATION MAPSTRUCT :
- * - componentModel = "spring" : Injection Spring automatique
- * - nullValuePropertyMappingStrategy = IGNORE : Ignore les null
- *
- * @author Équipe MDD
- * @version 1.0
+ * 
+ * Automatise les conversions entre entités JPA et DTOs avec mapping
+ * des relations User et Article.
  */
 @Mapper(
         componentModel = "spring",
@@ -35,17 +21,9 @@ import java.util.List;
 public interface CommentMapper {
 
     /**
-     * Convertit Comment Entity → CommentDTO.
-     *
-     * MAPPING AUTOMATIQUE :
-     * - id, content, createdAt
-     *
-     * MAPPING MANUEL :
-     * - authorId : extrait de author.id
-     * - authorUsername : extrait de author.username
-     * - articleId : extrait de article.id
-     * - articleTitle : extrait de article.title
-     *
+     * Convertit Comment Entity vers CommentDTO.
+     * Mappe les relations author et article vers leurs propriétés DTO.
+     * 
      * @param comment entité à convertir
      * @return DTO correspondant
      */
@@ -56,28 +34,17 @@ public interface CommentMapper {
     CommentDTO toDTO(Comment comment);
 
     /**
-     * Convertit Liste Comment Entity → Liste CommentDTO.
-     * Utilise automatiquement toDTO() pour chaque élément.
-     *
+     * Convertit liste d'entités Comment vers liste de CommentDTO.
+     * 
      * @param comments liste d'entités à convertir
      * @return liste de DTOs correspondants
      */
     List<CommentDTO> toDTOList(List<Comment> comments);
 
     /**
-     * Convertit CommentDTO → Comment Entity pour création.
-     *
-     * MAPPING AUTOMATIQUE :
-     * - id, content (createdAt géré par @CreationTimestamp)
-     *
-     * MAPPING IGNORÉ :
-     * - author, article : seront définis par le service via les ID
-     * - authorId, authorUsername, articleId, articleTitle : métadonnées read-only
-     * - createdAt : géré automatiquement par Hibernate
-     *
-     * USAGE : CommentService utilisera ce mapping puis définira author et article
-     * via UserRepository.findById() et ArticleRepository.findById().
-     *
+     * Convertit CommentDTO vers Comment Entity pour création.
+     * Les relations et timestamp sont ignorés et gérés par le service.
+     * 
      * @param commentDTO DTO à convertir
      * @return entité correspondante (sans relations)
      */

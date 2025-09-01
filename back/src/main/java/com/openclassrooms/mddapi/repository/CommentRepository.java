@@ -23,9 +23,6 @@ import org.springframework.stereotype.Repository;
  * - Utilise les index DB existants (fk_comments_article, fk_comments_author)
  * - Pagination systématique
  * - Tri par date de création (ordre chronologique)
- *
- * @author Équipe MDD
- * @version 1.0
  */
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
