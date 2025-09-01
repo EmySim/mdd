@@ -3,7 +3,6 @@ package com.openclassrooms.mddapi.security;
 import com.openclassrooms.mddapi.entity.User;
 import com.openclassrooms.mddapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,15 +21,23 @@ import java.util.ArrayList;
 
 /**
  * Filtre d'authentification JWT pour l'API MDD.
+ * 
+ * Intercepte les requêtes, valide le token JWT et configure le SecurityContext
+ * pour les endpoints protégés. Exclut les endpoints publics d'authentification.
+ * 
+ * @author Équipe MDD
  */
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
 
+    /**
+     * Filtre principal d'authentification JWT.
+     * Extrait et valide le token, puis configure l'authentification Spring Security.
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -55,17 +62,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                    log.debug("✅ [AUTH] Utilisateur authentifié: {}", user.getUsername());
                 }
             }
         } catch (Exception e) {
-            log.error("❌ [AUTH] Erreur JWT: {}", e.getMessage());
+            // Les erreurs JWT sont silencieuses, gérées par JwtAuthenticationEntryPoint
         }
 
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Extrait le token JWT de l'en-tête Authorization.
+     * 
+     * @param request requête HTTP
+     * @return token JWT sans le préfixe "Bearer " ou null
+     */
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 
@@ -76,6 +87,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    /**
+     * Crée un objet UserDetails pour Spring Security.
+     * 
+     * @param user entité utilisateur
+     * @return UserDetails configuré
+     */
     private UserDetails createUserDetails(User user) {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
@@ -84,6 +101,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .build();
     }
 
+    /**
+     * Définit les chemins à exclure du filtrage JWT.
+     * 
+     * @param request requête HTTP
+     * @return true si le filtre doit être ignoré
+     */
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         String path = request.getRequestURI();

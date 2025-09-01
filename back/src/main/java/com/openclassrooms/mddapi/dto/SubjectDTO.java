@@ -12,15 +12,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * DTO pour Subject - MVP STRICT.
- *
- * **FONCTIONNALITÉS MVP UNIQUEMENT :**
  * - Affichage des sujets
  * - Statut d'abonnement (pour bouton S'abonner/Se désabonner)
  * - Liste des abonnés
- *
- * @author Équipe MDD
- * @version 1.0
  */
 @Getter
 @Setter
