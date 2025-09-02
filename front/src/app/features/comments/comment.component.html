@@ -1,59 +1,53 @@
-<div class="comments-section">
+<div class="comments-block">
+  <h3 class="title">Commentaires</h3>
 
-  <h3 class="title">
-    Commentaires
-    <span class="comments-count">({{ comments.length }})</span>
-  </h3>
+  <!-- Boucle des commentaires -->
+  <ng-container *ngFor="let comment of comments; trackBy: trackByCommentId">
+    <!-- EN-TÊTE en dehors de la card -->
+    <div class="comment-header mb-sm">
+      <strong>{{ comment.authorUsername }}</strong>
+      <small class="text-secondary">
+        {{ comment.createdAt | date : "dd/MM/yyyy à HH:mm" }}
+      </small>
+    </div>
 
-  <div class="card mb-lg">
+    <!-- Contenu du commentaire dans la card -->
+    <div class="card mb-md">
+      <p class="comment-content">{{ comment.content }}</p>
+    </div>
+  </ng-container>
+
+  <!-- Formulaire pour poster un commentaire -->
+  <div class="comments-section">
     <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()">
-
       <div class="form__group">
         <textarea
           class="form__field"
           [class.form__field--error]="hasFieldError('content')"
           formControlName="content"
-          placeholder="Écrivez votre commentaire..."
+          placeholder="Écrivez ici votre commentaire"
           rows="3"
         ></textarea>
         <span class="form__error" *ngIf="hasFieldError('content')">
-          {{ getFieldError('content') }}
+          {{ getFieldError("content") }}
         </span>
       </div>
 
       <div class="actions">
         <button
-          class="btn btn--primary btn--sm"
+          class="btn-send-comment"
           type="submit"
           [disabled]="!commentForm.valid || isSubmitting"
         >
-          {{ isSubmitting ? 'Envoi...' : 'Commenter' }}
+          <img src="/assets/send_.arrow.svg" alt="Envoyer" class="send-arrow" />
         </button>
       </div>
     </form>
-  </div>
 
-  <div class="text-center p-xl" *ngIf="isLoading && comments.length === 0">
-    <div class="loading-spinner"></div>
-    <p class="text-secondary">Chargement des commentaires...</p>
-  </div>
-
-  <div>
-    <div *ngIf="comments.length === 0 && !isLoading" class="text-center p-lg">
-      <p class="text-secondary">Aucun commentaire pour le moment.</p>
-    </div>
-
-    <div
-      *ngFor="let comment of comments; trackBy: trackByCommentId"
-      class="card mb-md"
-    >
-      <div class="comment-header mb-sm">
-        <strong>{{ comment.authorUsername }}</strong>
-        <small class="text-secondary">{{ comment.createdAt | date:'dd/MM/yyyy à HH:mm' }}</small>
-      </div>
-
-      <p class="comment-content">{{ comment.content }}</p>
+    <!-- Message de chargement -->
+    <div class="text-center p-xl" *ngIf="isLoading && comments.length === 0">
+      <div class="loading-spinner"></div>
+      <p class="text-secondary">Chargement des commentaires...</p>
     </div>
   </div>
-
 </div>
