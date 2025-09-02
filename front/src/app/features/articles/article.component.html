@@ -87,6 +87,8 @@
           class="back-arrow"
           (click)="goBack()"
         />
+        <!-- Titre -->
+            <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
       </div>
     </div>
 
@@ -103,12 +105,11 @@
         <div *ngIf="!isLoading && selectedArticle" class="article-detail">
           <!-- Article principal -->
           <article class="article">
-            <!-- Titre -->
-            <h1 class="article-detail-title">{{ selectedArticle.title }}</h1>
+            
             <!-- Métadonnées -->
             <div class="article-detail-meta">
               <p class="meta-item">
-                {{ formatDate(selectedArticle.createdAt) }}
+                {{ selectedArticle.createdAt | date: "dd/MM/yyyy" }}
               </p>
               <p class="meta-item">{{ selectedArticle.authorUsername }}</p>
               <p class="meta-item">{{ selectedArticle.subjectName }}</p>

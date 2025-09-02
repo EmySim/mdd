@@ -3,24 +3,20 @@
 
   <!-- Boucle des commentaires -->
   <ng-container *ngFor="let comment of comments; trackBy: trackByCommentId">
-    <!-- EN-TÊTE en dehors de la card -->
-    <div class="comment-header mb-sm">
-      <strong>{{ comment.authorUsername }}</strong>
-      <small class="text-secondary">
-        {{ comment.createdAt | date : "dd/MM/yyyy à HH:mm" }}
-      </small>
-    </div>
+    <div class="previous-comment">
+      <p>{{ comment.authorUsername }}</p>
 
-    <!-- Contenu du commentaire dans la card -->
-    <div class="card mb-md">
-      <p class="comment-content">{{ comment.content }}</p>
+      <!-- Contenu du commentaire dans la card -->
+      <div class="comment-card">
+        <p class="comment-content">{{ comment.content }}</p>
+      </div>
     </div>
   </ng-container>
 
   <!-- Formulaire pour poster un commentaire -->
   <div class="comments-section">
     <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()">
-      <div class="form__group">
+      <div class="comment-form">
         <textarea
           class="form__field"
           [class.form__field--error]="hasFieldError('content')"
@@ -32,17 +28,16 @@
           {{ getFieldError("content") }}
         </span>
       </div>
-
-      <div class="actions">
-        <button
-          class="btn-send-comment"
-          type="submit"
-          [disabled]="!commentForm.valid || isSubmitting"
-        >
-          <img src="/assets/send_.arrow.svg" alt="Envoyer" class="send-arrow" />
-        </button>
-      </div>
     </form>
+    <div class="actions">
+      <button
+        class="btn-send-comment"
+        type="submit"
+        [disabled]="!commentForm.valid || isSubmitting"
+      >
+        <img src="/assets/send_.arrow.svg" alt="Envoyer" class="send-arrow" />
+      </button>
+    </div>
 
     <!-- Message de chargement -->
     <div class="text-center p-xl" *ngIf="isLoading && comments.length === 0">
