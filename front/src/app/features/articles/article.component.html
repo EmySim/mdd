@@ -1,21 +1,14 @@
 <div class="page-with-navbar">
-  <!-- ======================================== -->
-  <!-- VUE LISTE -->
-  <!-- ======================================== -->
   <div *ngIf="!showDetailView">
-    <!-- En-tête avec bouton et tri -->
     <div class="page-with-navbar__header">
       <div class="container">
-        <!-- Ligne unique : Bouton créer (gauche) + Tri (droite) -->
         <div class="flex-between mb-lg">
-          <!-- Bouton créer article (gauche) -->
           <div class="header-actions">
             <button class="btn btn--primary" (click)="createArticle()">
               Créer un article
             </button>
           </div>
 
-          <!-- Tri seulement (droite) -->
           <div class="filter-group">
             <button
               class="btn btn--sort"
@@ -29,43 +22,35 @@
       </div>
     </div>
 
-    <!-- Contenu principal -->
     <div class="page-with-navbar__content">
       <div class="container">
-        <!-- Loading -->
         <div class="text-center p-xl" *ngIf="isLoading">
           <div class="loading-spinner"></div>
           <p class="text-secondary">Chargement des articles...</p>
         </div>
 
-        <!-- Articles -->
         <div *ngIf="!isLoading">
-          <!-- Grid des articles -->
           <div class="grid" *ngIf="articles.length > 0">
             <article
               class="card card--clickable"
               *ngFor="let article of articles; trackBy: trackByArticleId"
               (click)="viewArticle(article)"
             >
-              <!-- Titre -->
               <h2 class="title">{{ article.title }}</h2>
 
-              <!-- Métadonnées -->
               <div class="article-meta mb-sm">
                 <span class="article-date">{{
-                  article.createdAt | date : "dd/MM/yyyy"
+                  article.createdAt | date: "dd/MM/yyyy"
                 }}</span>
                 <span class="article-author">{{ article.authorUsername }}</span>
               </div>
 
-              <!-- Contenu -->
               <p class="article-content mb-md">
                 {{ truncateContent(article.content) }}
               </p>
             </article>
           </div>
           
-          <!-- ✅ AJOUT : Message si aucun article -->
           <div *ngIf="articles.length === 0" class="text-center p-xl">
             <p class="text-secondary">Aucun article trouvé.</p>
           </div>
@@ -74,39 +59,28 @@
     </div>
   </div>
 
-  <!-- ======================================== -->
-  <!-- ✅ VUE DÉTAIL AVEC COMMENTAIRES -->
-  <!-- ======================================== -->
   <div *ngIf="showDetailView">
-    <!-- Header avec navigation -->
     <div class="page-with-navbar__header">
-      <div class="container">
+      <div class="container article-container">
         <img
           src="/assets/back_arrow.svg"
           alt="Retour"
           class="back-arrow"
           (click)="goBack()"
         />
-        <!-- Titre -->
-            <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
+        <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
       </div>
     </div>
 
-    <!-- Contenu détail -->
     <div class="page-with-navbar__content">
       <div class="container">
-        <!-- Loading état -->
         <div class="text-center p-xl" *ngIf="isLoading">
           <div class="loading-spinner"></div>
           <p class="text-secondary mt-md">Chargement de l'article...</p>
         </div>
 
-        <!-- Article détaillé -->
         <div *ngIf="!isLoading && selectedArticle" class="article-detail">
-          <!-- Article principal -->
           <article class="article">
-            
-            <!-- Métadonnées -->
             <div class="article-detail-meta">
               <p class="meta-item">
                 {{ selectedArticle.createdAt | date: "dd/MM/yyyy" }}
@@ -115,13 +89,11 @@
               <p class="meta-item">{{ selectedArticle.subjectName }}</p>
             </div>
 
-            <!-- Contenu de l'article -->
             <div class="article-detail-content">
               <p>{{ selectedArticle.content }}</p>
             </div>
           </article>
 
-          <!-- ✅ SECTION COMMENTAIRES -->
           <div class="comment-content">
             <app-comment
               [articleId]="selectedArticle.id"
