@@ -1,74 +1,68 @@
 <!-- login.component.html -->
 <div class="page-fullscreen">
-  <div class="content-auth slide-up">
+  <!-- Logo auth (même comportement que landing) -->
+  <div class="logo-section--auth">
+    <img src="/assets/logo_landing_dsk.png" alt="MDD" class="logo logo--auth" />
+  </div>
+
+  <div class="title-bar">
     <img
       src="/assets/back_arrow.svg"
       alt="Retour"
       class="back-arrow"
       (click)="goBack()"
     />
-    <!-- Logo auth (même comportement que landing) -->
-    <div class="logo-section--auth">
-      <img
-        src="/assets/logo_landing_dsk.png"
-        alt="MDD"
-        class="logo logo--auth"
-      />
+    <h1 class="text-center mb-lg">Se connecter</h1>
+  <!--</div>-->
+
+  <!-- Formulaire -->
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full">
+    <!-- Erreur globale -->
+    <div
+      class="form__error mb-md"
+      *ngIf="errorService.error$ | async as globalError"
+    >
+      {{ globalError }}
     </div>
 
-    <!-- Formulaire avec classes harmonisées -->
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-full">
-      <h1 class="text-center mb-lg">Se connecter</h1>
+    <!-- Champ Email ou Username -->
+    <div class="form__group">
+      <label class="form__label">Email ou nom d'utilisateur</label>
+      <input
+        class="form__field"
+        [class.form__field--error]="hasFieldError('emailOrUsername')"
+        formControlName="emailOrUsername"
+        type="text"
+      />
+      <span class="form__error" *ngIf="hasFieldError('emailOrUsername')">
+        {{ getFieldError("emailOrUsername") }}
+      </span>
+    </div>
 
-      <!-- Erreur globale -->
-      <div
-        class="form__error mb-md"
-        *ngIf="errorService.error$ | async as globalError"
+    <!-- Champ Mot de passe -->
+    <div class="form__group">
+      <label class="form__label">Mot de passe</label>
+      <input
+        class="form__field"
+        [class.form__field--error]="hasFieldError('password')"
+        formControlName="password"
+        type="password"
+      />
+      <span class="form__error" *ngIf="hasFieldError('password')">
+        {{ getFieldError("password") }}
+      </span>
+    </div>
+
+    <!-- Submit button -->
+    <div class="form__group">
+      <button
+        class="btn btn--primary btn--auth"
+        [class.loading]="isLoading"
+        type="submit"
+        [disabled]="isLoading"
       >
-        {{ globalError }}
-      </div>
-
-      <!-- Champ Email ou Username -->
-      <div class="form__group">
-        <label class="form__label">Email ou nom d'utilisateur</label>
-        <input
-          class="form__field"
-          [class.form__field--error]="hasFieldError('emailOrUsername')"
-          formControlName="emailOrUsername"
-          type="text"
-        />
-        <span class="form__error" *ngIf="hasFieldError('emailOrUsername')">
-          {{ getFieldError("emailOrUsername") }}
-        </span>
-      </div>
-
-      <!-- Champ Mot de passe -->
-      <div class="form__group">
-        <label class="form__label">Mot de passe</label>
-        <input
-          class="form__field"
-          [class.form__field--error]="hasFieldError('password')"
-          formControlName="password"
-          type="password"
-        />
-        <span class="form__error" *ngIf="hasFieldError('password')">
-          {{ getFieldError("password") }}
-        </span>
-      </div>
-
-      <!-- Submit button -->
-      <div class="form__group">
-        <button
-          class="btn btn--primary btn--auth"
-          [class.loading]="isLoading"
-          type="submit"
-          [disabled]="isLoading"
-        >
-          {{ isLoading ? "Connexion..." : "Se connecter" }}
-        </button>
-      </div>
-    </form>
-
-
-  </div>
+        {{ isLoading ? "Connexion..." : "Se connecter" }}
+      </button>
+    </div>
+  </form>
 </div>

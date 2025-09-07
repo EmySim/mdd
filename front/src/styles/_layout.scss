@@ -5,7 +5,6 @@
 // === CONTAINER GLOBAL ===
 .container {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 $space-md;
 
@@ -21,6 +20,14 @@
     padding: 0 $space-xl;
   }
 }
+
+// .title-bar {
+//   display: flex;
+//
+//  align-items: center;
+//
+//   height: 50px;
+// }
 
 // === LAYOUTS DE PAGES ===
 
@@ -58,7 +65,7 @@
     padding: $space-xxl $space-lg;
   }
 
-  // 🎯 Mobile : plein écran (pas de navbar)
+  // Mobile : plein écran (pas de navbar)
   @include mobile {
     min-height: 100vh;
   }
