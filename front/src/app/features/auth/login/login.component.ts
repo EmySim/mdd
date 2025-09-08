@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.errorService.clearAll();
 
+    // ✅ Redirige automatiquement si déjà connecté
     this.authService.isLoggedIn$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isLoggedIn: boolean) => {
@@ -50,32 +51,22 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private createLoginForm(): FormGroup {
     return this.formBuilder.group({
-      emailOrUsername: [
-        '',
-        [Validators.required, this.emailOrUsernameValidator],
-      ],
+      emailOrUsername: ['', [Validators.required, this.emailOrUsernameValidator]],
       password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
-  // Validateur personnalisé pour email ou nom d'utilisateur
+  // Validateur personnalisé pour email ou username
   private emailOrUsernameValidator(
     control: AbstractControl
   ): { [key: string]: any } | null {
     if (!control.value) {
-      return null; // Laisse la validation 'required' gérer les valeurs vides
+      return null; // handled by "required"
     }
 
     const value = control.value.trim();
-    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/; // 3-20 caractères, lettres, chiffres, _ et -
-
-    //if (emailRegex.test(value) || usernameRegex.test(value)) {
-    //  return null; // Valide
-    //}
-
-    //return { invalidEmailOrUsername: true };
-    return null; // Pas de validation stricte pour l'instant
+    // TODO: remettre la regex si tu veux forcer un format strict
+    return null; // ✅ pas de validation stricte pour l'instant
   }
 
   onSubmit(): void {
@@ -87,11 +78,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          console.log('✅ RÉPONSE COMPLÈTE DU BACKEND:', response);
+          console.log('✅ RÉPONSE DU BACKEND:', response);
 
-          // Sauvegarder le token ET l'ID utilisateur
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('userId', response.id.toString());
+          // ✅ PAS de stockage du token → géré par le cookie HttpOnly
+          // Si besoin, récupérer l'utilisateur courant via AuthService.getCurrentUser()
 
           console.log('✅ Connexion réussie');
           this.router.navigate(['/articles']);
@@ -105,7 +95,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Méthodes de validation
+  // Helpers de validation
   hasFieldError(fieldName: string): boolean {
     const field = this.loginForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
@@ -123,7 +113,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         return "Format invalide. Utilisez un email valide ou un nom d'utilisateur (3-20 caractères)";
       }
       if (field.errors['minlength']) {
-        return 'Le mot de passe doit contenir au moins 6 caractères';
+        return 'Le mot de passe doit contenir au moins 8 caractères';
       }
     }
     return '';

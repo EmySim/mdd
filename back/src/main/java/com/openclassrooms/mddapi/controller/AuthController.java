@@ -55,7 +55,7 @@ public class AuthController {
 
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); // ⚠️ en prod, seulement via HTTPS
+        cookie.setSecure(false); // ⚠️ temporaire pour développement local
         cookie.setPath("/");
         cookie.setMaxAge((int) jwtUtils.getJwtExpirationSeconds());
         response.addCookie(cookie);
@@ -99,7 +99,7 @@ public class AuthController {
 
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true); 
+        cookie.setSecure(false); // ⚠️ temporaire pour développement local
         cookie.setPath("/");
         cookie.setMaxAge((int) jwtUtils.getJwtExpirationSeconds());
         response.addCookie(cookie);

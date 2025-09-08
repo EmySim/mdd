@@ -1,4 +1,4 @@
-// src/app/features/comments/comment.service.ts - MODIFIÉ pour importer les interfaces
+// src/app/features/comments/comment.service.ts
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -26,7 +26,10 @@ export class CommentService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<CommentsPage>(`${this.API_URL}/articles/${articleId}/comments`, { params })
+    return this.http.get<CommentsPage>(`${this.API_URL}/articles/${articleId}/comments`, { 
+        params,
+        withCredentials: true // ✅ cookies envoyés
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -34,7 +37,9 @@ export class CommentService {
    * Crée un nouveau commentaire sur un article
    */
   createComment(articleId: number, commentData: CreateCommentRequest): Observable<Comment> {
-    return this.http.post<Comment>(`${this.API_URL}/articles/${articleId}/comments`, commentData)
+    return this.http.post<Comment>(`${this.API_URL}/articles/${articleId}/comments`, commentData, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -42,7 +47,9 @@ export class CommentService {
    * Récupère un commentaire par ID
    */
   getCommentById(id: number): Observable<Comment> {
-    return this.http.get<Comment>(`${this.API_URL}/comments/${id}`)
+    return this.http.get<Comment>(`${this.API_URL}/comments/${id}`, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -50,7 +57,9 @@ export class CommentService {
    * Supprime un commentaire (si propriétaire)
    */
   deleteComment(id: number): Observable<any> {
-    return this.http.delete(`${this.API_URL}/comments/${id}`)
+    return this.http.delete(`${this.API_URL}/comments/${id}`, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 

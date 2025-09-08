@@ -38,7 +38,10 @@ export class ThemeService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<ThemesPage>(this.API_URL, { params })
+    return this.http.get<ThemesPage>(this.API_URL, { 
+        params,
+        withCredentials: true // ✅ cookies envoyés
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -46,7 +49,9 @@ export class ThemeService {
    * Récupère un thème par ID
    */
   getThemeById(id: number): Observable<Theme> {
-    return this.http.get<Theme>(`${this.API_URL}/${id}`)
+    return this.http.get<Theme>(`${this.API_URL}/${id}`, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -56,7 +61,9 @@ export class ThemeService {
    * @returns Réponse de subscription typée
    */
   subscribeToTheme(id: number): Observable<SubscriptionResponse> {
-    return this.http.post<SubscriptionResponse>(`${this.API_URL}/${id}/subscribe`, {})
+    return this.http.post<SubscriptionResponse>(`${this.API_URL}/${id}/subscribe`, {}, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 
@@ -66,7 +73,9 @@ export class ThemeService {
    * @returns Réponse de désinscription typée
    */
   unsubscribeFromTheme(id: number): Observable<SubscriptionResponse> {
-    return this.http.delete<SubscriptionResponse>(`${this.API_URL}/${id}/subscribe`)
+    return this.http.delete<SubscriptionResponse>(`${this.API_URL}/${id}/subscribe`, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 

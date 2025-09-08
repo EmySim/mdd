@@ -4,8 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ErrorService } from '../../services/error.service';
 import { AuthService } from '../auth/auth.service';
-import { User } from '../../interfaces/user.interface';
-import { UpdateUserRequest } from '../../interfaces/user.interface';
+import { User, UpdateUserRequest } from '../../interfaces/user.interface';
 
 /**
  * Service simple pour la gestion du profil utilisateur
@@ -31,7 +30,9 @@ export class ProfileService {
    * Récupère le profil utilisateur
    */
   getUserProfile(userId: number): Observable<User> {
-    return this.http.get<User>(`${this.API_URL}/${userId}`)
+    return this.http.get<User>(`${this.API_URL}/${userId}`, { 
+        withCredentials: true // ✅ cookies envoyés
+      })
       .pipe(
         tap((user: User) => console.log('✅ Profil récupéré:', user.username)),
         catchError(this.handleError)
@@ -42,7 +43,9 @@ export class ProfileService {
    * Met à jour le profil utilisateur
    */
   updateUserProfile(userId: number, userData: UpdateUserRequest): Observable<User> {
-    return this.http.put<User>(`${this.API_URL}/${userId}`, userData)
+    return this.http.put<User>(`${this.API_URL}/${userId}`, userData, { 
+        withCredentials: true // ✅
+      })
       .pipe(
         tap((updatedUser: User) => {
           console.log('✅ Profil mis à jour:', updatedUser.username);
