@@ -1,4 +1,4 @@
-// app.component.ts - VERSION MVP SIMPLE
+
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -21,17 +21,22 @@ export class AppComponent implements OnInit {
   private simpleNavbarPages = ['/auth/login', '/auth/register'];
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    // ✅ CORRECTIF : charger automatiquement l'utilisateur courant depuis le cookie JWT
+    this.authService.loadUserFromServer();
+
+    // Gestion de la navbar selon la page
     this.router.events
       .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.updateNavbarStatus(event.url);
       });
 
+    // Vérification initiale sur l'URL actuelle
     this.updateNavbarStatus(this.router.url);
   }
 
@@ -40,7 +45,7 @@ export class AppComponent implements OnInit {
    */
   private updateNavbarStatus(url: string): void {
     console.log('🔍 URL courante:', url);
-    
+
     // Cas spécial pour la racine
     if (url === '/' || url === '') {
       this.showNavbar = false;

@@ -14,6 +14,7 @@
   </ng-container>
 
   <!-- Formulaire pour poster un commentaire -->
+  <!-- ...existing code... -->
   <div class="comments-section">
     <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()">
       <div class="comment-form">
@@ -28,16 +29,16 @@
           {{ getFieldError("content") }}
         </span>
       </div>
+      <div class="actions">
+        <button
+          class="btn-send-comment"
+          type="submit"
+          [disabled]="!commentForm.valid || isSubmitting"
+        >
+          <img src="/assets/send_.arrow.svg" alt="Envoyer" class="send-arrow" />
+        </button>
+      </div>
     </form>
-    <div class="actions">
-      <button
-        class="btn-send-comment"
-        type="submit"
-        [disabled]="!commentForm.valid || isSubmitting"
-      >
-        <img src="/assets/send_.arrow.svg" alt="Envoyer" class="send-arrow" />
-      </button>
-    </div>
 
     <!-- Message de chargement -->
     <div class="text-center p-xl" *ngIf="isLoading && comments.length === 0">

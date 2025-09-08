@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -128,7 +128,8 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  private loadUserFromServer(): void {
+  // ✅ rendu PUBLIC pour pouvoir être appelé depuis AppComponent
+  public loadUserFromServer(): void {
     // Tente de charger le profil utilisateur si le cookie JWT est présent
     this.checkAuthStatus().subscribe({
       next: (user) => this.currentUserSubject.next(user),
