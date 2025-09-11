@@ -78,7 +78,7 @@ export class AuthService {
   checkAuthStatus(): Observable<User> {
     // On suppose que le backend lit le cookie JWT et renvoie le profil utilisateur
     return this.http.get<User>(
-      `/api/user/me`,
+      `/api/user/profile`,
       { withCredentials: true }
     ).pipe(
       tap(userProfile => {
@@ -102,6 +102,21 @@ export class AuthService {
       catchError(error => {
         console.log('❌ Échec vérification auth:', error);
         this.logout();
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getUserById(id: string): Observable<User> {
+    return this.http.get<User>(
+      `/api/user/${id}`,
+      { withCredentials: true }
+    ).pipe(
+      tap(user => {
+        console.log(`✅ Utilisateur ${id} récupéré:`, user);
+      }),
+      catchError(error => {
+        console.log(`❌ Échec récupération utilisateur ${id}:`, error);
         return throwError(() => error);
       })
     );

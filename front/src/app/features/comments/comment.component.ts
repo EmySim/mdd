@@ -32,7 +32,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     private authService: AuthService
   ) {
     this.commentForm = this.formBuilder.group({
-      content: ['', [Validators.required, Validators.minLength(3)]]
+      content: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(500)]]
     });
   }
 
@@ -94,6 +94,7 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     const field = this.commentForm.get(fieldName);
     if (field?.errors?.['required']) return 'Le commentaire est obligatoire';
     if (field?.errors?.['minlength']) return `Minimum ${field.errors?.['minlength'].requiredLength} caractères`;
+    if (field?.errors?.['maxlength']) return `Maximum ${field.errors?.['maxlength'].requiredLength} caractères`;
     return '';
   }
 
