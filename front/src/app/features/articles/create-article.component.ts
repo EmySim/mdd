@@ -25,9 +25,23 @@ export class CreateArticleComponent implements OnInit {
     private router: Router
   ) {
     this.articleForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(5)]],
+      title: [
+        '', 
+        [
+          Validators.required, 
+          Validators.minLength(5), 
+          Validators.maxLength(200) // Limitation du titre à 200 caractères
+        ]
+      ],
       subjectId: ['', Validators.required],
-      content: ['', [Validators.required, Validators.minLength(10)]]
+      content: [
+        '', 
+        [
+          Validators.required, 
+          Validators.minLength(10), 
+          Validators.maxLength(2000) // Limitation du contenu à 2000 caractères
+        ]
+      ]
     });
   }
 

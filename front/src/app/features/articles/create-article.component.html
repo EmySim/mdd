@@ -3,12 +3,13 @@
     <div class="container">
       <div class="container">
         <img
-      src="/assets/back_arrow.svg"
-      alt="Retour"
-      class="back-arrow"
-      (click)="goBack()"
-    />
-      <h1 class="page-title">Créer un nouvel article</h1>
+          src="/assets/back_arrow.svg"
+          alt="Retour"
+          class="back-arrow"
+          (click)="goBack()"
+        />
+        <h1 class="page-title">Créer un nouvel article</h1>
+      </div>
     </div>
   </div>
 
@@ -28,6 +29,9 @@
                 {{ theme.name }}
               </option>
             </select>
+            <div class="form__error" *ngIf="hasError('subjectId')">
+              <span>Le sujet est obligatoire.</span>
+            </div>
           </div>
 
           <!-- Titre de l'article -->
@@ -39,6 +43,17 @@
               placeholder="Titre de l'article"
               type="text"
             />
+            <div class="form__error" *ngIf="hasError('title')">
+              <span *ngIf="articleForm.get('title')?.errors?.['required']">
+                Le titre est obligatoire.
+              </span>
+              <span *ngIf="articleForm.get('title')?.errors?.['minlength']">
+                Le titre doit contenir au moins 5 caractères.
+              </span>
+              <span *ngIf="articleForm.get('title')?.errors?.['maxlength']">
+                Le titre ne peut pas dépasser 200 caractères.
+              </span>
+            </div>
           </div>
 
           <!-- Contenu de l'article -->
@@ -49,8 +64,18 @@
               formControlName="content"
               placeholder="Contenu de l'article"
               rows="8"
-            >
-            </textarea>
+            ></textarea>
+            <div class="form__error" *ngIf="hasError('content')">
+              <span *ngIf="articleForm.get('content')?.errors?.['required']">
+                Le contenu est obligatoire.
+              </span>
+              <span *ngIf="articleForm.get('content')?.errors?.['minlength']">
+                Le contenu doit contenir au moins 10 caractères.
+              </span>
+              <span *ngIf="articleForm.get('content')?.errors?.['maxlength']">
+                Le contenu ne peut pas dépasser 2000 caractères.
+              </span>
+            </div>
           </div>
 
           <!-- Bouton Créer -->
@@ -66,5 +91,3 @@
         </form>
       </div>
     </div>
-  </div>
-</div>

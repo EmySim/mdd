@@ -30,9 +30,12 @@ export class ArticleService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sort', sortDirection); // ✅ CORRECTION: Juste la direction (le backend gère createdAt)
+      .set('sort', sortDirection);
 
-    return this.http.get<ArticlesPage>(this.API_URL, { params })
+    return this.http.get<ArticlesPage>(this.API_URL, { 
+        params, 
+        withCredentials: true // ✅ cookies envoyés
+      })
       .pipe(
         catchError(this.handleError),
         map(response => ({
@@ -43,12 +46,30 @@ export class ArticleService {
   }
 
   getArticleById(id: number): Observable<ArticleDetail> {
-    return this.http.get<ArticleDetail>(`${this.API_URL}/${id}`)
+    return this.http.get<ArticleDetail>(`${this.API_URL}/${id}`, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 
   createArticle(article: CreateArticleRequest): Observable<Article> {
-    return this.http.post<Article>(this.API_URL, article)
+    return this.http.post<Article>(this.API_URL, article, { 
+        withCredentials: true // ✅
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  updateArticle(id: number, article: UpdateArticleRequest): Observable<Article> {
+    return this.http.put<Article>(`${this.API_URL}/${id}`, article, { 
+        withCredentials: true // ✅
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteArticle(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}`, { 
+        withCredentials: true // ✅
+      })
       .pipe(catchError(this.handleError));
   }
 
