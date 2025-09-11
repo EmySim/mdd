@@ -58,16 +58,21 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   // Validateur personnalisé pour email ou username
   private emailOrUsernameValidator(
-    control: AbstractControl
-  ): { [key: string]: any } | null {
-    if (!control.value) {
-      return null; // handled by "required"
-    }
-
-    const value = control.value.trim();
-    // TODO: remettre la regex si tu veux forcer un format strict
-    return null; // ✅ pas de validation stricte pour l'instant
+  control: AbstractControl
+): { [key: string]: any } | null {
+  if (!control.value) {
+    return null; // handled by "required"
   }
+
+  const value = control.value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+
+  if (emailRegex.test(value) || usernameRegex.test(value)) {
+    return null; // valide
+  }
+  return { invalidEmailOrUsername: true };
+}
 
   onSubmit(): void {
     if (this.loginForm.valid) {

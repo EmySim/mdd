@@ -47,12 +47,28 @@ export class RegisterComponent implements OnInit, OnDestroy {
   private createRegisterForm(): FormGroup {
     return this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      username: ['', [Validators.required, Validators.minLength(3)]],
+      username: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+          Validators.pattern(/^[a-zA-Z0-9_-]{3,20}$/)
+        ]
+      ],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   onSubmit(): void {
+    if (this.registerForm.invalid) {
+      // Marque tous les champs comme "touched" pour afficher les erreurs
+      Object.values(this.registerForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      return;
+    }
+
     if (this.registerForm.valid && !this.isLoading) {
       this.isLoading = true;
       this.errorService.clearAll();
@@ -108,6 +124,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
         const minLength = minLengths[fieldName] || 0;
         return `${fieldName === 'username' ? 'Le nom d\'utilisateur' : 'Le mot de passe'} doit contenir au moins ${minLength} caractères`;
       }
+      if (field.errors['maxlength']) {
+        return 'Le nom d\'utilisateur doit contenir au maximum 20 caractères';
+      }
+      if (field.errors['pattern']) {
+        return 'Format invalide. Utilisez uniquement lettres, chiffres, tiret ou underscore (3-20 caractères)';
+      }
     }
     return '';
   }
@@ -119,5 +141,4 @@ export class RegisterComponent implements OnInit, OnDestroy {
     console.log('🔙 Retour à la page précédente');
     window.history.back();
   }
-
 }
