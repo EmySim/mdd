@@ -24,8 +24,6 @@ import java.util.ArrayList;
  * 
  * Intercepte les requêtes, valide le token JWT et configure le SecurityContext
  * pour les endpoints protégés. Exclut les endpoints publics d'authentification.
- * 
- * @author Équipe MDD
  */
 @Component
 @RequiredArgsConstructor
@@ -72,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Extrait le token JWT de l'en-tête Authorization.
+     * Extrait le token JWT de l'en-tête Authorization ou du cookie "jwt".
      * 
      * @param request requête HTTP
      * @return token JWT sans le préfixe "Bearer " ou null
@@ -82,6 +80,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
+        }
+
+        // Ajout : lecture du cookie "jwt"
+        if (request.getCookies() != null) {
+            for (javax.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
 
         return null;

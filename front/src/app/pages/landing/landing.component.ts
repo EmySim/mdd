@@ -7,9 +7,9 @@ import { AuthService } from '../../features/auth/auth.service';
  * Composant Landing - Page d'accueil publique
  *
  * Fonctionnalités :
- * ✅ Présentation de l'application
- * ✅ Navigation vers connexion/inscription
- * ✅ Redirection automatique si déjà connecté
+ * Présentation de l'application
+ * Navigation vers connexion/inscription
+ * Redirection automatique si déjà connecté
  */
 @Component({
   selector: 'app-landing',

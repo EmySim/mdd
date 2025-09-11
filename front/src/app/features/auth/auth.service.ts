@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { 
-  User, 
-  LoginRequest, 
-  RegisterRequest, 
-  AuthResponse 
+import {
+  User,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse
 } from '../../interfaces/user.interface';
 
 @Injectable({
@@ -15,11 +15,10 @@ import {
 })
 export class AuthService {
   private readonly API_URL = '/api/auth';
-  private readonly TOKEN_KEY = 'authToken';
-  
+
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public readonly currentUser$ = this.currentUserSubject.asObservable();
-  
+
   public readonly isLoggedIn$ = this.currentUser$.pipe(
     map(user => user !== null)
   );
@@ -28,7 +27,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    this.loadUserFromStorage();
+    this.loadUserFromServer();
   }
 
   // =============================================================================
@@ -36,26 +35,32 @@ export class AuthService {
   // =============================================================================
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(
+      `${this.API_URL}/login`,
+      credentials,
+      { withCredentials: true }
+    ).pipe(
       tap(response => this.handleAuthSuccess(response)),
       catchError(this.handleError)
     );
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/register`, userData).pipe(
+    return this.http.post<AuthResponse>(
+      `${this.API_URL}/register`,
+      userData,
+      { withCredentials: true }
+    ).pipe(
       tap(response => this.handleAuthSuccess(response)),
       catchError(this.handleError)
     );
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    // Le backend doit gérer la suppression du cookie côté serveur si besoin
     this.currentUserSubject.next(null);
     this.router.navigate(['/landing']);
-    console.log('✅ Déconnexion - Token et userId supprimés');
+    console.log('✅ Déconnexion - Utilisateur déconnecté');
   }
 
   getCurrentUser(): User | null {
@@ -66,33 +71,16 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  // Méthodes synchrones pour la compatibilité
   isLoggedIn(): boolean {
-    return this.getCurrentUser() !== null && this.getToken() !== null;
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.getCurrentUser() !== null;
   }
 
   checkAuthStatus(): Observable<User> {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      this.logout();
-      return throwError(() => new Error('No token found'));
-    }
-
-    // Récupérer l'ID utilisateur depuis le localStorage
-    const userId = localStorage.getItem('userId');
-    
-    if (!userId) {
-      console.log('❌ Aucun userId trouvé dans localStorage');
-      this.logout();
-      return throwError(() => new Error('No user ID found'));
-    }
-
-    return this.http.get<User>(`/api/user/${userId}`).pipe(
+    // On suppose que le backend lit le cookie JWT et renvoie le profil utilisateur
+    return this.http.get<User>(
+      `/api/user/profile`,
+      { withCredentials: true }
+    ).pipe(
       tap(userProfile => {
         console.log('✅ Profil utilisateur récupéré:', userProfile);
         const user: User = {
@@ -119,17 +107,30 @@ export class AuthService {
     );
   }
 
+  getUserById(id: string): Observable<User> {
+    return this.http.get<User>(
+      `/api/user/${id}`,
+      { withCredentials: true }
+    ).pipe(
+      tap(user => {
+        console.log(`✅ Utilisateur ${id} récupéré:`, user);
+      }),
+      catchError(error => {
+        console.log(`❌ Échec récupération utilisateur ${id}:`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   // =============================================================================
   // MÉTHODES PRIVÉES
   // =============================================================================
 
   private handleAuthSuccess(response: AuthResponse): void {
     console.log('🔍 handleAuthSuccess - response:', response);
-    
-    localStorage.setItem(this.TOKEN_KEY, response.token);
-    localStorage.setItem('token', response.token);
-    localStorage.setItem('userId', response.id.toString()); 
-    
+
+    // Le token est dans le cookie, pas besoin de le stocker côté client
+
     // Créer l'objet User à partir de la réponse
     const user: User = {
       id: response.id,
@@ -138,18 +139,17 @@ export class AuthService {
       createdAt: response.createdAt,
       updatedAt: response.updatedAt
     };
-    
+
     this.currentUserSubject.next(user);
   }
 
-  private loadUserFromStorage(): void {
-    const token = this.getToken();
-    if (token) {
-      this.checkAuthStatus().subscribe({
-        next: (user) => this.currentUserSubject.next(user),
-        error: () => this.logout()
-      });
-    }
+  // ✅ rendu PUBLIC pour pouvoir être appelé depuis AppComponent
+  public loadUserFromServer(): void {
+    // Tente de charger le profil utilisateur si le cookie JWT est présent
+    this.checkAuthStatus().subscribe({
+      next: (user) => this.currentUserSubject.next(user),
+      error: () => this.logout()
+    });
   }
 
   private handleError = (error: unknown): Observable<never> => {

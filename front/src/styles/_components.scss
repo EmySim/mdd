@@ -72,8 +72,6 @@
   }
 }
 
-
-
 // ===========================
 // BOUTON TRI SPÉCIFIQUE ARTICLES
 // ===========================
@@ -174,12 +172,14 @@
 }
 
 // ===========================
-// 🎯 GRILLE GLOBALE UNIFIÉE
+// GRILLE GLOBALE
 // ===========================
 
 .grid {
   display: grid;
-  gap: $space-lg;
+
+  row-gap: $space-sm;
+  column-gap: $space-xxl;
   grid-template-columns: 1fr;
 
   @include tablet {
@@ -187,7 +187,7 @@
   }
 
   @include desktop {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

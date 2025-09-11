@@ -15,10 +15,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * - Base de données : MySQL avec Spring Data JPA
  * - Frontend : Angular (séparé)
  * - Sécurité : Authentification stateless via tokens JWT
- *
- * @author OpenClassrooms MDD Team
- * @version 1.0
- * @since 1.0
  */
 @SpringBootApplication
 public class MddApiApplication {

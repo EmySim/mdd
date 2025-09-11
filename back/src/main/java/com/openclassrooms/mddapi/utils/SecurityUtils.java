@@ -16,9 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * - Utilitaires de sécurité réutilisables
  *
  * NOTE : Les exceptions sont gérées par GlobalExceptionHandler
- *
- * @author Équipe MDD
- * @version 1.0
  */
 @Slf4j
 public final class SecurityUtils {

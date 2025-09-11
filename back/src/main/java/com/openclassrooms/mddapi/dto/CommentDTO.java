@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,6 +20,7 @@ public class CommentDTO {
     private Long id;
 
     @NotBlank(message = "Le contenu du commentaire est obligatoire")
+    @Size(max = 500, message = "Le commentaire ne peut pas dépasser 500 caractères")
     private String content;
 
     private LocalDateTime createdAt;

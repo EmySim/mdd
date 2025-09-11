@@ -25,6 +25,7 @@ public class ArticleDTO {
     private String title;
 
     @NotBlank(message = "Le contenu est obligatoire")
+    @Size(max = 2000, message = "Le contenu ne peut pas dépasser 2000 caractères")
     private String content;
 
     private LocalDateTime createdAt;
