@@ -21,13 +21,6 @@
   }
 }
 
-// .title-bar {
-//   display: flex;
-//
-//  align-items: center;
-//
-//   height: 50px;
-// }
 
 // === LAYOUTS DE PAGES ===
 
@@ -45,6 +38,10 @@
 
   @include desktop {
     padding: $space-xxl $space-lg;
+  }
+
+  @include mobile {
+    flex-direction: column;
   }
 }
 
