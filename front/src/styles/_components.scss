@@ -91,9 +91,9 @@
 .back-arrow {
   position: absolute;
   top: 150px;
-  left: 40px; 
+  left: 40px;
   cursor: pointer;
-  height: auto; 
+  height: auto;
 
   // Ajustement pour les écrans mobiles avec votre mixin @include mobile
   @include mobile {
@@ -181,6 +181,8 @@
   row-gap: $space-sm;
   column-gap: $space-xxl;
   grid-template-columns: 1fr;
+
+  margin-top: $space-lg;
 
   @include tablet {
     grid-template-columns: repeat(2, 1fr);

@@ -75,7 +75,7 @@
 
   &__header {
     background-color: var(--mdd-white);
-    padding: $space-lg 0;
+    padding: $space-lg 0 0 0;
 
     .page-title {
       font-family: $mdd-font-family;
@@ -100,10 +100,6 @@
         text-align: left;
       }
     }
-  }
-
-  &__content {
-    //padding: $space-lg 0;
   }
 }
 

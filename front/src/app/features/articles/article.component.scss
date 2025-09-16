@@ -18,6 +18,10 @@
   color: $mdd-black;
   cursor: pointer;
   padding: 0;
+
+  @include mobile {
+    padding-top: $space-md;
+  }
 }
 
 // ===========================
