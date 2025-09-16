@@ -8,7 +8,7 @@
 .comments-block {
   margin-top: $space-xl;
   padding-top: $space-lg;
-  border-top: 1px solid $mdd-border-gray;
+  border-top: 1px solid $mdd-black;
 }
 
 .previous-comment {
@@ -19,8 +19,8 @@
 
 .comments-section {
   display: flex;
-  justify-content: space-around;
-  margin-top: $space-lg;
+  flex-direction: column;
+
 }
 
 .comment-header {
@@ -44,7 +44,7 @@
 }
 
 .comment-form {
-  width: 80%;
+  width: 95%;
   padding: $space-md;
 }
 

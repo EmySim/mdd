@@ -1,5 +1,5 @@
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 :host {
   display: block;
@@ -43,7 +43,7 @@
   gap: $space-sm;
 }
 
-.article-meta{
+.article-meta {
   display: flex;
   gap: $space-lg;
 }
@@ -65,7 +65,7 @@
 .article-detail {
   max-width: 800px;
   margin: 0 auto;
-  
+
   @include mobile {
     max-width: 100%;
   }
@@ -78,7 +78,7 @@
   color: var(--mdd-black);
   line-height: 1.3;
   margin-bottom: 0; /* Retire la marge pour un alignement correct avec la flèche */
-  
+
   @include mobile {
     font-size: 24px;
   }
@@ -88,26 +88,25 @@
   display: flex;
   gap: $space-lg;
   margin-bottom: $space-md;
-  
+
   @include desktop {
     flex-direction: row;
     flex-wrap: wrap;
     gap: $space-md;
   }
-  
+
   .meta-item {
     font-family: $mdd-font-family;
     font-size: 20px;
     color: $mdd-black;
-    
+
     strong {
       color: var(--mdd-black);
       font-weight: $weight-medium;
     }
-    
+
     @include desktop {
       &:not(:last-child)::after {
-        content: "•";
         margin-left: $space-md;
         color: $mdd-border-gray;
       }
@@ -120,17 +119,17 @@
   font-size: 16px;
   line-height: 1.6;
   color: var(--mdd-black);
-  
+
   p {
     margin-bottom: $space-md;
     white-space: pre-wrap;
     word-wrap: break-word;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
   }
-  
+
   @include mobile {
     font-size: $font-body-content;
   }
