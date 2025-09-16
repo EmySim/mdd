@@ -61,11 +61,7 @@
     font-weight: $weight-bold;
     color: var(--mdd-black);
     text-align: center;
-    margin-bottom: $space-xl;
-
-    @include mobile {
-      margin-bottom: $space-lg;
-    }
+    margin: 0;
   }
 }
 

@@ -43,6 +43,11 @@
   gap: $space-sm;
 }
 
+.article-meta{
+  display: flex;
+  gap: $space-lg;
+}
+
 // ===========================
 // DÉTAIL ARTICLE
 // ===========================
