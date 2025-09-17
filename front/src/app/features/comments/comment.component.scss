@@ -13,6 +13,7 @@
   border-top: 1px solid $mdd-black;
 }
 
+/* Styles par défaut pour les grands écrans */
 .previous-comment {
   display: flex;
   justify-content: space-evenly;
@@ -20,15 +21,7 @@
 }
 
 .comments-section {
-  // Pas besoin de display: flex ici, car le wrapper s'en occupe
-}
-
-.comment-header {
-  @include mobile {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $space-xs;
-  }
+  // Pas de style Flexbox nécessaire
 }
 
 .comment-card {
@@ -41,9 +34,9 @@
 
 /* Nouvelles règles pour le formulaire */
 .comment-form-wrapper {
-  display: flex; /* Active Flexbox pour aligner le texte et le bouton */
-  align-items: flex-end; /* Aligne le bouton avec le bas de la zone de texte */
-  gap: $space-md; /* Ajoute de l'espace entre le champ et le bouton */
+  display: flex;
+  align-items: flex-end;
+  gap: $space-md;
   width: 100%;
 }
 
@@ -53,7 +46,7 @@
   border-radius: 16px;
   padding: 0.5rem;
   box-sizing: border-box;
-  flex-grow: 1; /* Permet à la zone de texte de prendre toute la largeur disponible */
+  flex-grow: 1;
   min-height: 5rem;
   
   &:focus {
@@ -72,12 +65,37 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  height: 43px; /* Fixe la hauteur pour correspondre à l'image */
-  width: 43px; /* Fixe la largeur pour correspondre à l'image */
-  flex-shrink: 0; /* Empêche le bouton de rétrécir */
+  height: 43px;
+  width: 43px;
+  flex-shrink: 0;
 }
 
 img.send-arrow {
   width: 100%;
   height: 100%;
+}
+
+/* Media Query pour les mobiles */
+@include mobile {
+  .previous-comment {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: initial;
+    gap: $space-xs;
+  }
+
+  .comment-card {
+    width: 100%;
+  }
+
+  /* Si vous avez un conteneur pour les méta-données */
+  .meta-data-container {
+      flex-direction: column;
+      gap: $space-xs;
+  }
+
+  /* Si vous avez un conteneur pour le titre */
+  .article-title-container {
+      flex-direction: column;
+  }
 }

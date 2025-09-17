@@ -81,7 +81,7 @@
 
         <div *ngIf="!isLoading && selectedArticle" class="article-detail">
           <article class="article">
-            <h1 class="article-detail-title">{{ selectedArticle?.title }}</h1>
+            <h1 class="article-detail-title">{{ selectedArticle.title }}</h1>
             <div class="article-detail-meta">
               <p class="meta-item">
                 {{ selectedArticle.createdAt | date: "dd/MM/yyyy" }}
