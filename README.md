@@ -66,7 +66,7 @@ cd back
 
 2. Créez un fichier `.env` à la racine du backend avec les variables suivantes :
 
-Voir fichier
+Voir "fichier_zip"
 
 3. Lancez l'application :
 
