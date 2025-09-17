@@ -10,7 +10,6 @@ import com.openclassrooms.mddapi.repository.UserRepository;
 import com.openclassrooms.mddapi.security.JwtUtils;
 import com.openclassrooms.mddapi.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,13 +22,19 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Contrôleur REST pour l'authentification des utilisateurs.
- * 
- * Endpoints : POST /api/auth/register, POST /api/auth/login, GET /api/auth/status
+ *
+ * <p>Endpoints disponibles :</p>
+ * <ul>
+ *     <li>POST /api/auth/register : Inscription d'un nouvel utilisateur.</li>
+ *     <li>POST /api/auth/login : Authentification d'un utilisateur existant.</li>
+ *     <li>GET /api/auth/status : Vérifie le statut du service d'authentification.</li>
+ * </ul>
+ *
+ * <p>Le JWT est stocké dans un cookie HttpOnly et n'est pas géré côté frontend.</p>
  */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -37,29 +42,31 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
+    /**
+     * Inscrit un nouvel utilisateur.
+     *
+     * <p>Crée l'utilisateur en base, génère un JWT et le place dans un cookie HttpOnly.</p>
+     *
+     * @param registerRequest DTO contenant email, username et mot de passe
+     * @param response        HttpServletResponse pour ajouter le cookie JWT
+     * @return ResponseEntity avec le JWT et les informations de l'utilisateur
+     * @throws EntityNotFoundException si l'utilisateur nouvellement créé n'est pas retrouvé en base
+     */
     @PostMapping("/register")
     public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletResponse response) {
-        log.info("📩 Requête inscription reçue: {}", registerRequest);
-
         UserDTO userDTO = userService.createUser(registerRequest);
-        log.debug("✅ Utilisateur créé: {}", userDTO);
 
         User user = userRepository.findByEmail(userDTO.getEmail())
-                .orElseThrow(() -> {
-                    log.error("❌ Utilisateur créé introuvable en DB: {}", userDTO.getEmail());
-                    return new EntityNotFoundException("Utilisateur créé introuvable");
-                });
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur créé introuvable"));
 
         String jwt = jwtUtils.generateTokenFromUsername(user.getEmail());
-        log.info("🔑 JWT généré pour nouvel utilisateur {}: {}", user.getEmail(), jwt);
 
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // ⚠️ temporaire pour développement local
+        cookie.setSecure(false); // temporaire pour dev local
         cookie.setPath("/");
         cookie.setMaxAge((int) jwtUtils.getJwtExpirationSeconds());
         response.addCookie(cookie);
-        log.info("🍪 Cookie JWT ajouté à la réponse pour l'utilisateur {}", user.getEmail());
 
         JwtResponse jwtResponse = JwtResponse.builder()
                 .token(jwt)
@@ -70,40 +77,37 @@ public class AuthController {
                 .expiresIn(jwtUtils.getJwtExpirationSeconds())
                 .build();
 
-        log.debug("📤 Réponse d'inscription envoyée: {}", jwtResponse);
         return ResponseEntity.status(201).body(jwtResponse);
     }
 
+    /**
+     * Authentifie un utilisateur existant.
+     *
+     * <p>Vérifie les identifiants, génère un JWT et le place dans un cookie HttpOnly.</p>
+     *
+     * @param loginRequest DTO contenant email ou username et mot de passe
+     * @param response     HttpServletResponse pour ajouter le cookie JWT
+     * @return ResponseEntity avec le JWT et les informations de l'utilisateur
+     * @throws EntityNotFoundException si l'utilisateur n'existe pas
+     */
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        log.info("📩 Tentative de connexion avec identifiant: {}", loginRequest.getEmailOrUsername());
-
         User user = userRepository.findByEmail(loginRequest.getEmailOrUsername())
                 .or(() -> userRepository.findByUsername(loginRequest.getEmailOrUsername()))
-                .orElseThrow(() -> {
-                    log.error("❌ Utilisateur non trouvé: {}", loginRequest.getEmailOrUsername());
-                    return new EntityNotFoundException("Utilisateur non trouvé");
-                });
-        log.debug("✅ Utilisateur trouvé: {}", user.getEmail());
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        loginRequest.getPassword()
-                )
+                new UsernamePasswordAuthenticationToken(user.getEmail(), loginRequest.getPassword())
         );
-        log.info("🔐 Authentification réussie pour {}", user.getEmail());
 
         String jwt = jwtUtils.generateTokenFromUsername(user.getEmail());
-        log.info("🔑 JWT généré pour {}: {}", user.getEmail(), jwt);
 
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // ⚠️ temporaire pour développement local
+        cookie.setSecure(false); // temporaire pour dev local
         cookie.setPath("/");
         cookie.setMaxAge((int) jwtUtils.getJwtExpirationSeconds());
         response.addCookie(cookie);
-        log.info("🍪 Cookie JWT ajouté à la réponse pour l'utilisateur {}", user.getEmail());
 
         JwtResponse jwtResponse = JwtResponse.builder()
                 .token(jwt)
@@ -114,15 +118,21 @@ public class AuthController {
                 .expiresIn(jwtUtils.getJwtExpirationSeconds())
                 .build();
 
-        log.debug("📤 Réponse de connexion envoyée: {}", jwtResponse);
         return ResponseEntity.ok(jwtResponse);
     }
 
+    /**
+     * Vérifie le statut du service d'authentification.
+     *
+     * <p>Permet de tester si le service fonctionne et retourne le nombre d'utilisateurs inscrits.</p>
+     *
+     * @return ResponseEntity contenant un message d'information
+     */
     @GetMapping("/status")
     public ResponseEntity<MessageResponse> getStatus() {
-        log.info("📩 Requête de statut du service d'auth");
         long userCount = userService.countAllUsers();
-        log.info("✅ Service d'auth OK - {} utilisateurs inscrits", userCount);
-        return ResponseEntity.ok(MessageResponse.info("Service d'authentification MDD opérationnel. " + userCount + " utilisateurs inscrits."));
+        return ResponseEntity.ok(MessageResponse.info(
+                "Service d'authentification MDD opérationnel. " + userCount + " utilisateurs inscrits."
+        ));
     }
 }
