@@ -17,5 +17,4 @@ export * from './article.interface';
 export {
   Comment as CommentInterface,
   CreateCommentRequest,
-  UpdateCommentRequest,
 } from './comment.interface';

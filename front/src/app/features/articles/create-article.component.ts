@@ -1,4 +1,4 @@
-// front/src/app/features/articles/create-article.component.ts
+// create-article.component.ts - Formulaire de création d'article
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,9 +13,9 @@ import { ErrorService } from '../../services/error.service';
 })
 export class CreateArticleComponent implements OnInit {
   
-  articleForm: FormGroup;
-  themes: any[] = [];
-  isSubmitting = false;
+  articleForm: FormGroup;   // Formulaire réactif
+  themes: any[] = [];       // Liste des thèmes
+  isSubmitting = false;     // Indique si une soumission est en cours
 
   constructor(
     private fb: FormBuilder,
@@ -24,13 +24,14 @@ export class CreateArticleComponent implements OnInit {
     private errorService: ErrorService,
     private router: Router
   ) {
+    // Initialisation du formulaire avec validations
     this.articleForm = this.fb.group({
       title: [
         '', 
         [
           Validators.required, 
           Validators.minLength(5), 
-          Validators.maxLength(200) // Limitation du titre à 200 caractères
+          Validators.maxLength(200) // Titre limité à 200 caractères
         ]
       ],
       subjectId: ['', Validators.required],
@@ -39,7 +40,7 @@ export class CreateArticleComponent implements OnInit {
         [
           Validators.required, 
           Validators.minLength(10), 
-          Validators.maxLength(2000) // Limitation du contenu à 2000 caractères
+          Validators.maxLength(2000) // Contenu limité à 2000 caractères
         ]
       ]
     });
@@ -49,6 +50,9 @@ export class CreateArticleComponent implements OnInit {
     this.loadThemes();
   }
 
+  /**
+   * Charge la liste des thèmes disponibles
+   */
   private loadThemes(): void {
     this.themeService.getAllThemes().subscribe({
       next: (response) => {
@@ -60,6 +64,9 @@ export class CreateArticleComponent implements OnInit {
     });
   }
 
+  /**
+   * Soumission du formulaire de création d'article
+   */
   onSubmit(): void {
     if (this.articleForm.valid) {
       this.isSubmitting = true;
@@ -67,7 +74,7 @@ export class CreateArticleComponent implements OnInit {
       const articleData = {
         title: this.articleForm.value.title,
         content: this.articleForm.value.content,
-        subjectId: parseInt(this.articleForm.value.subjectId)
+        subjectId: parseInt(this.articleForm.value.subjectId, 10)
       };
 
       this.articleService.createArticle(articleData).subscribe({
@@ -82,16 +89,18 @@ export class CreateArticleComponent implements OnInit {
     }
   }
 
+  /**
+   * Vérifie si un champ du formulaire est en erreur
+   */
   hasError(field: string): boolean {
     const control = this.articleForm.get(field);
     return !!(control && control.invalid && control.touched);
   }
 
   /**
-   * Retour à la page précédente
+   * Retourne à la page précédente
    */
   goBack(): void {
-    console.log('🔙 Retour à la page précédente');
     window.history.back();
   }
 }

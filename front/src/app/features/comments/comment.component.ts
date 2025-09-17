@@ -19,10 +19,9 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
 
   comments: Comment[] = [];
   commentForm: FormGroup;
-  isLoading = false;
   isSubmitting = false;
+  isLoading = false; 
 
-  // Subject RxJS pour gérer la destruction des observables (pattern unsubscription)
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -32,12 +31,16 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
     private authService: AuthService
   ) {
     this.commentForm = this.formBuilder.group({
-      content: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(500)]]
+      content: ['', [
+        Validators.required, 
+        Validators.minLength(3), 
+        Validators.maxLength(500)
+      ]]
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['initialComments'] && changes['initialComments'].currentValue) {
+    if (changes['initialComments']?.currentValue) {
       this.comments = [...changes['initialComments'].currentValue];
     }
   }
@@ -76,8 +79,8 @@ export class CommentComponent implements OnInit, OnDestroy, OnChanges {
           this.commentForm.get('content')?.markAsPristine();
         },
         error: (err) => {
-          console.error("Erreur lors de la soumission du commentaire :", err);
           this.isSubmitting = false;
+          this.errorService.handleHttpError(err);
         }
       });
     } else {

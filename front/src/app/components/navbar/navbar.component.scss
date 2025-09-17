@@ -9,7 +9,7 @@
   background: var(--mdd-white);
   border-bottom: 1px solid #e0e0e0;
 
-  // 🎯 Masquer toute la navbar sur mobile pour pages auth
+  //  Masquer toute la navbar sur mobile pour pages auth
   &.navbar--simple {
     @include mobile {
       display: none !important;
@@ -20,7 +20,7 @@
     margin: 0 auto;
     padding: $space-md;
 
-    // 🎯 Appliquer flex directement sur le container
+    // Appliquer flex directement sur le container
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -87,7 +87,7 @@
       transform: scale(1.05);
     }
 
-    // ✅ Style pour l'état actif (page profile)
+    // Style pour l'état actif (page profile)
     &--active {
       opacity: 1;
       transform: scale(1.02);
@@ -154,7 +154,7 @@
   }
 
   &__user-icon-section {
-    margin-top: auto; // 🎯 Pousse l'icône vers le bas
+    margin-top: auto; 
     display: flex;
     justify-content: center;
     padding: $space-md 0;
@@ -163,14 +163,14 @@
   &__user-icon-bottom {
     opacity: 0.7;
     cursor: pointer;
-    transition: all 0.3s ease; // ✅ Transition pour mobile aussi
+    transition: all 0.3s ease; 
 
     &:hover {
       opacity: 1;
       transform: scale(1.05);
     }
 
-    // ✅ Style pour l'état actif en mobile
+    // Style pour l'état actif en mobile
     &--active {
       opacity: 1;
       transform: scale(1.02);

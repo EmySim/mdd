@@ -13,8 +13,7 @@ import { ErrorService } from '../../services/error.service';
       </div>
     </div>
   `,
-  styleUrls: ['./error-toast.component.scss']
-  // 🎯 PAS D'ANIMATION = Plus simple pour MVP
+  styleUrls: ['./error-toast.component.scss'],
 })
 export class ErrorToastComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
@@ -23,11 +22,11 @@ export class ErrorToastComponent implements OnInit, OnDestroy {
   constructor(private errorService: ErrorService) {}
 
   ngOnInit(): void {
-    this.errorService.error$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(error => {
-      this.errorMessage = error;
-    });
+    this.errorService.error$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((error) => {
+        this.errorMessage = error;
+      });
   }
 
   ngOnDestroy(): void {

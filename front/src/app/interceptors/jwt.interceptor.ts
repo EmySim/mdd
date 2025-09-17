@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 /**
  * JWT Interceptor - Version cookie HTTPOnly
- * 
+ *
  * Le backend lit le JWT depuis le cookie, donc
  * aucune gestion du token côté frontend.
  */
@@ -22,7 +22,6 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Les cookies sont envoyés automatiquement si { withCredentials: true } est utilisé dans les services
-    // On ne modifie pas la requête, on laisse passer telle quelle
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         this.handleError(error);
@@ -35,11 +34,8 @@ export class JwtInterceptor implements HttpInterceptor {
    * Gestion d'erreurs simplifiée
    */
   private handleError(error: HttpErrorResponse): void {
-    console.error(`❌ HTTP ${error.status} sur ${error.url}:`, error);
-
     if (error.status === 401) {
       // Redirection vers la page de login en cas d'erreur d'authentification
-      console.warn('🚫 Session expirée ou non authentifiée - redirection automatique');
       this.router.navigate(['/auth/login']);
     }
     // Les autres erreurs sont gérées par les composants

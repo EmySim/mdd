@@ -7,13 +7,12 @@ import { AuthService } from '../auth/auth.service';
 import { User, UpdateUserRequest } from '../../interfaces/user.interface';
 
 /**
- * Service simple pour la gestion du profil utilisateur
+ * Service pour la gestion du profil utilisateur
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
-  
   private readonly API_URL = '/api/user';
 
   constructor(
@@ -30,31 +29,26 @@ export class ProfileService {
    * Récupère le profil utilisateur
    */
   getUserProfile(userId: number): Observable<User> {
-    return this.http.get<User>(`${this.API_URL}/${userId}`, { 
-        withCredentials: true // ✅ cookies envoyés
-      })
-      .pipe(
-        tap((user: User) => console.log('✅ Profil récupéré:', user.username)),
-        catchError(this.handleError)
-      );
+    return this.http.get<User>(`${this.API_URL}/${userId}`, {
+      withCredentials: true,
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Met à jour le profil utilisateur
    */
   updateUserProfile(userId: number, userData: UpdateUserRequest): Observable<User> {
-    return this.http.put<User>(`${this.API_URL}/${userId}`, userData, { 
-        withCredentials: true // ✅
-      })
-      .pipe(
-        tap((updatedUser: User) => {
-          console.log('✅ Profil mis à jour:', updatedUser.username);
-          
-          // Mettre à jour les données dans AuthService
-          this.authService.updateCurrentUser(updatedUser);
-        }),
-        catchError(this.handleError)
-      );
+    return this.http.put<User>(`${this.API_URL}/${userId}`, userData, {
+      withCredentials: true,
+    }).pipe(
+      tap((updatedUser: User) => {
+        // Mettre à jour les données dans AuthService
+        this.authService.updateCurrentUser(updatedUser);
+      }),
+      catchError(this.handleError)
+    );
   }
 
   // ===========================
@@ -67,7 +61,6 @@ export class ProfileService {
    * @returns Observable qui émet une erreur
    */
   private handleError = (error: HttpErrorResponse): Observable<never> => {
-    console.error('❌ Erreur ProfileService:', error);
     this.errorService.handleHttpError(error);
     return throwError(() => error);
   };

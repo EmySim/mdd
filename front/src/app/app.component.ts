@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -26,7 +25,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // ✅ CORRECTIF : charger automatiquement l'utilisateur courant depuis le cookie JWT
+    // Charger automatiquement l'utilisateur courant depuis le cookie JWT
     this.authService.loadUserFromServer();
 
     // Gestion de la navbar selon la page
@@ -41,11 +40,9 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * 🎯 LOGIQUE SIMPLE - Laisse le CSS gérer le responsive
+   * Logique simple pour afficher ou masquer la navbar
    */
   private updateNavbarStatus(url: string): void {
-    console.log('🔍 URL courante:', url);
-
     // Cas spécial pour la racine
     if (url === '/' || url === '') {
       this.showNavbar = false;
@@ -55,7 +52,6 @@ export class AppComponent implements OnInit {
 
     // Pages SANS navbar (landing)
     if (this.noNavbarPages.some(page => url === page || url.startsWith(page))) {
-      console.log('❌ Navbar masquée (landing)');
       this.showNavbar = false;
       this.isSimplePage = false;
       return;
@@ -63,14 +59,12 @@ export class AppComponent implements OnInit {
 
     // Pages AUTH - Navbar simple (CSS gère le responsive)
     if (this.simpleNavbarPages.some(page => url === page || url.startsWith(page))) {
-      console.log('✅ Navbar simple (CSS responsive)');
       this.showNavbar = true;
       this.isSimplePage = true;
       return;
     }
 
     // Pages APP - Navbar complète (CSS gère le responsive)
-    console.log('✅ Navbar complète (CSS responsive)');
     this.showNavbar = true;
     this.isSimplePage = false;
   }

@@ -1,3 +1,4 @@
+// login.component.ts - Formulaire de connexion utilisateur
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
@@ -16,11 +17,11 @@ import { ErrorService } from '../../../services/error.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  loginForm: FormGroup;
-  isLoading = false;
-  errorMessage = '';
+  loginForm: FormGroup;        // Formulaire de connexion
+  isLoading = false;           // Indique si une requête est en cours
+  errorMessage = '';           // Message d’erreur à afficher si besoin
 
-  private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>(); // Gestion du cycle de vie des abonnements
 
   constructor(
     private formBuilder: FormBuilder,
@@ -34,7 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.errorService.clearAll();
 
-    // ✅ Redirige automatiquement si déjà connecté
+    // Redirige automatiquement si déjà connecté
     this.authService.isLoggedIn$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isLoggedIn: boolean) => {
@@ -49,6 +50,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /**
+   * Crée et initialise le formulaire de connexion
+   */
   private createLoginForm(): FormGroup {
     return this.formBuilder.group({
       emailOrUsername: ['', [Validators.required, this.emailOrUsernameValidator]],
@@ -56,43 +60,41 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Validateur personnalisé pour email ou username
+  /**
+   * Validateur personnalisé permettant d'accepter
+   * soit un email valide, soit un nom d’utilisateur valide
+   */
   private emailOrUsernameValidator(
-  control: AbstractControl
-): { [key: string]: any } | null {
-  if (!control.value) {
-    return null; // handled by "required"
+    control: AbstractControl
+  ): { [key: string]: any } | null {
+    if (!control.value) {
+      return null; // déjà géré par "required"
+    }
+
+    const value = control.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+
+    if (emailRegex.test(value) || usernameRegex.test(value)) {
+      return null; // valide
+    }
+    return { invalidEmailOrUsername: true };
   }
 
-  const value = control.value.trim();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
-
-  if (emailRegex.test(value) || usernameRegex.test(value)) {
-    return null; // valide
-  }
-  return { invalidEmailOrUsername: true };
-}
-
+  /**
+   * Soumission du formulaire de connexion
+   */
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorService.clearAll();
 
-      console.log('🔍 Données envoyées:', this.loginForm.value);
-
       this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          console.log('✅ RÉPONSE DU BACKEND:', response);
-
-          // ✅ PAS de stockage du token → géré par le cookie HttpOnly
-          // Si besoin, récupérer l'utilisateur courant via AuthService.getCurrentUser()
-
-          console.log('✅ Connexion réussie');
+        next: () => {
+          // Le backend gère le cookie HttpOnly → pas de stockage manuel du token
           this.router.navigate(['/articles']);
         },
         error: (error) => {
-          console.error('❌ Erreur de connexion:', error);
           this.errorService.handleHttpError(error);
           this.isLoading = false;
         },
@@ -100,12 +102,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Helpers de validation
+  /**
+   * Vérifie si un champ du formulaire est invalide et a été touché
+   */
   hasFieldError(fieldName: string): boolean {
     const field = this.loginForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
   }
 
+  /**
+   * Retourne le message d'erreur approprié pour un champ
+   */
   getFieldError(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
     if (field && field.errors && field.touched) {
@@ -128,7 +135,6 @@ export class LoginComponent implements OnInit, OnDestroy {
    * Retour à la page précédente
    */
   goBack(): void {
-    console.log('🔙 Retour à la page précédente');
     window.history.back();
   }
 }

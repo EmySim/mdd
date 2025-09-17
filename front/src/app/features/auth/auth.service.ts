@@ -1,3 +1,4 @@
+// auth.service.ts - Service d'authentification centralisé
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -30,10 +31,13 @@ export class AuthService {
     this.loadUserFromServer();
   }
 
-  // =============================================================================
+  // ============================================================================
   // MÉTHODES PUBLIQUES
-  // =============================================================================
+  // ============================================================================
 
+  /**
+   * Connexion utilisateur.
+   */
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
       `${this.API_URL}/login`,
@@ -45,6 +49,9 @@ export class AuthService {
     );
   }
 
+  /**
+   * Inscription utilisateur.
+   */
   register(userData: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
       `${this.API_URL}/register`,
@@ -56,33 +63,46 @@ export class AuthService {
     );
   }
 
+  /**
+   * Déconnexion utilisateur.
+   * Réinitialise l'état local et redirige vers la landing page.
+   */
   logout(): void {
-    // Le backend doit gérer la suppression du cookie côté serveur si besoin
     this.currentUserSubject.next(null);
     this.router.navigate(['/landing']);
-    console.log('✅ Déconnexion - Utilisateur déconnecté');
   }
 
+  /**
+   * Retourne l'utilisateur courant (synchrone).
+   */
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
 
+  /**
+   * Met à jour manuellement l'utilisateur courant.
+   */
   updateCurrentUser(user: User): void {
     this.currentUserSubject.next(user);
   }
 
+  /**
+   * Vérifie si l'utilisateur est connecté (synchrone).
+   */
   isLoggedIn(): boolean {
     return this.getCurrentUser() !== null;
   }
 
+  /**
+   * Vérifie l'état d'authentification auprès du serveur.
+   * Si valide → met à jour le user, sinon → logout.
+   */
   checkAuthStatus(): Observable<User> {
-    // On suppose que le backend lit le cookie JWT et renvoie le profil utilisateur
     return this.http.get<User>(
       `/api/user/profile`,
       { withCredentials: true }
     ).pipe(
       tap(userProfile => {
-        console.log('✅ Profil utilisateur récupéré:', userProfile);
         const user: User = {
           id: userProfile.id,
           username: userProfile.username,
@@ -100,38 +120,40 @@ export class AuthService {
         updatedAt: userProfile.updatedAt
       })),
       catchError(error => {
-        console.log('❌ Échec vérification auth:', error);
         this.logout();
         return throwError(() => error);
       })
     );
   }
 
+  /**
+   * Récupère un utilisateur par son id.
+   */
   getUserById(id: string): Observable<User> {
     return this.http.get<User>(
       `/api/user/${id}`,
       { withCredentials: true }
     ).pipe(
-      tap(user => {
-        console.log(`✅ Utilisateur ${id} récupéré:`, user);
-      }),
-      catchError(error => {
-        console.log(`❌ Échec récupération utilisateur ${id}:`, error);
-        return throwError(() => error);
-      })
+      catchError(error => throwError(() => error))
     );
   }
 
-  // =============================================================================
+  /**
+   * Chargement initial du profil utilisateur si un cookie JWT est présent.
+   */
+  public loadUserFromServer(): void {
+    this.checkAuthStatus().subscribe({
+      next: (user) => this.currentUserSubject.next(user),
+      error: () => this.logout()
+    });
+  }
+
+  // ============================================================================
   // MÉTHODES PRIVÉES
-  // =============================================================================
+  // ============================================================================
 
   private handleAuthSuccess(response: AuthResponse): void {
-    console.log('🔍 handleAuthSuccess - response:', response);
-
-    // Le token est dans le cookie, pas besoin de le stocker côté client
-
-    // Créer l'objet User à partir de la réponse
+    // ⚠️ Token géré par HttpOnly cookie côté serveur → rien à stocker ici
     const user: User = {
       id: response.id,
       username: response.username,
@@ -139,21 +161,10 @@ export class AuthService {
       createdAt: response.createdAt,
       updatedAt: response.updatedAt
     };
-
     this.currentUserSubject.next(user);
   }
 
-  // ✅ rendu PUBLIC pour pouvoir être appelé depuis AppComponent
-  public loadUserFromServer(): void {
-    // Tente de charger le profil utilisateur si le cookie JWT est présent
-    this.checkAuthStatus().subscribe({
-      next: (user) => this.currentUserSubject.next(user),
-      error: () => this.logout()
-    });
-  }
-
   private handleError = (error: unknown): Observable<never> => {
-    console.error('❌ AuthService Error:', error);
     return throwError(() => error);
   };
 }

@@ -26,7 +26,6 @@ export class ThemeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadThemes();
-    console.log('📂 Page thèmes chargée');
   }
 
   ngOnDestroy(): void {
@@ -35,10 +34,9 @@ export class ThemeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Charge la liste des thèmes avec statut d'abonnement
+   * Charge la liste des thèmes
    */
   loadThemes(): void {
-    console.log(`📂 Chargement initial des thèmes`);
     this.isLoading = true;
     this.errorService.clearAll();
 
@@ -46,34 +44,11 @@ export class ThemeComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (themesPage: ThemesPage) => {
-        this.themes = themesPage.content; 
+        this.themes = themesPage.content;
         this.isLoading = false;
-        console.log(`✅ Thèmes chargés: ${themesPage.content.length}`);
-        
-        // 🔍 LOGS POUR DIAGNOSTIQUER LA DESCRIPTION
-        console.log('📋 Réponse complète du backend:', themesPage);
-        console.log('🎯 Contenu des thèmes:', themesPage.content);
-        
-        // Vérifier chaque thème individuellement
-        themesPage.content.forEach((theme, index) => {
-          console.log(`📝 Thème ${index + 1}:`);
-          console.log(`  - ID: ${theme.id}`);
-          console.log(`  - Nom: ${theme.name}`);
-          console.log(`  - Description: "${theme.description}"`);
-          console.log(`  - Type description: ${typeof theme.description}`);
-          console.log(`  - Description vide/null: ${!theme.description}`);
-          console.log(`  - Abonné: ${theme.isSubscribed}`);
-          console.log(`  - Créé le: ${theme.createdAt}`);
-          console.log('  - Objet complet:', theme);
-        });
-
-        // Vérifier si au moins un thème a une description
-        const themesWithDescription = themesPage.content.filter(theme => theme.description && theme.description.trim());
-        console.log(`📊 Thèmes avec description non vide: ${themesWithDescription.length}/${themesPage.content.length}`);
       },
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;
-        console.error('❌ Erreur chargement thèmes:', error);
         this.errorService.handleHttpError(error);
       },
     });
@@ -83,8 +58,6 @@ export class ThemeComponent implements OnInit, OnDestroy {
    * Toggle abonnement à un thème
    */
   toggleSubscription(theme: Theme): void {
-    console.log(`🔄 Toggle abonnement thème: ${theme.name} (${theme.isSubscribed ? 'se désabonner' : 's\'abonner'})`);
-
     const originalState = theme.isSubscribed;
     theme.isSubscribed = !theme.isSubscribed; // Mise à jour optimiste
 
@@ -92,42 +65,28 @@ export class ThemeComponent implements OnInit, OnDestroy {
       ? this.themeService.unsubscribeFromTheme(theme.id)
       : this.themeService.subscribeToTheme(theme.id);
 
-    apiCall.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe({
+    apiCall.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-        const action = originalState ? 'désabonné de' : 'abonné à';
-        console.log(`✅ ${action} ${theme.name}`);
+        // succès → rien à faire, l'état a été mis à jour
       },
       error: (error: HttpErrorResponse) => {
-        theme.isSubscribed = originalState; // Annuler la mise à jour optimiste
-        console.error('❌ Erreur toggle abonnement:', error);
+        theme.isSubscribed = originalState; // rollback
         this.errorService.handleHttpError(error);
       },
     });
   }
 
   // ===========================
-  // ✅ NOUVELLES MÉTHODES - SYSTÈME DE BOUTONS UNIFIÉ
+  // MÉTHODES D'AFFICHAGE DES BOUTONS
   // ===========================
-
-  /**
-   * Retourne la classe CSS appropriée selon l'état d'abonnement
-   */
   getThemeButtonClass(isSubscribed: boolean): string {
     return isSubscribed ? 'btn btn--subscribed' : 'btn btn--primary';
   }
 
-  /**
-   * Retourne le texte approprié selon l'état d'abonnement
-   */
   getThemeButtonText(isSubscribed: boolean): string {
     return isSubscribed ? 'Abonné' : 'S\'abonner';
   }
 
-  /**
-   * Retourne le titre (tooltip) approprié selon l'état d'abonnement
-   */
   getThemeButtonTitle(isSubscribed: boolean): string {
     return isSubscribed 
       ? 'Cliquez pour vous désabonner de ce thème' 
@@ -137,10 +96,6 @@ export class ThemeComponent implements OnInit, OnDestroy {
   // ===========================
   // MÉTHODES UTILITAIRES
   // ===========================
-
-  /**
-   * TrackBy pour optimiser le rendu de la liste
-   */
   trackByThemeId(index: number, theme: Theme): number {
     return theme.id;
   }

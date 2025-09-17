@@ -20,10 +20,6 @@
   padding-bottom: $space-md;
 }
 
-.comments-section {
-  // Pas de style Flexbox nécessaire
-}
-
 .comment-card {
   background-color: $mdd-border-gray;
   padding: 1rem;
@@ -32,7 +28,6 @@
   min-height: 6.25rem;
 }
 
-/* Nouvelles règles pour le formulaire */
 .comment-form-wrapper {
   display: flex;
   align-items: flex-end;
@@ -48,7 +43,7 @@
   box-sizing: border-box;
   flex-grow: 1;
   min-height: 5rem;
-  
+
   &:focus {
     outline: none;
     border-color: $mdd-black;
@@ -88,14 +83,12 @@ img.send-arrow {
     width: 100%;
   }
 
-  /* Si vous avez un conteneur pour les méta-données */
   .meta-data-container {
-      flex-direction: column;
-      gap: $space-xs;
+    flex-direction: column;
+    gap: $space-xs;
   }
 
-  /* Si vous avez un conteneur pour le titre */
   .article-title-container {
-      flex-direction: column;
+    flex-direction: column;
   }
 }
