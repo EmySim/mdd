@@ -25,18 +25,18 @@ export class ErrorService {
 
   constructor() {}
 
-  // 🔄 INTERFACE
+  //  INTERFACE
   get error$(): Observable<string | null> {
     return this.errorSubject.asObservable();
   }
 
-  // ✨ interface pour erreurs de validation
+  //  interface pour erreurs de validation
   get validationErrors$(): Observable<{[key: string]: string} | null> {
     return this.validationErrorsSubject.asObservable();
   }
 
   /**
-   * 🔄 MÉTHODE EXISTANTE 
+   *  MÉTHODE EXISTANTE 
    */
   showError(message: string): void {
     this.errorSubject.next(message);
@@ -45,14 +45,14 @@ export class ErrorService {
   }
 
   /**
-   * 🔄 VOTRE MÉTHODE EXISTANTE - 100% COMPATIBLE  
+   *  VOTRE MÉTHODE EXISTANTE - 100% COMPATIBLE  
    */
   clearError(): void {
     this.errorSubject.next(null);
   }
 
   /**
-   * ✨ Gestion des réponses HTTP du backend
+   *  Gestion des réponses HTTP du backend
    * Utilise directement les messages du GlobalExceptionHandler
    */
   handleHttpError(error: HttpErrorResponse): void {
@@ -71,7 +71,7 @@ export class ErrorService {
   }
 
   /**
-   * ✨ Gestion des erreurs de validation (400)
+   *  Gestion des erreurs de validation (400)
    */
   showValidationErrors(errors: {[key: string]: string}): void {
     this.validationErrorsSubject.next(errors);
@@ -82,14 +82,14 @@ export class ErrorService {
   }
 
   /**
-   * ✨ Clear des erreurs de validation
+   *  Clear des erreurs de validation
    */
   clearValidationErrors(): void {
     this.validationErrorsSubject.next(null);
   }
 
   /**
-   * ✨ Clear
+   *  Clear
    */
   clearAll(): void {
     this.clearError();

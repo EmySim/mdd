@@ -1,3 +1,4 @@
+// register.component.ts - Formulaire d'inscription utilisateur
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,10 +14,10 @@ import { RegisterRequest } from '../../../interfaces/user.interface';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  registerForm: FormGroup;
-  isLoading = false;
+  registerForm: FormGroup;   // Formulaire réactif pour l'inscription
+  isLoading = false;         // Indique si une requête est en cours
   
-  private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>(); // Gestion du cycle de vie des abonnements
 
   constructor(
     private formBuilder: FormBuilder,
@@ -29,7 +30,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.errorService.clearAll();
-    
+
+    // Redirige si l'utilisateur est déjà connecté
     this.authService.isLoggedIn$.pipe(
       takeUntil(this.destroy$)
     ).subscribe((isLoggedIn: boolean) => {
@@ -44,6 +46,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /**
+   * Crée et initialise le formulaire d'inscription
+   */
   private createRegisterForm(): FormGroup {
     return this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -60,9 +65,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Soumission du formulaire d'inscription
+   */
   onSubmit(): void {
     if (this.registerForm.invalid) {
-      // Marque tous les champs comme "touched" pour afficher les erreurs
+      // Marque tous les champs comme "touched" pour déclencher les erreurs
       Object.values(this.registerForm.controls).forEach(control => {
         control.markAsTouched();
       });
@@ -82,13 +90,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.authService.register(registerData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
-        next: (response) => {
-          console.log('✅ Inscription réussie');
+        next: () => {
           this.isLoading = false;
           this.router.navigate(['/']);
         },
         error: (error: HttpErrorResponse) => {
-          console.error('❌ Erreur d\'inscription:', error);
           this.isLoading = false;
           this.errorService.handleHttpError(error);
         }
@@ -96,17 +102,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ✅ Méthodes de validation ajoutées
+  /**
+   * Vérifie si un champ du formulaire est invalide et a été touché
+   */
   hasFieldError(fieldName: string): boolean {
     const field = this.registerForm.get(fieldName);
     return !!(field && field.invalid && field.touched);
   }
 
+  /**
+   * Retourne le message d'erreur approprié pour un champ
+   */
   getFieldError(fieldName: string): string {
     const field = this.registerForm.get(fieldName);
     if (field && field.errors && field.touched) {
       if (field.errors['required']) {
-        const fieldNames: {[key: string]: string} = {
+        const fieldNames: { [key: string]: string } = {
           'username': 'Nom d\'utilisateur',
           'email': 'Email',
           'password': 'Mot de passe'
@@ -117,7 +128,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         return 'Format email invalide';
       }
       if (field.errors['minlength']) {
-        const minLengths: {[key: string]: number} = {
+        const minLengths: { [key: string]: number } = {
           'username': 3,
           'password': 6
         };
@@ -138,7 +149,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
    * Retour à la page précédente
    */
   goBack(): void {
-    console.log('🔙 Retour à la page précédente');
     window.history.back();
   }
 }

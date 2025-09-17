@@ -1,4 +1,4 @@
-// navbar.component.ts - Modification pour icône dynamique
+// navbar.component.ts - Navbar avec icône dynamique selon la page
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subject, takeUntil, filter } from 'rxjs';
@@ -11,13 +11,13 @@ import { User } from '../../interfaces/user.interface';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  @Input() isSimple: boolean = false;
+  @Input() isSimple: boolean = false; // Navbar simplifiée (landing par ex.)
   
-  currentUser: User | null = null;
-  showMobileMenu = false;
-  isProfilePage = false; 
+  currentUser: User | null = null;   // Utilisateur connecté
+  showMobileMenu = false;            // État du menu mobile
+  isProfilePage = false;             // Indique si on est sur la page profil
   
-  private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>(); // Gestion du cycle de vie (unsubscribe)
 
   constructor(
     private authService: AuthService,
@@ -25,37 +25,41 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Écouter les changements d'utilisateur
+    // Abonnement aux changements d'utilisateur
     this.authService.currentUser$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(user => {
       this.currentUser = user;
     });
 
-    // ✅ Écouter les changements de route pour détecter la page profile
+    // Abonnement aux changements de route pour détecter si on est sur le profil
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       takeUntil(this.destroy$)
-    ).subscribe((event) => {
+    ).subscribe(event => {
       this.updateProfilePageStatus(event.url);
     });
 
-    // ✅ Vérifier l'URL initiale
+    // Vérifie l'URL initiale au chargement du composant
     this.updateProfilePageStatus(this.router.url);
   }
 
   ngOnDestroy(): void {
+    // Nettoyage des abonnements
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // ✅ Nouvelle méthode pour déterminer si on est sur la page profile
+  /**
+   * Met à jour l'état indiquant si l'utilisateur est sur la page profil
+   */
   private updateProfilePageStatus(url: string): void {
     this.isProfilePage = url === '/profile' || url.startsWith('/profile/');
-    console.log(`🔍 URL: ${url} - isProfilePage: ${this.isProfilePage}`);
   }
 
-  // ✅ Nouvelle méthode pour obtenir le bon chemin d'icône
+  /**
+   * Retourne le chemin de l'icône en fonction de la page active
+   */
   getUserIconPath(): string {
     return this.isProfilePage 
       ? 'assets/icone_profile.svg' 
@@ -63,7 +67,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // NAVIGATION (méthodes existantes inchangées)
+  // NAVIGATION
   // =============================================================================
 
   goToHomePage(): void {
@@ -92,7 +96,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // AUTHENTIFICATION (méthodes existantes inchangées)
+  // AUTHENTIFICATION
   // =============================================================================
 
   logout(): void {
@@ -106,7 +110,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // MOBILE MENU (méthodes existantes inchangées)
+  // MOBILE MENU
   // =============================================================================
 
   toggleMobileMenu(): void {
@@ -118,7 +122,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // =============================================================================
-  // HELPERS (méthodes existantes inchangées)
+  // HELPERS
   // =============================================================================
 
   isRouteActive(route: string): boolean {
