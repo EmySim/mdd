@@ -80,11 +80,11 @@
     width: 48px;
     cursor: pointer;
     opacity: 0.7;
-    transition: all 0.3s ease; 
-    
+    transition: all 0.3s ease;
+
     &:hover {
       opacity: 1;
-      transform: scale(1.05); 
+      transform: scale(1.05);
     }
 
     // ✅ Style pour l'état actif (page profile)
@@ -161,7 +161,6 @@
   }
 
   &__user-icon-bottom {
-    
     opacity: 0.7;
     cursor: pointer;
     transition: all 0.3s ease; // ✅ Transition pour mobile aussi
@@ -196,8 +195,6 @@
     &--logout {
       color: var(--mdd-logout-red) !important;
       font-weight: $weight-bold;
-      margin-top: $space-md;
-      padding-top: $space-lg;
 
       &:hover {
         color: var(--mdd-logout-red) !important;

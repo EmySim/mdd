@@ -89,16 +89,16 @@
 
 // Définir la position et la taille de base pour la flèche sur desktop
 .back-arrow {
-  top: 30px; // Espace depuis le haut, ajustable selon le design
-  left: 30px; // Espace depuis la gauche
+  position: absolute;
+  top: 150px;
+  left: 40px;
   cursor: pointer;
-  height: auto; // Garder les proportions
+  height: auto;
 
   // Ajustement pour les écrans mobiles avec votre mixin @include mobile
   @include mobile {
-    //top: 16px; // Ajustement de la position pour mobile
-    //left: 16px; // Ajustement de la position pour mobile
-    //width: 1.5rem; // Réduction de la taille pour mobile
+    top: 30px; // Ajustement de la position pour mobile
+    width: 1.5rem; // Réduction de la taille pour mobile
   }
 }
 
@@ -181,6 +181,8 @@
   row-gap: $space-sm;
   column-gap: $space-xxl;
   grid-template-columns: 1fr;
+
+  margin-top: $space-lg;
 
   @include tablet {
     grid-template-columns: repeat(2, 1fr);
