@@ -66,7 +66,7 @@ cd back
 
 2. Créez un fichier `.env` à la racine du backend avec les variables suivantes :
 
-<script src="https://gist.github.com/EmySim/cddcb58131dd0a3fd261149ac6e9bfe4.js"></script>
+Voir fichier
 
 3. Lancez l'application :
 
