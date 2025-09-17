@@ -1,3 +1,5 @@
+// src/app/features/comments/comment.component.scss
+
 @import "src/styles/variables";
 @import "src/styles/mixins";
 
@@ -18,16 +20,10 @@
 }
 
 .comments-section {
-  display: flex;
-  flex-direction: column;
-
+  // Pas besoin de display: flex ici, car le wrapper s'en occupe
 }
 
 .comment-header {
-  //display: flex;
-  //justify-content: space-between;
-  //align-items: center;
-
   @include mobile {
     flex-direction: column;
     align-items: flex-start;
@@ -43,9 +39,12 @@
   min-height: 6.25rem;
 }
 
-.comment-form {
-  width: 95%;
-  padding: $space-md;
+/* Nouvelles règles pour le formulaire */
+.comment-form-wrapper {
+  display: flex; /* Active Flexbox pour aligner le texte et le bouton */
+  align-items: flex-end; /* Aligne le bouton avec le bas de la zone de texte */
+  gap: $space-md; /* Ajoute de l'espace entre le champ et le bouton */
+  width: 100%;
 }
 
 .form__field {
@@ -53,9 +52,10 @@
   border: 1px solid #000000;
   border-radius: 16px;
   padding: 0.5rem;
-
   box-sizing: border-box;
-
+  flex-grow: 1; /* Permet à la zone de texte de prendre toute la largeur disponible */
+  min-height: 5rem;
+  
   &:focus {
     outline: none;
     border-color: $mdd-black;
@@ -71,10 +71,13 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  // padding: 20%;
+  padding: 0;
+  height: 43px; /* Fixe la hauteur pour correspondre à l'image */
+  width: 43px; /* Fixe la largeur pour correspondre à l'image */
+  flex-shrink: 0; /* Empêche le bouton de rétrécir */
 }
 
 img.send-arrow {
-  width: 43px;
-  height: 43px;
+  width: 100%;
+  height: 100%;
 }
