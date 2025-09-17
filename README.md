@@ -66,14 +66,7 @@ cd back
 
 2. Créez un fichier `.env` à la racine du backend avec les variables suivantes :
 
-```env
-DB_USERNAME=mdd_app
-DB_PASSWORD=Db@dm1n_MDD!2025#
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=mdd_db
-JWT_SECRET=MddSecretKeyForJWTTokenGeneration2024VerySecureAndLongEnoughForHS256AlgorithmProduction
-```
+<script src="https://gist.github.com/EmySim/cddcb58131dd0a3fd261149ac6e9bfe4.js"></script>
 
 3. Lancez l'application :
 
