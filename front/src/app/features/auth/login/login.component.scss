@@ -1,6 +1,6 @@
-// ============================================================================
-// login.component.scss -
-// ============================================================================
+/* ============================================================================
+// login.component.scss
+// ============================================================================ */
 
 @import "src/styles/variables";
 @import "src/styles/mixins";
@@ -9,18 +9,14 @@
   display: block;
 }
 
-// ===========================
+/* ===========================
 // CONTENEUR AUTH
-// ===========================
+// =========================== */
 
 .auth-container {
   min-height: calc(100vh - 64px);
-  background: linear-gradient(
-    135deg,
-    var(--mdd-primary-violet) 0%,
-    #9085d4 100%
-  );
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: $space-lg;
@@ -43,20 +39,37 @@
   }
 }
 
-// ===========================
-// TITRE
-// ===========================
+/* ===========================
+// TITRE & FLÈCHE
+// =========================== */
 
-.auth-title {
-  font-size: $font-landing-title;
-  font-weight: $weight-bold;
-  text-align: center;
+.header-section {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
   margin-bottom: $space-lg;
+
+  .back-arrow {
+    position: absolute;
+    left: 0;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+  }
+
+  .auth-title {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+    font-size: $font-landing-title;
+    font-weight: $weight-bold;
+  }
 }
 
-// ===========================
+/* ===========================
 // BOUTON AUTH
-// ===========================
+// =========================== */
 
 .btn--auth {
   width: 100%;
@@ -73,9 +86,9 @@
   }
 }
 
-// ===========================
+/* ===========================
 // CHAMPS
-// ===========================
+// =========================== */
 
 .form__field {
   height: 48px;

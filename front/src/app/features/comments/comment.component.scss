@@ -1,3 +1,5 @@
+// src/app/features/comments/comment.component.scss
+
 @import "src/styles/variables";
 @import "src/styles/mixins";
 
@@ -8,9 +10,10 @@
 .comments-block {
   margin-top: $space-xl;
   padding-top: $space-lg;
-  border-top: 1px solid $mdd-border-gray;
+  border-top: 1px solid $mdd-black;
 }
 
+/* Styles par défaut pour les grands écrans */
 .previous-comment {
   display: flex;
   justify-content: space-evenly;
@@ -18,21 +21,7 @@
 }
 
 .comments-section {
-  display: flex;
-  justify-content: space-around;
-  margin-top: $space-lg;
-}
-
-.comment-header {
-  //display: flex;
-  //justify-content: space-between;
-  //align-items: center;
-
-  @include mobile {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $space-xs;
-  }
+  // Pas de style Flexbox nécessaire
 }
 
 .comment-card {
@@ -43,9 +32,12 @@
   min-height: 6.25rem;
 }
 
-.comment-form {
-  width: 80%;
-  padding: $space-md;
+/* Nouvelles règles pour le formulaire */
+.comment-form-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: $space-md;
+  width: 100%;
 }
 
 .form__field {
@@ -53,9 +45,10 @@
   border: 1px solid #000000;
   border-radius: 16px;
   padding: 0.5rem;
-
   box-sizing: border-box;
-
+  flex-grow: 1;
+  min-height: 5rem;
+  
   &:focus {
     outline: none;
     border-color: $mdd-black;
@@ -71,10 +64,38 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  // padding: 20%;
+  padding: 0;
+  height: 43px;
+  width: 43px;
+  flex-shrink: 0;
 }
 
 img.send-arrow {
-  width: 43px;
-  height: 43px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Media Query pour les mobiles */
+@include mobile {
+  .previous-comment {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: initial;
+    gap: $space-xs;
+  }
+
+  .comment-card {
+    width: 100%;
+  }
+
+  /* Si vous avez un conteneur pour les méta-données */
+  .meta-data-container {
+      flex-direction: column;
+      gap: $space-xs;
+  }
+
+  /* Si vous avez un conteneur pour le titre */
+  .article-title-container {
+      flex-direction: column;
+  }
 }

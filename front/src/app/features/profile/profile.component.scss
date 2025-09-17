@@ -1,5 +1,5 @@
-@import 'src/styles/variables';
-@import 'src/styles/mixins';
+@import "src/styles/variables";
+@import "src/styles/mixins";
 
 :host {
   display: block;
@@ -12,7 +12,7 @@
 .profile-form-section {
   max-width: 500px;
   margin: 0 auto $space-xxl;
-  
+
   @include mobile {
     max-width: 100%;
     margin-bottom: $space-xl;
@@ -25,7 +25,7 @@
   align-items: center;
   background-color: var(--mdd-white);
   border-radius: 8px;
-  
+
   @include mobile {
     padding: $space-lg;
     box-shadow: none;
@@ -41,8 +41,7 @@
   height: 1px;
   background-color: #000000;
   margin: $space-lg 0;
-  width: 80%; 
-  
+
   @include mobile {
     margin: $space-xl 0;
   }
@@ -62,11 +61,7 @@
     font-weight: $weight-bold;
     color: var(--mdd-black);
     text-align: center;
-    margin-bottom: $space-xl;
-    
-    @include mobile {
-      margin-bottom: $space-lg;
-    }
+    margin: 0;
   }
 }
 
@@ -78,13 +73,13 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: $space-xxl;
-  
+
   .text-secondary {
     font-size: $font-body-content;
     color: lighten($mdd-black, 40%);
     margin-bottom: $space-md;
   }
-  
+
   .btn {
     display: inline-flex;
   }
